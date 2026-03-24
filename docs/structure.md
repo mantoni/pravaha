@@ -3,7 +3,7 @@
 - Kind: convention
 - Status: active
 
-- `docs/patram.md`: Product definition.
+- `docs/pravaha.md`: Product definition.
 - `docs/structure.md`: Repo documentation map for humans and agents.
 - `docs/decisions/`: Decision records.
 - `docs/roadmap/`: Milestone and version roadmaps.
@@ -22,7 +22,7 @@
 
 ```mermaid
 graph TD
-  A["docs/patram.md"]
+  A["docs/pravaha.md"]
   B["docs/structure.md"]
   C["docs/decisions/"]
   D["docs/roadmap/"]

@@ -1,20 +1,19 @@
 # Agents
 
-Pravaha is a CLI (`pravaha`) for humans and agents to work together, based on
-[patram](https://github.com/mantoni/patram) managed docs.
+> Pravaha turns human workflow into explicit contracts that agents can execute.
 
 Use `patram` to orient in the repo based on the user's request.
 
 - For planning, decisions, tasks, changes, and queue state, start with
   `npx patram queries` and then run the stored query that best matches the
   workflow stage.
-- For a specific document or work item, use `patram show <repo-path>` and exact
-  relation-target queries such as `tracked_in=doc:<repo-path>` or
+- For a specific document or work item, use `npx patram show <repo-path>` and
+  exact relation-target queries such as `tracked_in=doc:<repo-path>` or
   `decided_by=doc:<repo-path>`.
 - For CLI behavior or graph vocabulary, use taxonomy queries such as
   `command-taxonomy`, `command-implementations`, `term-taxonomy`, and
   `term-usage`.
-- For validation, use `patram check <path>`.
+- For validation, use `npx patram check <path>`.
 
 ## Interaction Style
 

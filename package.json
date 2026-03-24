@@ -1,5 +1,6 @@
 {
   "name": "pravaha",
+  "description": "Pravaha turns human workflow into explicit contracts that agents can execute.",
   "version": "0.0.1",
   "type": "module",
   "main": "./lib/pravaha.js",

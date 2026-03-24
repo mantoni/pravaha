@@ -18,6 +18,8 @@ const repo_directory = dirname(
 
 it('defines publish metadata for the npm package', async () => {
   expect(package_json).toMatchObject({
+    description:
+      'Pravaha turns human workflow into explicit contracts that agents can execute.',
     engines: {
       node: '>=22',
     },
