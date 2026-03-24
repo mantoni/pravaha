@@ -1,0 +1,71 @@
+{
+  "name": "pravaha",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./lib/pravaha.js",
+  "exports": {
+    ".": "./lib/pravaha.js",
+    "./bin/pravaha.js": "./bin/pravaha.js"
+  },
+  "files": [
+    "bin/pravaha.js",
+    "lib/**/*.js",
+    "lib/**/*.ts",
+    "!bin/**/*.test.js",
+    "!bin/**/*.test-helpers.js",
+    "!lib/**/*.test.js",
+    "!lib/**/*.test-helpers.js"
+  ],
+  "bin": {
+    "pravaha": "bin/pravaha.js"
+  },
+  "homepage": "https://github.com/mantoni/pravaha",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mantoni/pravaha.git"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "scripts": {
+    "all": "npm run check:lint && npm run check:format && npm run check:types && npm run check:patram && npm run test:coverage && npm run check:dupes",
+    "check:dupes": "jscpd --min-tokens 100 --min-lines 6 --mode mild --threshold 0 --reporters console --gitignore .",
+    "check:format": "prettier --check .",
+    "check:lint": "eslint .",
+    "check:patram": "patram check",
+    "check:staged": "lint-staged",
+    "check:types": "tsc",
+    "postversion": "git push && git push --tags",
+    "preversion": "npm run all",
+    "prepare": "husky",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "version": "node scripts/update-changelog.js && git add CHANGELOG.md package.json package-lock.json"
+  },
+  "lint-staged": {
+    "*.{js,ts,json,md}": "prettier --check",
+    "*.{js,ts}": [
+      "eslint",
+      "vitest related --run --passWithNoTests"
+    ]
+  },
+  "peerDependencies": {
+    "patram": "^0.1.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.12.0",
+    "@vitest/coverage-v8": "^4.1.0",
+    "eslint": "^10.0.3",
+    "eslint-plugin-jsdoc": "^62.8.0",
+    "globals": "^17.4.0",
+    "husky": "^9.1.7",
+    "jscpd": "^4.0.8",
+    "lint-staged": "^16.2.6",
+    "patram": "^0.1.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2",
+    "vitest": "^4.1.0"
+  }
+}

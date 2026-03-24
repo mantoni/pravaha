@@ -1,0 +1,10 @@
+if {
+  if git rev-parse --verify '@{u}' >/dev/null 2>&1; then
+    git log --format=%s @{u}..HEAD
+  else
+    git log --format=%s HEAD --not --remotes
+  fi
+} | grep -qE '^(fixup!|squash!)'; then
+  echo "❌ fixup commits found"
+  exit 1
+fi

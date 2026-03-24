@@ -1,0 +1,49 @@
+{
+  "include": [
+    "README.md",
+    "docs/**/*.md",
+    "bin/**/*.js",
+    "lib/**/*.js",
+    "scripts/**/*.js",
+    "test/**/*.js"
+  ],
+  "queries": {
+    "documentation": {
+      "where": "kind=document"
+    }
+  },
+  "kinds": {
+    "document": {
+      "builtin": true
+    }
+  },
+  "relations": {
+    "links_to": {
+      "builtin": true,
+      "from": ["document"],
+      "to": ["document"]
+    }
+  },
+  "mappings": {
+    "document.title": {
+      "node": {
+        "field": "title",
+        "kind": "document"
+      }
+    },
+    "jsdoc.link": {
+      "emit": {
+        "relation": "links_to",
+        "target": "path",
+        "target_kind": "document"
+      }
+    },
+    "markdown.link": {
+      "emit": {
+        "relation": "links_to",
+        "target": "path",
+        "target_kind": "document"
+      }
+    }
+  }
+}
