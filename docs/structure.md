@@ -1,35 +1,37 @@
+---
+Kind: convention
+Status: active
+---
+
 # Docs Structure
 
-- Kind: convention
-- Status: active
+- `docs/pravaha.md`: North-star definition of Pravaha.
+- `docs/structure.md`: Repository documentation map for humans and agents.
+- `docs/contracts/`: Canonical executable contracts.
+- `docs/tasks/`: Decomposed execution units linked to contracts.
+- `docs/decisions/`: Durable decisions that constrain contracts and tasks.
+- `docs/conventions/`: Workflow, metadata, naming, and repo conventions.
+- `docs/reference/`: Stable domain and product knowledge that contracts can
+  depend on.
+- `docs/plans/<version>/`: Repo evolution plans for changing Pravaha itself.
 
-- `docs/pravaha.md`: Product definition.
-- `docs/structure.md`: Repo documentation map for humans and agents.
-- `docs/decisions/`: Decision records.
-- `docs/roadmap/`: Milestone and version roadmaps.
-- `docs/plans/<version>/`: Change-level implementation plans.
-- `docs/tasks/<version>/`: Work items grouped by version.
-- `docs/conventions/`: Naming, config, graph, CLI, output conventions.
-- `docs/research/`: Exploratory notes.
-
-- One decision per file.
-- One roadmap per milestone or version.
-- One plan per change.
-- One conventions file per topic or version.
-- Prefer append-only decisions.
-- Prefer short files.
-- Prefer examples over prose.
+- Treat semantic ids and graph relations as the workflow source of truth.
+- Use directory placement for validation and readability, not as the meaning of
+  a work item.
+- Keep review gates inside contract documents.
+- Prefer front matter metadata and headings over visible `Label: value` prose in
+  workflow docs.
 
 ```mermaid
 graph TD
   A["docs/pravaha.md"]
   B["docs/structure.md"]
-  C["docs/decisions/"]
-  D["docs/roadmap/"]
-  E["docs/plans/<version>/"]
-  F["docs/tasks/<version>/"]
-  G["docs/conventions/"]
-  H["docs/research/"]
+  C["docs/contracts/"]
+  D["docs/tasks/"]
+  E["docs/decisions/"]
+  F["docs/conventions/"]
+  G["docs/reference/"]
+  H["docs/plans/<version>/"]
 
   A --> B
   B --> C
@@ -38,4 +40,8 @@ graph TD
   B --> F
   B --> G
   B --> H
+  C --> D
+  C --> E
+  C --> G
+  D --> E
 ```

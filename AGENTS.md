@@ -4,15 +4,18 @@
 
 Use `patram` to orient in the repo based on the user's request.
 
-- For planning, decisions, tasks, changes, and queue state, start with
-  `npx patram queries` and then run the stored query that best matches the
-  workflow stage.
+- Start with `npx patram queries`.
+- Use `change-queue` to see active workflow items across contracts, tasks, and
+  decisions.
+- Use `active-contracts` to orient on the governing contract for a request.
+- Use `ready-tasks` to find executable decomposed work.
+- Use `contracts-missing-decisions` when a contract exists but the human choice
+  surface is not explicit yet.
+- Use `decision-backlog`, `blocked-work`, `review-queue`, and `orphan-tasks`
+  when the workflow stage matches those names.
 - For a specific document or work item, use `npx patram show <repo-path>` and
-  exact relation-target queries such as `tracked_in=doc:<repo-path>` or
-  `decided_by=doc:<repo-path>`.
-- For CLI behavior or graph vocabulary, use taxonomy queries such as
-  `command-taxonomy`, `command-implementations`, `term-taxonomy`, and
-  `term-usage`.
+  exact relation-target queries such as `tracked_in=contract:<slug>` or
+  `decided_by=decision:<slug>`.
 - For validation, use `npx patram check <path>`.
 
 ## Interaction Style
@@ -22,14 +25,23 @@ Use `patram` to orient in the repo based on the user's request.
 - Use code, JSON and mermaid graphs in communication and documentation.
 - Never repurpose existing files unless explicitly approved by the user.
 - Change size should align with the request. Simple request = simple change.
+- Prefer front matter for workflow metadata.
+- Avoid free-form `Label: value` prose lines in workflow docs because Patram may
+  parse them as visible directives.
 
 ## Process
 
 - Docs first.
-- Record decisions in `docs/decisions/`.
-- Record implementation plans in `docs/plans/<version>/`.
-- Record conventions in `docs/conventions/`.
-- Do not implement before decisions are documented.
+- Record durable workflow decisions in `docs/decisions/`.
+- Record repo implementation plans in `docs/plans/<version>/`.
+- Record workflow and metadata conventions in `docs/conventions/`.
+- Treat `docs/contracts/` as the primary executable work items.
+- Add `docs/tasks/` only when a contract needs decomposition or parallel agent
+  execution.
+- Keep review gates inside contract documents.
+- Use front matter metadata with `Kind`, `Id`, `Status`, and relation directives
+  such as `Tracked in`, `Decided by`, `Depends on`, and `Implements`.
+- Do not implement before the governing decision or contract is documented.
 - TDD is required for code changes.
 - Use red, green, refactor.
 

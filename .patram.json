@@ -7,42 +7,358 @@
     "scripts/**/*.js",
     "test/**/*.js"
   ],
-  "queries": {
-    "documentation": {
-      "where": "kind=document"
-    }
-  },
-  "kinds": {
+  "classes": {
     "document": {
       "builtin": true
+    },
+    "contract": {
+      "label": "Contract"
+    },
+    "decision": {
+      "label": "Decision"
+    },
+    "task": {
+      "label": "Task"
+    },
+    "convention": {
+      "label": "Convention"
+    },
+    "plan": {
+      "label": "Plan"
+    },
+    "reference": {
+      "label": "Reference"
+    }
+  },
+  "class_schemas": {
+    "contract": {
+      "document_path_class": "contracts",
+      "fields": {
+        "status": {
+          "presence": "required"
+        },
+        "decided_by": {
+          "presence": "optional"
+        },
+        "depends_on": {
+          "presence": "optional"
+        }
+      },
+      "unknown_fields": "ignore"
+    },
+    "decision": {
+      "document_path_class": "decisions",
+      "fields": {
+        "status": {
+          "presence": "required"
+        },
+        "tracked_in": {
+          "presence": "optional"
+        }
+      },
+      "unknown_fields": "ignore"
+    },
+    "task": {
+      "document_path_class": "tasks",
+      "fields": {
+        "status": {
+          "presence": "required"
+        },
+        "tracked_in": {
+          "presence": "required"
+        },
+        "decided_by": {
+          "presence": "optional"
+        },
+        "depends_on": {
+          "presence": "optional"
+        },
+        "implements": {
+          "presence": "optional"
+        }
+      },
+      "unknown_fields": "ignore"
+    },
+    "convention": {
+      "document_path_class": "conventions",
+      "fields": {
+        "status": {
+          "presence": "required"
+        }
+      },
+      "unknown_fields": "ignore"
+    },
+    "plan": {
+      "document_path_class": "plans",
+      "fields": {
+        "status": {
+          "presence": "required"
+        }
+      },
+      "unknown_fields": "ignore"
+    },
+    "reference": {
+      "document_path_class": "reference",
+      "fields": {
+        "status": {
+          "presence": "optional"
+        }
+      },
+      "unknown_fields": "ignore"
+    }
+  },
+  "fields": {
+    "status": {
+      "type": "enum",
+      "values": [
+        "proposed",
+        "active",
+        "ready",
+        "blocked",
+        "review",
+        "done",
+        "dropped",
+        "accepted",
+        "superseded"
+      ],
+      "display": {
+        "order": 1
+      }
+    },
+    "tracked_in": {
+      "type": "path",
+      "path_class": "workflow_docs"
+    },
+    "decided_by": {
+      "type": "path",
+      "multiple": true,
+      "path_class": "decisions"
+    },
+    "depends_on": {
+      "type": "path",
+      "multiple": true,
+      "path_class": "workflow_docs"
+    },
+    "implements": {
+      "type": "path",
+      "multiple": true,
+      "path_class": "workflow_docs"
+    }
+  },
+  "path_classes": {
+    "contracts": {
+      "prefixes": ["docs/contracts/"]
+    },
+    "decisions": {
+      "prefixes": ["docs/decisions/"]
+    },
+    "tasks": {
+      "prefixes": ["docs/tasks/"]
+    },
+    "conventions": {
+      "prefixes": ["docs/conventions/", "docs/structure.md"]
+    },
+    "plans": {
+      "prefixes": ["docs/plans/"]
+    },
+    "reference": {
+      "prefixes": ["docs/reference/", "docs/pravaha.md"]
+    },
+    "workflow_docs": {
+      "prefixes": [
+        "docs/contracts/",
+        "docs/tasks/",
+        "docs/decisions/",
+        "docs/conventions/",
+        "docs/plans/",
+        "docs/reference/",
+        "docs/structure.md",
+        "docs/pravaha.md"
+      ]
+    }
+  },
+  "queries": {
+    "change-queue": {
+      "where": "($class=contract or $class=task or $class=decision) and status in [proposed, active, ready, blocked, review]"
+    },
+    "active-contracts": {
+      "where": "$class=contract and status in [proposed, active, blocked, review]"
+    },
+    "contracts-missing-decisions": {
+      "where": "$class=contract and status in [proposed, active, blocked, review] and none(out:decided_by, $class=decision and status=accepted)"
+    },
+    "ready-tasks": {
+      "where": "$class=task and status=ready and none(out:depends_on, status not in [done, dropped])"
+    },
+    "blocked-work": {
+      "where": "($class=contract or $class=task) and status=blocked"
+    },
+    "review-queue": {
+      "where": "($class=contract or $class=task) and status=review"
+    },
+    "decision-backlog": {
+      "where": "$class=decision and status in [proposed, active]"
+    },
+    "orphan-tasks": {
+      "where": "$class=task and none(out:tracked_in, $class=contract)"
     }
   },
   "relations": {
-    "links_to": {
-      "builtin": true,
-      "from": ["document"],
-      "to": ["document"]
+    "tracked_in": {
+      "from": [
+        "document",
+        "contract",
+        "decision",
+        "task",
+        "convention",
+        "plan",
+        "reference"
+      ],
+      "to": [
+        "document",
+        "contract",
+        "decision",
+        "task",
+        "convention",
+        "plan",
+        "reference"
+      ]
+    },
+    "decided_by": {
+      "from": [
+        "document",
+        "contract",
+        "decision",
+        "task",
+        "convention",
+        "plan",
+        "reference"
+      ],
+      "to": [
+        "document",
+        "contract",
+        "decision",
+        "task",
+        "convention",
+        "plan",
+        "reference"
+      ]
+    },
+    "depends_on": {
+      "from": [
+        "document",
+        "contract",
+        "decision",
+        "task",
+        "convention",
+        "plan",
+        "reference"
+      ],
+      "to": [
+        "document",
+        "contract",
+        "decision",
+        "task",
+        "convention",
+        "plan",
+        "reference"
+      ]
+    },
+    "implements": {
+      "from": [
+        "document",
+        "contract",
+        "decision",
+        "task",
+        "convention",
+        "plan",
+        "reference"
+      ],
+      "to": [
+        "document",
+        "contract",
+        "decision",
+        "task",
+        "convention",
+        "plan",
+        "reference"
+      ]
     }
   },
   "mappings": {
-    "document.title": {
+    "markdown.directive.kind": {
       "node": {
-        "field": "title",
-        "kind": "document"
+        "class": "document",
+        "field": "$class"
       }
     },
-    "jsdoc.link": {
-      "emit": {
-        "relation": "links_to",
-        "target": "path",
-        "target_kind": "document"
+    "markdown.directive.id": {
+      "node": {
+        "class": "document",
+        "field": "$id",
+        "key": "value"
       }
     },
-    "markdown.link": {
+    "markdown.directive.status": {
+      "node": {
+        "class": "document",
+        "field": "status"
+      }
+    },
+    "markdown.directive.tracked_in": {
       "emit": {
-        "relation": "links_to",
+        "relation": "tracked_in",
         "target": "path",
-        "target_kind": "document"
+        "target_class": "document"
+      }
+    },
+    "markdown.directive.decided_by": {
+      "emit": {
+        "relation": "decided_by",
+        "target": "path",
+        "target_class": "document"
+      }
+    },
+    "markdown.directive.depends_on": {
+      "emit": {
+        "relation": "depends_on",
+        "target": "path",
+        "target_class": "document"
+      }
+    },
+    "markdown.directive.implements": {
+      "emit": {
+        "relation": "implements",
+        "target": "path",
+        "target_class": "document"
+      }
+    },
+    "jsdoc.directive.tracked_in": {
+      "emit": {
+        "relation": "tracked_in",
+        "target": "path",
+        "target_class": "document"
+      }
+    },
+    "jsdoc.directive.decided_by": {
+      "emit": {
+        "relation": "decided_by",
+        "target": "path",
+        "target_class": "document"
+      }
+    },
+    "jsdoc.directive.depends_on": {
+      "emit": {
+        "relation": "depends_on",
+        "target": "path",
+        "target_class": "document"
+      }
+    },
+    "jsdoc.directive.implements": {
+      "emit": {
+        "relation": "implements",
+        "target": "path",
+        "target_class": "document"
       }
     }
   }

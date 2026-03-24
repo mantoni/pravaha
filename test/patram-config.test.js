@@ -19,24 +19,13 @@ function createExpectedPatramConfig() {
       'scripts/**/*.js',
       'test/**/*.js',
     ],
-    kinds: {
-      document: {
-        builtin: true,
-      },
-    },
+    classes: createExpectedClasses(),
+    class_schemas: createExpectedClassSchemas(),
+    fields: createExpectedFields(),
     mappings: createExpectedMappings(),
-    queries: {
-      documentation: {
-        where: 'kind=document',
-      },
-    },
-    relations: {
-      links_to: {
-        builtin: true,
-        from: ['document'],
-        to: ['document'],
-      },
-    },
+    path_classes: createExpectedPathClasses(),
+    queries: createExpectedQueries(),
+    relations: createExpectedRelations(),
   };
 }
 
@@ -45,25 +34,331 @@ function createExpectedPatramConfig() {
  */
 function createExpectedMappings() {
   return {
-    'document.title': {
+    ...createExpectedMarkdownNodeMappings(),
+    ...createExpectedMarkdownRelationMappings(),
+    ...createExpectedJsdocRelationMappings(),
+  };
+}
+
+/**
+ * @returns {object}
+ */
+function createExpectedClasses() {
+  return {
+    document: {
+      builtin: true,
+    },
+    contract: {
+      label: 'Contract',
+    },
+    decision: {
+      label: 'Decision',
+    },
+    task: {
+      label: 'Task',
+    },
+    convention: {
+      label: 'Convention',
+    },
+    plan: {
+      label: 'Plan',
+    },
+    reference: {
+      label: 'Reference',
+    },
+  };
+}
+
+/**
+ * @returns {object}
+ */
+function createExpectedClassSchemas() {
+  return {
+    contract: createClassSchema(
+      'contracts',
+      createFieldPresenceEntries([
+        ['status', 'required'],
+        ['decided_by', 'optional'],
+        ['depends_on', 'optional'],
+      ]),
+    ),
+    decision: createClassSchema(
+      'decisions',
+      createFieldPresenceEntries([
+        ['status', 'required'],
+        ['tracked_in', 'optional'],
+      ]),
+    ),
+    task: createClassSchema(
+      'tasks',
+      createFieldPresenceEntries([
+        ['status', 'required'],
+        ['tracked_in', 'required'],
+        ['decided_by', 'optional'],
+        ['depends_on', 'optional'],
+        ['implements', 'optional'],
+      ]),
+    ),
+    convention: createClassSchema(
+      'conventions',
+      createFieldPresenceEntries([['status', 'required']]),
+    ),
+    plan: createClassSchema(
+      'plans',
+      createFieldPresenceEntries([['status', 'required']]),
+    ),
+    reference: createClassSchema(
+      'reference',
+      createFieldPresenceEntries([['status', 'optional']]),
+    ),
+  };
+}
+
+/**
+ * @returns {object}
+ */
+function createExpectedFields() {
+  return {
+    status: {
+      type: 'enum',
+      values: [
+        'proposed',
+        'active',
+        'ready',
+        'blocked',
+        'review',
+        'done',
+        'dropped',
+        'accepted',
+        'superseded',
+      ],
+      display: {
+        order: 1,
+      },
+    },
+    tracked_in: {
+      type: 'path',
+      path_class: 'workflow_docs',
+    },
+    decided_by: {
+      type: 'path',
+      multiple: true,
+      path_class: 'decisions',
+    },
+    depends_on: {
+      type: 'path',
+      multiple: true,
+      path_class: 'workflow_docs',
+    },
+    implements: {
+      type: 'path',
+      multiple: true,
+      path_class: 'workflow_docs',
+    },
+  };
+}
+
+/**
+ * @returns {object}
+ */
+function createExpectedPathClasses() {
+  return {
+    contracts: {
+      prefixes: ['docs/contracts/'],
+    },
+    decisions: {
+      prefixes: ['docs/decisions/'],
+    },
+    tasks: {
+      prefixes: ['docs/tasks/'],
+    },
+    conventions: {
+      prefixes: ['docs/conventions/', 'docs/structure.md'],
+    },
+    plans: {
+      prefixes: ['docs/plans/'],
+    },
+    reference: {
+      prefixes: ['docs/reference/', 'docs/pravaha.md'],
+    },
+    workflow_docs: {
+      prefixes: [
+        'docs/contracts/',
+        'docs/tasks/',
+        'docs/decisions/',
+        'docs/conventions/',
+        'docs/plans/',
+        'docs/reference/',
+        'docs/structure.md',
+        'docs/pravaha.md',
+      ],
+    },
+  };
+}
+
+/**
+ * @returns {object}
+ */
+function createExpectedRelations() {
+  const workflow_classes = [
+    'document',
+    'contract',
+    'decision',
+    'task',
+    'convention',
+    'plan',
+    'reference',
+  ];
+
+  return {
+    tracked_in: {
+      from: workflow_classes,
+      to: workflow_classes,
+    },
+    decided_by: {
+      from: workflow_classes,
+      to: workflow_classes,
+    },
+    depends_on: {
+      from: workflow_classes,
+      to: workflow_classes,
+    },
+    implements: {
+      from: workflow_classes,
+      to: workflow_classes,
+    },
+  };
+}
+
+/**
+ * @returns {object}
+ */
+function createExpectedQueries() {
+  return {
+    'change-queue': {
+      where:
+        '($class=contract or $class=task or $class=decision) and status in [proposed, active, ready, blocked, review]',
+    },
+    'active-contracts': {
+      where:
+        '$class=contract and status in [proposed, active, blocked, review]',
+    },
+    'contracts-missing-decisions': {
+      where:
+        '$class=contract and status in [proposed, active, blocked, review] and none(out:decided_by, $class=decision and status=accepted)',
+    },
+    'ready-tasks': {
+      where:
+        '$class=task and status=ready and none(out:depends_on, status not in [done, dropped])',
+    },
+    'blocked-work': {
+      where: '($class=contract or $class=task) and status=blocked',
+    },
+    'review-queue': {
+      where: '($class=contract or $class=task) and status=review',
+    },
+    'decision-backlog': {
+      where: '$class=decision and status in [proposed, active]',
+    },
+    'orphan-tasks': {
+      where: '$class=task and none(out:tracked_in, $class=contract)',
+    },
+  };
+}
+
+/**
+ * @returns {object}
+ */
+function createExpectedMarkdownNodeMappings() {
+  return {
+    'markdown.directive.kind': {
       node: {
-        field: 'title',
-        kind: 'document',
+        class: 'document',
+        field: '$class',
       },
     },
-    'jsdoc.link': {
-      emit: {
-        relation: 'links_to',
-        target: 'path',
-        target_kind: 'document',
+    'markdown.directive.id': {
+      node: {
+        class: 'document',
+        field: '$id',
+        key: 'value',
       },
     },
-    'markdown.link': {
-      emit: {
-        relation: 'links_to',
-        target: 'path',
-        target_kind: 'document',
+    'markdown.directive.status': {
+      node: {
+        class: 'document',
+        field: 'status',
       },
     },
   };
+}
+
+/**
+ * @returns {object}
+ */
+function createExpectedMarkdownRelationMappings() {
+  return createExpectedRelationMappings('markdown.directive');
+}
+
+/**
+ * @returns {object}
+ */
+function createExpectedJsdocRelationMappings() {
+  return createExpectedRelationMappings('jsdoc.directive');
+}
+
+/**
+ * @param {string} mapping_prefix
+ * @returns {object}
+ */
+function createExpectedRelationMappings(mapping_prefix) {
+  return {
+    [`${mapping_prefix}.tracked_in`]: createRelationMapping('tracked_in'),
+    [`${mapping_prefix}.decided_by`]: createRelationMapping('decided_by'),
+    [`${mapping_prefix}.depends_on`]: createRelationMapping('depends_on'),
+    [`${mapping_prefix}.implements`]: createRelationMapping('implements'),
+  };
+}
+
+/**
+ * @param {string} relation_name
+ * @returns {object}
+ */
+function createRelationMapping(relation_name) {
+  return {
+    emit: {
+      relation: relation_name,
+      target: 'path',
+      target_class: 'document',
+    },
+  };
+}
+
+/**
+ * @param {string} document_path_class
+ * @param {Record<string, { presence: 'required' | 'optional' | 'forbidden' }>} fields
+ * @returns {object}
+ */
+function createClassSchema(document_path_class, fields) {
+  return {
+    document_path_class,
+    fields,
+    unknown_fields: 'ignore',
+  };
+}
+
+/**
+ * @param {Array<[string, 'required' | 'optional' | 'forbidden']>} field_entries
+ * @returns {Record<string, { presence: 'required' | 'optional' | 'forbidden' }>}
+ */
+function createFieldPresenceEntries(field_entries) {
+  return Object.fromEntries(
+    field_entries.map(
+      /**
+       * @param {[string, 'required' | 'optional' | 'forbidden']} field_entry
+       * @returns {[string, { presence: 'required' | 'optional' | 'forbidden' }]}
+       */
+      ([field_name, presence]) => [field_name, { presence }],
+    ),
+  );
 }
