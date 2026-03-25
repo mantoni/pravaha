@@ -44,6 +44,8 @@ scope: contract
 jobs:
   implement_ready_tasks:
     select: $class == task and tracked_in == document and status == ready
+    worktree:
+      mode: ephemeral
     steps:
       - name: Setup worktree
         uses: core/setup-worktree
@@ -94,6 +96,9 @@ scope: contract
 jobs:
   implement_ready_tasks:
     select: $class == task and tracked_in == document and status == ready
+    worktree:
+      mode: named
+      slot: castello
     steps:
       - uses: core/setup-worktree
       - uses: core/codex-exec
@@ -130,6 +135,8 @@ runtime state.
 jobs:
   implement_ready_tasks:
     select: $class == task and tracked_in == document and status == ready
+    worktree:
+      mode: ephemeral
     steps:
       - uses: core/codex-exec
       - await:
@@ -141,7 +148,7 @@ jobs:
 ```json
 {
   "top_level_keys": ["kind", "id", "status", "scope", "jobs"],
-  "job_keys": ["select", "needs", "if", "steps"],
+  "job_keys": ["select", "needs", "if", "worktree", "steps"],
   "step_keys": [
     "name",
     "uses",

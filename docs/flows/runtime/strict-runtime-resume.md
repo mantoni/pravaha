@@ -21,6 +21,8 @@ jobs:
   reconcile_or_resume_first_ready_task:
     select:
       role: task
+    worktree:
+      mode: ephemeral
     steps:
       - uses: core/lease-task
       - uses: core/setup-worktree

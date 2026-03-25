@@ -21,6 +21,8 @@ jobs:
   implement_ready_tasks:
     select:
       role: task
+    worktree:
+      mode: ephemeral
     steps:
       - uses: core/lease-task
       - uses: core/setup-worktree

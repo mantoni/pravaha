@@ -79,6 +79,8 @@ scope: contract
 jobs:
   implement_ready_tasks:
     select: $class == task and tracked_in == document and status == ready
+    worktree:
+      mode: ephemeral
     steps:
       - uses: core/codex-exec
       - await:
@@ -97,6 +99,8 @@ scope: contract
 
 jobs:
   implement:
+    worktree:
+      mode: ephemeral
     steps:
       - select: $class == task and status == ready
         uses: core/codex-exec
@@ -113,6 +117,8 @@ scope: contract
 
 jobs:
   implement:
+    worktree:
+      mode: ephemeral
     steps:
       - uses: core/request-review
         update:
@@ -132,6 +138,43 @@ scope: contract
 jobs:
   mixed:
     select: $class in [task, contract]
+    worktree:
+      mode: ephemeral
+    steps:
+      - uses: core/codex-exec
+```
+
+Invalid because worktree is declared on a step instead of a job:
+
+```yaml
+kind: flow
+id: invalid-step-worktree
+status: active
+scope: contract
+
+jobs:
+  implement:
+    worktree:
+      mode: ephemeral
+    steps:
+      - uses: core/codex-exec
+        worktree:
+          mode: named
+          slot: castello
+```
+
+Invalid because `named` worktree mode is missing the exact slot:
+
+```yaml
+kind: flow
+id: invalid-named-worktree
+status: active
+scope: contract
+
+jobs:
+  implement:
+    worktree:
+      mode: named
     steps:
       - uses: core/codex-exec
 ```
