@@ -8,7 +8,8 @@ Status: active
 
 This root flow captures the intended single-task vertical slice for the first
 SDK-backed runtime contract. The hard-coded entrypoint may further narrow this
-to the first semantic `ready` task until the full query surface lands.
+to the first semantic `ready` task until the full query surface lands. The
+current executable entrypoint is `pravaha run-happy-path`.
 
 ```yaml
 kind: flow
