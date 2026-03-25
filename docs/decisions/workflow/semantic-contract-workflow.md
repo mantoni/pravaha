@@ -21,8 +21,8 @@ Tracked in: docs/plans/repo/v0.1/semantic-contract-workflow.md
 ## Rationale
 
 - Pravaha's north star is contract execution, not folder choreography.
-- Patram `0.4.0` can now promote document-backed nodes to canonical semantic
-  identities and can express grouped boolean workflow queries.
+- Patram can promote document-backed nodes to canonical semantic identities and
+  express grouped boolean workflow queries.
 - Stable semantic ids let agents navigate by meaning such as
   `contract:semantic-contract-workflow` rather than by path alone.
 - Front matter keeps workflow metadata explicit while avoiding the visible

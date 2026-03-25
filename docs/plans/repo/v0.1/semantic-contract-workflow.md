@@ -15,7 +15,8 @@ Status: active
 ## Scope
 
 - Add the workflow decision and metadata convention.
-- Update `.patram.json` to the Patram `0.4.0` schema.
+- Update `.patram.json` to the semantic Patram schema used by the workflow
+  rollout.
 - Update `AGENTS.md` with the contract-centric workflow.
 - Update `docs/conventions/repository/docs-structure.md` to describe the
   semantic document layout.
