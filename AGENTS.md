@@ -33,11 +33,14 @@ Use `patram` to orient in the repo based on the user's request.
 
 - Docs first.
 - Record durable workflow decisions in `docs/decisions/`.
-- Record repo implementation plans in `docs/plans/<version>/`.
+- Record repo implementation plans in `docs/plans/repo/<version>/`.
+- Use `v<major>.<minor>` for repo plan version directories such as `v0.1` or
+  `v1.0`.
 - Record workflow and metadata conventions in `docs/conventions/`.
 - Treat `docs/contracts/` as the primary executable work items.
 - Add `docs/tasks/` only when a contract needs decomposition or parallel agent
   execution.
+- Group contract tasks under `docs/tasks/<contract-slug>/`.
 - Keep review gates inside contract documents.
 - Use front matter metadata with `Kind`, `Id`, `Status`, and relation directives
   such as `Tracked in`, `Decided by`, `Depends on`, and `Implements`.

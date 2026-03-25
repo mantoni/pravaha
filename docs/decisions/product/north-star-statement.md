@@ -1,8 +1,11 @@
-# North Star Statement Proposal
+---
+Kind: decision
+Id: north-star-statement
+Status: accepted
+Tracked in: docs/plans/repo/v0.1/north-star.md
+---
 
-- Kind: decision
-- Status: accepted
-- Tracked in: docs/plans/v0/north-star.md
+# North Star Statement
 
 - Use
   `Pravaha turns human workflow into explicit contracts that agents can execute.`

@@ -1,5 +1,6 @@
 ---
 Kind: plan
+Id: semantic-contract-workflow
 Status: active
 ---
 
@@ -16,7 +17,8 @@ Status: active
 - Add the workflow decision and metadata convention.
 - Update `.patram.json` to the Patram `0.4.0` schema.
 - Update `AGENTS.md` with the contract-centric workflow.
-- Update `docs/structure.md` to describe the semantic document layout.
+- Update `docs/conventions/repository/docs-structure.md` to describe the
+  semantic document layout.
 - Add tests that verify every stored Patram query against a representative
   workflow fixture.
 
@@ -26,7 +28,7 @@ Status: active
 - `npx patram queries` lists the semantic workflow queries.
 - `AGENTS.md` tells agents to start from contracts and query the workflow graph
   by semantic id.
-- `docs/structure.md` describes contracts, tasks, decisions, conventions,
-  references, and repo plans distinctly.
+- `docs/conventions/repository/docs-structure.md` describes contracts, tasks,
+  decisions, conventions, references, and repo plans distinctly.
 - Tests cover every stored query and confirm each query returns the expected
   semantic ids.

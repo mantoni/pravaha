@@ -1,7 +1,8 @@
 ---
 Kind: decision
+Id: semantic-contract-workflow
 Status: accepted
-Tracked in: docs/plans/v0/semantic-contract-workflow.md
+Tracked in: docs/plans/repo/v0.1/semantic-contract-workflow.md
 ---
 
 # Semantic Contract Workflow
@@ -14,8 +15,8 @@ Tracked in: docs/plans/v0/semantic-contract-workflow.md
   review document class for now.
 - Use directory placement rules to validate where each semantic class lives, but
   use semantic ids and graph relations as the source of truth.
-- Keep implementation plans in `docs/plans/<version>/` for evolving Pravaha
-  itself.
+- Keep repo implementation plans in `docs/plans/repo/v<major>.<minor>/` for
+  evolving Pravaha itself.
 
 ## Rationale
 

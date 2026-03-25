@@ -1,12 +1,16 @@
-# North Star Plan
+---
+Kind: plan
+Id: north-star
+Status: active
+---
 
-- Kind: plan
-- Status: active
+# North Star Plan
 
 ## Goal
 
 - Set one concise project description in package metadata.
-- Define one north-star statement and explanation in `docs/pravaha.md`.
+- Define one north-star statement and explanation in
+  `docs/reference/product/pravaha.md`.
 
 ## Scope
 
@@ -18,6 +22,7 @@
 ## Acceptance
 
 - `package.json` uses the agreed project description.
-- `docs/pravaha.md` defines the north-star with a concise explanation.
+- `docs/reference/product/pravaha.md` defines the north-star with a concise
+  explanation.
 - The wording makes explicit that agents execute against well-defined workflow
   contracts rather than a fixed built-in process.

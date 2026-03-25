@@ -188,7 +188,7 @@ function createContractFixtures() {
  */
 function createTaskFixtures() {
   return {
-    'docs/tasks/add-tests.md': createFixtureDocument({
+    'docs/tasks/release-flow/add-tests.md': createFixtureDocument({
       body: '# Add Tests\n',
       metadata: [
         ['Kind', 'task'],
@@ -197,7 +197,7 @@ function createTaskFixtures() {
         ['Tracked in', 'docs/contracts/release-flow.md'],
       ],
     }),
-    'docs/tasks/orphan-task.md': createFixtureDocument({
+    'docs/tasks/untracked/orphan-task.md': createFixtureDocument({
       body: '# Orphan Task\n',
       metadata: [
         ['Kind', 'task'],
@@ -205,7 +205,7 @@ function createTaskFixtures() {
         ['Status', 'ready'],
       ],
     }),
-    'docs/tasks/wait-on-decision.md': createFixtureDocument({
+    'docs/tasks/release-flow/wait-on-decision.md': createFixtureDocument({
       body: '# Wait On Decision\n',
       metadata: [
         ['Kind', 'task'],

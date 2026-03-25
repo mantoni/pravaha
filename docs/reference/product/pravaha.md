@@ -1,4 +1,12 @@
-# Pravaha turns human workflow into explicit contracts that agents can execute.
+---
+Kind: reference
+Id: pravaha
+Status: active
+---
+
+# Pravaha
+
+Pravaha turns human workflow into explicit contracts that agents can execute.
 
 Pravaha is a workflow automation engine built on top of
 [`patram`](https://github.com/mantoni/patram). It helps humans and agents

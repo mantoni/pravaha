@@ -155,13 +155,13 @@ function createExpectedPathClasses() {
       prefixes: ['docs/tasks/'],
     },
     conventions: {
-      prefixes: ['docs/conventions/', 'docs/structure.md'],
+      prefixes: ['docs/conventions/'],
     },
     plans: {
       prefixes: ['docs/plans/'],
     },
     reference: {
-      prefixes: ['docs/reference/', 'docs/pravaha.md'],
+      prefixes: ['docs/reference/'],
     },
     workflow_docs: {
       prefixes: [
@@ -171,8 +171,6 @@ function createExpectedPathClasses() {
         'docs/conventions/',
         'docs/plans/',
         'docs/reference/',
-        'docs/structure.md',
-        'docs/pravaha.md',
       ],
     },
   };

@@ -1,5 +1,6 @@
 ---
 Kind: convention
+Id: patram-workflow-metadata
 Status: active
 ---
 
@@ -12,7 +13,9 @@ Status: active
 - Set `Kind` to the semantic class name.
 - Set `Id` to the semantic slug only. Patram derives the canonical graph id as
   `<kind>:<id>`.
-- Set `Status` on every contract, task, decision, convention, and plan.
+- Set `Status` on every contract, task, decision, convention, plan, and
+  reference.
+- Store contract tasks under `docs/tasks/<contract-slug>/`.
 
 ## Contract Template
 
@@ -50,7 +53,7 @@ Kind: task
 Id: example-task
 Status: ready
 Tracked in: docs/contracts/example-contract.md
-Depends on: docs/tasks/example-prerequisite.md
+Depends on: docs/tasks/example-contract/example-prerequisite.md
 Implements: docs/contracts/example-contract.md
 ---
 
@@ -64,7 +67,7 @@ Implements: docs/contracts/example-contract.md
  * Example implementation.
  *
  * Tracked in: ../docs/contracts/example-contract.md
- * Implements: ../docs/tasks/example-task.md
+ * Implements: ../docs/tasks/example-contract/example-task.md
  * Decided by: ../docs/decisions/example-decision.md
  * @patram
  */
