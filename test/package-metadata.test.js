@@ -40,7 +40,7 @@ it('defines publish metadata for the npm package', async () => {
     license: 'MIT',
     main: './lib/pravaha.js',
     dependencies: {
-      patram: '^0.6.0',
+      patram: '^0.6.2',
     },
     repository: {
       type: 'git',
