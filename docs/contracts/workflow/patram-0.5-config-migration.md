@@ -1,7 +1,7 @@
 ---
 Kind: contract
 Id: patram-0.5-config-migration
-Status: review
+Status: done
 Decided by: docs/decisions/workflow/patram-0.5-config-grouping.md
 Depends on:
   - docs/conventions/workflow/patram-workflow-metadata.md

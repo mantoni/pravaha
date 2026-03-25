@@ -1,7 +1,7 @@
 ---
 Kind: contract
 Id: docs-structure-alignment
-Status: review
+Status: done
 Decided by: docs/decisions/workflow/semantic-contract-workflow.md
 Depends on: docs/conventions/repository/docs-structure.md
 ---

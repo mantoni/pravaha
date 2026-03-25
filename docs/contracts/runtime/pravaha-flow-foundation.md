@@ -1,7 +1,7 @@
 ---
 Kind: contract
 Id: pravaha-flow-foundation
-Status: active
+Status: done
 Decided by:
   - docs/decisions/architecture/flow-documents-and-contract-binding.md
   - docs/decisions/architecture/semantic-role-config-and-state-model.md
