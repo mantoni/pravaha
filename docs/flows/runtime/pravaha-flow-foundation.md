@@ -7,7 +7,7 @@ Status: active
 # Pravaha Flow Foundation
 
 This root flow anchors the repository model surface for the Pravaha runtime
-contract until runtime execution and strict config validation land.
+contract until runtime execution lands.
 
 ```yaml
 jobs:

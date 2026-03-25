@@ -34,7 +34,7 @@
     "check:dupes": "jscpd --min-tokens 100 --min-lines 6 --mode mild --threshold 0 --reporters console --gitignore .",
     "check:format": "prettier --check .",
     "check:lint": "eslint .",
-    "check:patram": "patram check",
+    "check:patram": "patram check && node ./bin/pravaha.js validate",
     "check:staged": "lint-staged",
     "check:types": "tsc",
     "postversion": "git push && git push --tags",
@@ -50,6 +50,9 @@
       "eslint",
       "vitest related --run --passWithNoTests"
     ]
+  },
+  "dependencies": {
+    "yaml": "^2.8.3"
   },
   "peerDependencies": {
     "patram": "^0.5.0"

@@ -1,0 +1,16 @@
+{
+  "semantic_roles": {
+    "contract": ["contract"],
+    "decision": ["decision"],
+    "flow": ["flow"],
+    "task": ["task"]
+  },
+  "semantic_states": {
+    "active": ["active"],
+    "blocked": ["blocked"],
+    "proposed": ["proposed"],
+    "ready": ["ready"],
+    "review": ["review"],
+    "terminal": ["accepted", "done", "dropped", "superseded"]
+  }
+}

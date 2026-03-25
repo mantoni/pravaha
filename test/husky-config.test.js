@@ -14,7 +14,7 @@ it('installs husky and wires pre-commit to the package checks', async () => {
     patram: '^0.5.0',
   });
   expect(package_json.scripts).toMatchObject({
-    'check:patram': 'patram check',
+    'check:patram': 'patram check && node ./bin/pravaha.js validate',
     'check:staged': 'lint-staged',
     prepare: 'husky',
   });

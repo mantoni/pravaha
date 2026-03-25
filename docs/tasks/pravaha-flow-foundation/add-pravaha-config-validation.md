@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: add-pravaha-config-validation
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/pravaha-flow-foundation.md
 Implements: docs/contracts/runtime/pravaha-flow-foundation.md
 Decided by: docs/decisions/architecture/semantic-role-config-and-state-model.md
