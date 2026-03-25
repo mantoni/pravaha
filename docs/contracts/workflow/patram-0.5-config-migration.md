@@ -3,8 +3,9 @@ Kind: contract
 Id: patram-0.5-config-migration
 Status: review
 Decided by: docs/decisions/workflow/patram-0.5-config-grouping.md
-Depends on: docs/conventions/workflow/patram-workflow-metadata.md
-Depends on: docs/conventions/repository/repo-plan-versioning.md
+Depends on:
+  - docs/conventions/workflow/patram-workflow-metadata.md
+  - docs/conventions/repository/repo-plan-versioning.md
 ---
 
 # Patram 0.5 Config Migration

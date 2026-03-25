@@ -2,12 +2,14 @@
 Kind: contract
 Id: pravaha-flow-foundation
 Status: active
-Decided by: docs/decisions/architecture/flow-documents-and-contract-binding.md
-Decided by: docs/decisions/architecture/semantic-role-config-and-state-model.md
-Decided by: docs/decisions/runtime/trigger-driven-codex-runtime.md
-Depends on: docs/conventions/workflow/patram-workflow-metadata.md
-Depends on: docs/conventions/repository/docs-structure.md
-Depends on: docs/plans/repo/v0.1/pravaha-flow-runtime.md
+Decided by:
+  - docs/decisions/architecture/flow-documents-and-contract-binding.md
+  - docs/decisions/architecture/semantic-role-config-and-state-model.md
+  - docs/decisions/runtime/trigger-driven-codex-runtime.md
+Depends on:
+  - docs/conventions/workflow/patram-workflow-metadata.md
+  - docs/conventions/repository/docs-structure.md
+  - docs/plans/repo/v0.1/pravaha-flow-runtime.md
 Root flow: docs/flows/runtime/pravaha-flow-foundation.md
 ---
 

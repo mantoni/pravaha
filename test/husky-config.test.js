@@ -5,13 +5,12 @@ import { expect, it } from 'vitest';
 import package_json from '../package.json' with { type: 'json' };
 
 it('installs husky and wires pre-commit to the package checks', async () => {
+  expect(package_json.dependencies).toMatchObject({
+    patram: '^0.6.0',
+  });
   expect(package_json.devDependencies).toMatchObject({
     husky: expect.any(String),
     'lint-staged': expect.any(String),
-    patram: '^0.5.0',
-  });
-  expect(package_json.peerDependencies).toMatchObject({
-    patram: '^0.5.0',
   });
   expect(package_json.scripts).toMatchObject({
     'check:patram': 'patram check && node ./bin/pravaha.js validate',

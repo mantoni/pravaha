@@ -24,8 +24,10 @@ Status: active
 Kind: contract
 Id: example-contract
 Status: active
-Decided by: docs/decisions/example-decision.md
-Depends on: docs/reference/example-reference.md
+Decided by:
+  - docs/decisions/example-decision.md
+Depends on:
+  - docs/reference/example-reference.md
 ---
 
 # Example Contract
@@ -53,7 +55,8 @@ Kind: task
 Id: example-task
 Status: ready
 Tracked in: docs/contracts/example-contract.md
-Depends on: docs/tasks/example-contract/example-prerequisite.md
+Depends on:
+  - docs/tasks/example-contract/example-prerequisite.md
 Implements: docs/contracts/example-contract.md
 ---
 
