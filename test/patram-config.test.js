@@ -6,9 +6,6 @@ it('defines the Patram repo contract for docs and source files', () => {
   expect(patram_config).toEqual(createExpectedPatramConfig());
 });
 
-/**
- * @returns {object}
- */
 function createExpectedPatramConfig() {
   return {
     include: [
@@ -29,9 +26,6 @@ function createExpectedPatramConfig() {
   };
 }
 
-/**
- * @returns {object}
- */
 function createExpectedMappings() {
   return {
     ...createExpectedMarkdownNodeMappings(),
@@ -40,9 +34,6 @@ function createExpectedMappings() {
   };
 }
 
-/**
- * @returns {object}
- */
 function createExpectedClasses() {
   return {
     document: {
@@ -69,9 +60,6 @@ function createExpectedClasses() {
   };
 }
 
-/**
- * @returns {object}
- */
 function createExpectedClassSchemas() {
   return {
     contract: createClassSchema(
@@ -114,9 +102,6 @@ function createExpectedClassSchemas() {
   };
 }
 
-/**
- * @returns {object}
- */
 function createExpectedFields() {
   return {
     status: {
@@ -158,9 +143,6 @@ function createExpectedFields() {
   };
 }
 
-/**
- * @returns {object}
- */
 function createExpectedPathClasses() {
   return {
     contracts: {
@@ -196,9 +178,6 @@ function createExpectedPathClasses() {
   };
 }
 
-/**
- * @returns {object}
- */
 function createExpectedRelations() {
   const workflow_classes = [
     'document',
@@ -230,9 +209,6 @@ function createExpectedRelations() {
   };
 }
 
-/**
- * @returns {object}
- */
 function createExpectedQueries() {
   return {
     'change-queue': {
@@ -266,9 +242,6 @@ function createExpectedQueries() {
   };
 }
 
-/**
- * @returns {object}
- */
 function createExpectedMarkdownNodeMappings() {
   return {
     'markdown.directive.kind': {
@@ -293,23 +266,16 @@ function createExpectedMarkdownNodeMappings() {
   };
 }
 
-/**
- * @returns {object}
- */
 function createExpectedMarkdownRelationMappings() {
   return createExpectedRelationMappings('markdown.directive');
 }
 
-/**
- * @returns {object}
- */
 function createExpectedJsdocRelationMappings() {
   return createExpectedRelationMappings('jsdoc.directive');
 }
 
 /**
  * @param {string} mapping_prefix
- * @returns {object}
  */
 function createExpectedRelationMappings(mapping_prefix) {
   return {
@@ -322,7 +288,6 @@ function createExpectedRelationMappings(mapping_prefix) {
 
 /**
  * @param {string} relation_name
- * @returns {object}
  */
 function createRelationMapping(relation_name) {
   return {
@@ -337,7 +302,6 @@ function createRelationMapping(relation_name) {
 /**
  * @param {string} document_path_class
  * @param {Record<string, { presence: 'required' | 'optional' | 'forbidden' }>} fields
- * @returns {object}
  */
 function createClassSchema(document_path_class, fields) {
   return {
