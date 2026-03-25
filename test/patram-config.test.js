@@ -17,7 +17,6 @@ function createExpectedPatramConfig() {
       'test/**/*.js',
     ],
     classes: createExpectedClasses(),
-    class_schemas: createExpectedClassSchemas(),
     fields: createExpectedFields(),
     mappings: createExpectedMappings(),
     path_classes: createExpectedPathClasses(),
@@ -39,65 +38,8 @@ function createExpectedClasses() {
     document: {
       builtin: true,
     },
-    contract: {
-      label: 'Contract',
-    },
-    decision: {
-      label: 'Decision',
-    },
-    task: {
-      label: 'Task',
-    },
-    convention: {
-      label: 'Convention',
-    },
-    plan: {
-      label: 'Plan',
-    },
-    reference: {
-      label: 'Reference',
-    },
-  };
-}
-
-function createExpectedClassSchemas() {
-  return {
-    contract: createClassSchema(
-      'contracts',
-      createFieldPresenceEntries([
-        ['status', 'required'],
-        ['decided_by', 'optional'],
-        ['depends_on', 'optional'],
-      ]),
-    ),
-    decision: createClassSchema(
-      'decisions',
-      createFieldPresenceEntries([
-        ['status', 'required'],
-        ['tracked_in', 'optional'],
-      ]),
-    ),
-    task: createClassSchema(
-      'tasks',
-      createFieldPresenceEntries([
-        ['status', 'required'],
-        ['tracked_in', 'required'],
-        ['decided_by', 'optional'],
-        ['depends_on', 'optional'],
-        ['implements', 'optional'],
-      ]),
-    ),
-    convention: createClassSchema(
-      'conventions',
-      createFieldPresenceEntries([['status', 'required']]),
-    ),
-    plan: createClassSchema(
-      'plans',
-      createFieldPresenceEntries([['status', 'required']]),
-    ),
-    reference: createClassSchema(
-      'reference',
-      createFieldPresenceEntries([['status', 'optional']]),
+    ...Object.fromEntries(
+      createExpectedClassDefinitionEntries().map(createExpectedClassEntry),
     ),
   };
 }
@@ -298,8 +240,92 @@ function createRelationMapping(relation_name) {
 }
 
 /**
+ * @param {{ name: string, label: string, document_path_class: string, fields: Array<[string, 'required' | 'optional' | 'forbidden']> }} class_definition
+ * @returns {[string, { label: string, schema: { document_path_class: string, fields: Record<string, { presence: 'required' | 'optional' | 'forbidden' }>, unknown_fields: 'ignore' } }]}
+ */
+function createExpectedClassEntry(class_definition) {
+  return [
+    class_definition.name,
+    createExpectedClassDefinition(
+      class_definition.label,
+      class_definition.document_path_class,
+      createFieldPresenceEntries(class_definition.fields),
+    ),
+  ];
+}
+
+/**
+ * @returns {Array<{ name: string, label: string, document_path_class: string, fields: Array<[string, 'required' | 'optional' | 'forbidden']> }>}
+ */
+function createExpectedClassDefinitionEntries() {
+  return [
+    createExpectedClassEntryDefinition('contract', 'Contract', 'contracts', [
+      ['status', 'required'],
+      ['decided_by', 'optional'],
+      ['depends_on', 'optional'],
+    ]),
+    createExpectedClassEntryDefinition('decision', 'Decision', 'decisions', [
+      ['status', 'required'],
+      ['tracked_in', 'optional'],
+    ]),
+    createExpectedClassEntryDefinition('task', 'Task', 'tasks', [
+      ['status', 'required'],
+      ['tracked_in', 'required'],
+      ['decided_by', 'optional'],
+      ['depends_on', 'optional'],
+      ['implements', 'optional'],
+    ]),
+    createExpectedClassEntryDefinition(
+      'convention',
+      'Convention',
+      'conventions',
+      [['status', 'required']],
+    ),
+    createExpectedClassEntryDefinition('plan', 'Plan', 'plans', [
+      ['status', 'required'],
+    ]),
+    createExpectedClassEntryDefinition('reference', 'Reference', 'reference', [
+      ['status', 'optional'],
+    ]),
+  ];
+}
+
+/**
+ * @param {string} name
+ * @param {string} label
+ * @param {string} document_path_class
+ * @param {Array<[string, 'required' | 'optional' | 'forbidden']>} fields
+ */
+function createExpectedClassEntryDefinition(
+  name,
+  label,
+  document_path_class,
+  fields,
+) {
+  return {
+    name,
+    label,
+    document_path_class,
+    fields,
+  };
+}
+
+/**
+ * @param {string} label
  * @param {string} document_path_class
  * @param {Record<string, { presence: 'required' | 'optional' | 'forbidden' }>} fields
+ */
+function createExpectedClassDefinition(label, document_path_class, fields) {
+  return {
+    label,
+    schema: createClassSchema(document_path_class, fields),
+  };
+}
+
+/**
+ * @param {string} document_path_class
+ * @param {Record<string, { presence: 'required' | 'optional' | 'forbidden' }>} fields
+ * @returns {{ document_path_class: string, fields: Record<string, { presence: 'required' | 'optional' | 'forbidden' }>, unknown_fields: 'ignore' }}
  */
 function createClassSchema(document_path_class, fields) {
   return {

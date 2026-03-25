@@ -8,10 +8,10 @@ it('installs husky and wires pre-commit to the package checks', async () => {
   expect(package_json.devDependencies).toMatchObject({
     husky: expect.any(String),
     'lint-staged': expect.any(String),
-    patram: expect.any(String),
+    patram: '^0.5.0',
   });
   expect(package_json.peerDependencies).toMatchObject({
-    patram: expect.any(String),
+    patram: '^0.5.0',
   });
   expect(package_json.scripts).toMatchObject({
     'check:patram': 'patram check',

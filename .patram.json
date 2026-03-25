@@ -12,99 +12,97 @@
       "builtin": true
     },
     "contract": {
-      "label": "Contract"
+      "label": "Contract",
+      "schema": {
+        "document_path_class": "contracts",
+        "fields": {
+          "status": {
+            "presence": "required"
+          },
+          "decided_by": {
+            "presence": "optional"
+          },
+          "depends_on": {
+            "presence": "optional"
+          }
+        },
+        "unknown_fields": "ignore"
+      }
     },
     "decision": {
-      "label": "Decision"
+      "label": "Decision",
+      "schema": {
+        "document_path_class": "decisions",
+        "fields": {
+          "status": {
+            "presence": "required"
+          },
+          "tracked_in": {
+            "presence": "optional"
+          }
+        },
+        "unknown_fields": "ignore"
+      }
     },
     "task": {
-      "label": "Task"
+      "label": "Task",
+      "schema": {
+        "document_path_class": "tasks",
+        "fields": {
+          "status": {
+            "presence": "required"
+          },
+          "tracked_in": {
+            "presence": "required"
+          },
+          "decided_by": {
+            "presence": "optional"
+          },
+          "depends_on": {
+            "presence": "optional"
+          },
+          "implements": {
+            "presence": "optional"
+          }
+        },
+        "unknown_fields": "ignore"
+      }
     },
     "convention": {
-      "label": "Convention"
+      "label": "Convention",
+      "schema": {
+        "document_path_class": "conventions",
+        "fields": {
+          "status": {
+            "presence": "required"
+          }
+        },
+        "unknown_fields": "ignore"
+      }
     },
     "plan": {
-      "label": "Plan"
+      "label": "Plan",
+      "schema": {
+        "document_path_class": "plans",
+        "fields": {
+          "status": {
+            "presence": "required"
+          }
+        },
+        "unknown_fields": "ignore"
+      }
     },
     "reference": {
-      "label": "Reference"
-    }
-  },
-  "class_schemas": {
-    "contract": {
-      "document_path_class": "contracts",
-      "fields": {
-        "status": {
-          "presence": "required"
+      "label": "Reference",
+      "schema": {
+        "document_path_class": "reference",
+        "fields": {
+          "status": {
+            "presence": "optional"
+          }
         },
-        "decided_by": {
-          "presence": "optional"
-        },
-        "depends_on": {
-          "presence": "optional"
-        }
-      },
-      "unknown_fields": "ignore"
-    },
-    "decision": {
-      "document_path_class": "decisions",
-      "fields": {
-        "status": {
-          "presence": "required"
-        },
-        "tracked_in": {
-          "presence": "optional"
-        }
-      },
-      "unknown_fields": "ignore"
-    },
-    "task": {
-      "document_path_class": "tasks",
-      "fields": {
-        "status": {
-          "presence": "required"
-        },
-        "tracked_in": {
-          "presence": "required"
-        },
-        "decided_by": {
-          "presence": "optional"
-        },
-        "depends_on": {
-          "presence": "optional"
-        },
-        "implements": {
-          "presence": "optional"
-        }
-      },
-      "unknown_fields": "ignore"
-    },
-    "convention": {
-      "document_path_class": "conventions",
-      "fields": {
-        "status": {
-          "presence": "required"
-        }
-      },
-      "unknown_fields": "ignore"
-    },
-    "plan": {
-      "document_path_class": "plans",
-      "fields": {
-        "status": {
-          "presence": "required"
-        }
-      },
-      "unknown_fields": "ignore"
-    },
-    "reference": {
-      "document_path_class": "reference",
-      "fields": {
-        "status": {
-          "presence": "optional"
-        }
-      },
-      "unknown_fields": "ignore"
+        "unknown_fields": "ignore"
+      }
     }
   },
   "fields": {

@@ -52,7 +52,7 @@
     ]
   },
   "peerDependencies": {
-    "patram": "^0.4.0"
+    "patram": "^0.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -64,7 +64,7 @@
     "husky": "^9.1.7",
     "jscpd": "^4.0.8",
     "lint-staged": "^16.2.6",
-    "patram": "^0.4.0",
+    "patram": "^0.5.0",
     "prettier": "^3.5.3",
     "typescript": "^6.0.2",
     "vitest": "^4.1.0"
