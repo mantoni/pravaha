@@ -1,0 +1,46 @@
+---
+Kind: plan
+Id: pravaha-flow-runtime
+Status: active
+---
+
+# Pravaha Flow Runtime Plan
+
+## Goal
+
+- Add the first executable Pravaha architecture for contract-bound flows,
+  task-based leasing, and a local Codex-backed runtime on top of Patram.
+
+## Scope
+
+- Add repo decisions for flow documents, semantic role and state mapping, and
+  the trigger-driven local runtime model.
+- Extend the repository workflow model to support a `flow` document class and an
+  explicit contract-to-flow relation.
+- Add one repo-level Pravaha JSON config file for semantic roles and semantic
+  states.
+- Implement YAML loading and strict validation for Pravaha flow documents.
+- Implement a mixed query graph that combines checked-in Patram documents with
+  machine-local runtime nodes.
+- Implement trigger-driven reconciliation with manual resume.
+- Implement task leasing gated by semantic `ready` states and dependency
+  relations.
+- Implement reusable worktree lifecycle support with prepare and cleanup steps.
+- Implement one first-class Codex backend with local process supervision and
+  run-to-completion worker sessions.
+- Evaluate candidate Codex launch modes and choose the first backend based on
+  local lifecycle control and observability.
+
+## Acceptance
+
+- Contracts can reference exactly one root flow document.
+- Pravaha validates flow documents against the configured semantic role and
+  state model.
+- Flow jobs can use `select`, `needs`, `if`, `await`, `uses`, `run`,
+  `transition`, and `relate` in the approved YAML format.
+- Only documents in configured semantic `ready` states are leaseable.
+- The runtime exposes mixed-graph runtime nodes through reserved `$...` classes.
+- One task can be leased into one prepared worktree and executed through one
+  locally supervised Codex worker.
+- Reconciliation can be resumed manually after restart without losing shared
+  workflow state.
