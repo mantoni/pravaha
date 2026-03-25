@@ -54,3 +54,21 @@ Depends on:
   locally supervised Codex worker.
 - Reconciliation can be resumed manually after restart without losing shared
   workflow state.
+
+## Sequencing
+
+- Foundation is complete: flow documents, contract-to-flow binding, and repo
+  semantic validation are in place.
+- Current executable slice: implement the hard-coded Codex SDK happy path that
+  leases one ready task, prepares one worktree, runs one worker, and projects a
+  success or failure outcome.
+- Next chunk after the happy path: replace the bespoke path with a minimal
+  flow-driven reconciler for one contract and one job without introducing a
+  generic backend abstraction.
+- Then add machine-local runtime persistence and manual resume so worker, lease,
+  and worktree state survive process restart.
+- Then widen the flow surface toward the planned runtime model, including richer
+  `select`, targeted `transition`, and broader `if` and `await` evaluation over
+  the mixed graph.
+- Then add scheduler depth such as dependency barriers, multi-task runs, and
+  reusable worktree policy refinement.
