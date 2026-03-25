@@ -1,6 +1,7 @@
 # Docs
 
 - `contracts/`: Canonical executable contracts grouped by topic.
+- `flows/`: Checked-in root flow definitions grouped by topic.
 - `tasks/<contract-slug>/`: Decomposed execution units for one contract.
 - `tasks/untracked/`: Temporary holding area for tasks that still need a
   `Tracked in` relation.

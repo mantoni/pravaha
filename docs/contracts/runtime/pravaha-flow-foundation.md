@@ -8,6 +8,7 @@ Decided by: docs/decisions/runtime/trigger-driven-codex-runtime.md
 Depends on: docs/conventions/workflow/patram-workflow-metadata.md
 Depends on: docs/conventions/repository/docs-structure.md
 Depends on: docs/plans/repo/v0.1/pravaha-flow-runtime.md
+Root flow: docs/flows/runtime/pravaha-flow-foundation.md
 ---
 
 # Pravaha Flow Foundation

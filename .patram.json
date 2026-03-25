@@ -24,6 +24,9 @@
           },
           "depends_on": {
             "presence": "optional"
+          },
+          "root_flow": {
+            "presence": "optional"
           }
         },
         "unknown_fields": "ignore"
@@ -63,6 +66,18 @@
           },
           "implements": {
             "presence": "optional"
+          }
+        },
+        "unknown_fields": "ignore"
+      }
+    },
+    "flow": {
+      "label": "Flow",
+      "schema": {
+        "document_path_class": "flows",
+        "fields": {
+          "status": {
+            "presence": "required"
           }
         },
         "unknown_fields": "ignore"
@@ -141,6 +156,10 @@
       "type": "path",
       "multiple": true,
       "path_class": "workflow_docs"
+    },
+    "root_flow": {
+      "type": "path",
+      "path_class": "flows"
     }
   },
   "path_classes": {
@@ -152,6 +171,9 @@
     },
     "tasks": {
       "prefixes": ["docs/tasks/"]
+    },
+    "flows": {
+      "prefixes": ["docs/flows/"]
     },
     "conventions": {
       "prefixes": ["docs/conventions/"]
@@ -166,6 +188,7 @@
       "prefixes": [
         "docs/contracts/",
         "docs/tasks/",
+        "docs/flows/",
         "docs/decisions/",
         "docs/conventions/",
         "docs/plans/",
@@ -206,6 +229,7 @@
         "contract",
         "decision",
         "task",
+        "flow",
         "convention",
         "plan",
         "reference"
@@ -215,6 +239,7 @@
         "contract",
         "decision",
         "task",
+        "flow",
         "convention",
         "plan",
         "reference"
@@ -226,6 +251,7 @@
         "contract",
         "decision",
         "task",
+        "flow",
         "convention",
         "plan",
         "reference"
@@ -235,6 +261,7 @@
         "contract",
         "decision",
         "task",
+        "flow",
         "convention",
         "plan",
         "reference"
@@ -246,6 +273,7 @@
         "contract",
         "decision",
         "task",
+        "flow",
         "convention",
         "plan",
         "reference"
@@ -255,6 +283,7 @@
         "contract",
         "decision",
         "task",
+        "flow",
         "convention",
         "plan",
         "reference"
@@ -266,6 +295,7 @@
         "contract",
         "decision",
         "task",
+        "flow",
         "convention",
         "plan",
         "reference"
@@ -275,10 +305,15 @@
         "contract",
         "decision",
         "task",
+        "flow",
         "convention",
         "plan",
         "reference"
       ]
+    },
+    "root_flow": {
+      "from": ["contract"],
+      "to": ["flow"]
     }
   },
   "mappings": {
@@ -329,6 +364,13 @@
         "target_class": "document"
       }
     },
+    "markdown.directive.root_flow": {
+      "emit": {
+        "relation": "root_flow",
+        "target": "path",
+        "target_class": "flow"
+      }
+    },
     "jsdoc.directive.tracked_in": {
       "emit": {
         "relation": "tracked_in",
@@ -355,6 +397,13 @@
         "relation": "implements",
         "target": "path",
         "target_class": "document"
+      }
+    },
+    "jsdoc.directive.root_flow": {
+      "emit": {
+        "relation": "root_flow",
+        "target": "path",
+        "target_class": "flow"
       }
     }
   }

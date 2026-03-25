@@ -38,6 +38,21 @@ it('covers every stored Patram query with an executable fixture', async () => {
   }
 });
 
+it('supports contract root flow bindings in ad hoc queries', async () => {
+  const temp_directory = await createFixtureRepo();
+
+  try {
+    const actual_result_ids = await runPatramWhereQuery(
+      temp_directory,
+      'root_flow=flow:release-flow-root',
+    );
+
+    expect(actual_result_ids).toEqual(['contract:release-flow']);
+  } finally {
+    await rm(temp_directory, { force: true, recursive: true });
+  }
+});
+
 /**
  * @returns {Record<string, string[]>}
  */
@@ -99,6 +114,7 @@ function createFixtureFiles() {
     ...createContractFixtures(),
     ...createTaskFixtures(),
     ...createDecisionFixtures(),
+    ...createFlowFixtures(),
   };
 }
 
@@ -142,6 +158,33 @@ async function runPatramQuery(temp_directory, query_name) {
 }
 
 /**
+ * @param {string} temp_directory
+ * @param {string} where_clause
+ * @returns {Promise<string[]>}
+ */
+async function runPatramWhereQuery(temp_directory, where_clause) {
+  const { stdout } = await exec_file(
+    process.execPath,
+    [patram_bin_path.pathname, 'query', '--where', where_clause, '--json'],
+    {
+      cwd: temp_directory,
+      encoding: 'utf8',
+    },
+  );
+  const parsed_output = JSON.parse(stdout);
+
+  return parsed_output.results
+    .map(
+      /**
+       * @param {{ '$id': string }} result
+       * @returns {string}
+       */
+      (result) => result.$id,
+    )
+    .sort(compareText);
+}
+
+/**
  * @param {string} left_text
  * @param {string} right_text
  * @returns {number}
@@ -162,6 +205,7 @@ function createContractFixtures() {
         ['Id', 'release-flow'],
         ['Status', 'active'],
         ['Decided by', 'docs/decisions/query-logic.md'],
+        ['Root flow', 'docs/flows/release-flow-root.md'],
       ],
     }),
     'docs/contracts/reviewed-contract.md': createFixtureDocument({
@@ -237,6 +281,22 @@ function createDecisionFixtures() {
         ['Kind', 'decision'],
         ['Id', 'open-question'],
         ['Status', 'proposed'],
+      ],
+    }),
+  };
+}
+
+/**
+ * @returns {Record<string, string>}
+ */
+function createFlowFixtures() {
+  return {
+    'docs/flows/release-flow-root.md': createFixtureDocument({
+      body: '# Release Flow Root\n',
+      metadata: [
+        ['Kind', 'flow'],
+        ['Id', 'release-flow-root'],
+        ['Status', 'active'],
       ],
     }),
   };

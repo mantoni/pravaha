@@ -82,6 +82,10 @@ function createExpectedFields() {
       multiple: true,
       path_class: 'workflow_docs',
     },
+    root_flow: {
+      type: 'path',
+      path_class: 'flows',
+    },
   };
 }
 
@@ -96,6 +100,9 @@ function createExpectedPathClasses() {
     tasks: {
       prefixes: ['docs/tasks/'],
     },
+    flows: {
+      prefixes: ['docs/flows/'],
+    },
     conventions: {
       prefixes: ['docs/conventions/'],
     },
@@ -109,6 +116,7 @@ function createExpectedPathClasses() {
       prefixes: [
         'docs/contracts/',
         'docs/tasks/',
+        'docs/flows/',
         'docs/decisions/',
         'docs/conventions/',
         'docs/plans/',
@@ -124,6 +132,7 @@ function createExpectedRelations() {
     'contract',
     'decision',
     'task',
+    'flow',
     'convention',
     'plan',
     'reference',
@@ -145,6 +154,10 @@ function createExpectedRelations() {
     implements: {
       from: workflow_classes,
       to: workflow_classes,
+    },
+    root_flow: {
+      from: ['contract'],
+      to: ['flow'],
     },
   };
 }
@@ -223,18 +236,20 @@ function createExpectedRelationMappings(mapping_prefix) {
     [`${mapping_prefix}.decided_by`]: createRelationMapping('decided_by'),
     [`${mapping_prefix}.depends_on`]: createRelationMapping('depends_on'),
     [`${mapping_prefix}.implements`]: createRelationMapping('implements'),
+    [`${mapping_prefix}.root_flow`]: createRelationMapping('root_flow', 'flow'),
   };
 }
 
 /**
  * @param {string} relation_name
+ * @param {string} [target_class]
  */
-function createRelationMapping(relation_name) {
+function createRelationMapping(relation_name, target_class = 'document') {
   return {
     emit: {
       relation: relation_name,
       target: 'path',
-      target_class: 'document',
+      target_class,
     },
   };
 }
@@ -263,6 +278,7 @@ function createExpectedClassDefinitionEntries() {
       ['status', 'required'],
       ['decided_by', 'optional'],
       ['depends_on', 'optional'],
+      ['root_flow', 'optional'],
     ]),
     createExpectedClassEntryDefinition('decision', 'Decision', 'decisions', [
       ['status', 'required'],
@@ -274,6 +290,9 @@ function createExpectedClassDefinitionEntries() {
       ['decided_by', 'optional'],
       ['depends_on', 'optional'],
       ['implements', 'optional'],
+    ]),
+    createExpectedClassEntryDefinition('flow', 'Flow', 'flows', [
+      ['status', 'required'],
     ]),
     createExpectedClassEntryDefinition(
       'convention',

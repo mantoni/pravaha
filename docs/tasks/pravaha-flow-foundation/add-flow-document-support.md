@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: add-flow-document-support
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/pravaha-flow-foundation.md
 Implements: docs/contracts/runtime/pravaha-flow-foundation.md
 Decided by: docs/decisions/architecture/flow-documents-and-contract-binding.md
