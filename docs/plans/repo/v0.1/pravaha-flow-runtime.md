@@ -5,6 +5,13 @@ Status: active
 Depends on:
   - docs/reference/runtime/pravaha-runtime-architecture.md
   - docs/reference/runtime/pravaha-flow-examples.md
+  - docs/reference/runtime/codex-backend-evaluation.md
+  - docs/reference/runtime/trigger-catalog.md
+  - docs/reference/runtime/worktree-lifecycle.md
+  - docs/reference/runtime/runtime-node-model.md
+  - docs/reference/runtime/validation-examples.md
+  - docs/reference/runtime/glossary.md
+  - docs/reference/runtime/end-to-end-walkthrough.md
 ---
 
 # Pravaha Flow Runtime Plan
