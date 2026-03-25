@@ -10,6 +10,8 @@ Depends on:
   - docs/conventions/workflow/patram-workflow-metadata.md
   - docs/conventions/repository/docs-structure.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
+  - docs/reference/runtime/pravaha-runtime-architecture.md
+  - docs/reference/runtime/pravaha-flow-examples.md
 Root flow: docs/flows/runtime/pravaha-flow-foundation.md
 ---
 

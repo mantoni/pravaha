@@ -2,6 +2,9 @@
 Kind: plan
 Id: pravaha-flow-runtime
 Status: active
+Depends on:
+  - docs/reference/runtime/pravaha-runtime-architecture.md
+  - docs/reference/runtime/pravaha-flow-examples.md
 ---
 
 # Pravaha Flow Runtime Plan
