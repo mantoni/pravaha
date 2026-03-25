@@ -1,7 +1,7 @@
 ---
 Kind: contract
 Id: single-task-flow-reconciler
-Status: proposed
+Status: done
 Decided by:
   - docs/decisions/runtime/trigger-driven-codex-runtime.md
   - docs/decisions/runtime/job-and-step-execution-semantics.md

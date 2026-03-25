@@ -1,23 +1,24 @@
 ---
 Kind: flow
-Id: single-task-flow-reconciler
-Status: active
+Id: mixed-graph-flow-surface
+Status: proposed
 ---
 
-# Single-Task Flow Reconciler
+# Mixed-Graph Flow Surface
 
-This root flow captures the first interpreted reconciler slice. It stays inside
-the currently validated flow surface while the reconciler reads the checked-in
-contract flow through `pravaha reconcile`.
+This root flow captures the next slice where the checked-in flow language will
+drive durable selection, runtime-aware conditions, and explicit mutation targets
+through the mixed graph. Until that widened surface lands, this flow stays
+inside the currently validated subset.
 
 ```yaml
 kind: flow
-id: single-task-flow-reconciler
-status: active
+id: mixed-graph-flow-surface
+status: proposed
 scope: contract
 
 jobs:
-  reconcile_first_ready_task:
+  implement_ready_tasks:
     select:
       role: task
     steps:

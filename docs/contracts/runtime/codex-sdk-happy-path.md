@@ -1,7 +1,7 @@
 ---
 Kind: contract
 Id: codex-sdk-happy-path
-Status: active
+Status: done
 Decided by:
   - docs/decisions/runtime/codex-sdk-happy-path-backend.md
   - docs/decisions/runtime/trigger-driven-codex-runtime.md

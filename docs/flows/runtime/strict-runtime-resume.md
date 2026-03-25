@@ -1,19 +1,20 @@
 ---
 Kind: flow
 Id: strict-runtime-resume
-Status: proposed
+Status: active
 ---
 
 # Strict Runtime Resume
 
 This root flow captures the strict runtime persistence and manual resume slice.
-It stays within the current validated flow surface while the runtime learns to
-block new reconcile work whenever unresolved local state exists.
+It stays within the current validated flow surface while the runtime blocks new
+reconcile work whenever unresolved local state exists and resumes through
+`pravaha resume`.
 
 ```yaml
 kind: flow
 id: strict-runtime-resume
-status: proposed
+status: active
 scope: contract
 
 jobs:
