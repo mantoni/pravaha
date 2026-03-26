@@ -13,8 +13,9 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
   as a mixed graph together with checked-in Patram documents.
 - Treat task documents as the leaseable execution unit and require one task per
   worktree at a time.
-- Allow worktrees to be reusable, named, and long-lived, with explicit prepare
-  and cleanup lifecycle steps.
+- Allow worktrees to be reusable, named, and long-lived, while keeping
+  assignment and reuse engine-owned and expressing setup or cleanup through the
+  ordinary ordered job step list.
 - Make Codex a first-class worker family in `v0.1`.
 - Require the chosen Codex backend to support locally supervised
   run-to-completion workers with strong local lifecycle control and

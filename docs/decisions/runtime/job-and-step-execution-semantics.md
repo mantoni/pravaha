@@ -29,8 +29,9 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
   `roles.leaseable_unit_class`.
 - Require one leased task or equivalent leaseable document per worktree at a
   time.
-- Allow worktrees to be reusable, named, and long-lived, with explicit prepare
-  and cleanup lifecycle steps.
+- Allow worktrees to be reusable, named, and long-lived, while keeping
+  assignment and reuse engine-owned and expressing setup or cleanup through the
+  ordinary ordered job step list.
 - Treat worker runs as locally supervised run-to-completion processes.
 - Treat `uses` as the primitive execution step form and `run` as sugar over
   `core/run`.
