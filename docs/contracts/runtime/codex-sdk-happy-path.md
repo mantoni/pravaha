@@ -29,7 +29,7 @@ Root flow: docs/flows/runtime/codex-sdk-happy-path.md
   semantic config validation.
 - One contract with one root flow and at least one task in a semantic `ready`
   state.
-- One prepared or preparable worktree location for that task.
+- One checked-in job-level worktree policy in the bound root flow.
 - One Codex SDK invocation path with explicit prompt and working-directory
   control.
 
@@ -37,7 +37,7 @@ Root flow: docs/flows/runtime/codex-sdk-happy-path.md
 
 - One runtime entrypoint that selects and leases exactly one ready task for one
   contract.
-- One worktree assignment and preparation path for that leased task.
+- One flow-driven worktree assignment and preparation path for that leased task.
 - One real Codex SDK invocation in that worktree with deterministic input.
 - One observable runtime outcome with captured completion status and operator
   debug surface.
@@ -55,6 +55,7 @@ Root flow: docs/flows/runtime/codex-sdk-happy-path.md
 ## Invariants
 
 - One leased task occupies one worktree at a time.
+- The checked-in root flow is the source of truth for worktree mode.
 - The worker boundary is the Codex SDK, not a simulated completion path.
 - The slice stays hard-coded and does not introduce a generic backend adapter or
   generic flow interpreter.
