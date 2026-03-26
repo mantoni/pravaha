@@ -63,10 +63,10 @@ Depends on:
   - hard-coded Codex SDK happy path
   - single-task interpreted reconciler
   - strict machine-local runtime persistence with manual resume
-- Current next chunk: widen the flow surface toward the planned runtime model,
-  including richer `select`, targeted `transition`, and broader `if` and `await`
-  evaluation over the mixed graph.
-- Then expose reserved machine-local runtime nodes more directly through the
-  mixed graph and tighten their execution semantics.
-- Then add scheduler depth such as dependency barriers, multi-task runs, and
-  reusable worktree policy refinement.
+  - widened mixed-graph flow surface
+  - job-level worktree policy
+- Current next chunk: expose reserved machine-local runtime nodes more directly
+  through the mixed graph and tighten their lifecycle semantics.
+- Then add scheduler depth such as dependency barriers and multi-task runs.
+- Then refine prepare and cleanup lifecycle behavior on top of the job-level
+  worktree policy surface.

@@ -1,19 +1,19 @@
 ---
 Kind: flow
 Id: job-level-worktree-policy
-Status: proposed
+Status: active
 ---
 
 # Job-Level Worktree Policy
 
-This root flow captures the next slice where checked-in flow policy declares the
+This root flow captures the slice where checked-in flow policy declares the
 worktree lifecycle at job scope. It models both disposable and exact-slot named
 worktrees while keeping the current step surface intact.
 
 ```yaml
 kind: flow
 id: job-level-worktree-policy
-status: proposed
+status: active
 scope: contract
 
 jobs:

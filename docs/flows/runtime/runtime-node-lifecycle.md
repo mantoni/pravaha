@@ -1,19 +1,19 @@
 ---
 Kind: flow
-Id: mixed-graph-flow-surface
-Status: active
+Id: runtime-node-lifecycle
+Status: proposed
 ---
 
-# Mixed-Graph Flow Surface
+# Runtime Node Lifecycle
 
-This root flow captures the mixed-graph slice where the checked-in flow language
-drives durable selection, runtime-aware conditions, and explicit mutation
-targets through the mixed graph.
+This root flow captures the next slice where the runtime-node lifecycle becomes
+explicit enough for flows to query the current run and its terminal signals
+predictably through the mixed graph.
 
 ```yaml
 kind: flow
-id: mixed-graph-flow-surface
-status: active
+id: runtime-node-lifecycle
+status: proposed
 scope: contract
 
 jobs:
@@ -21,9 +21,9 @@ jobs:
     select:
       role: task
     worktree:
-      mode: ephemeral
+      mode: named
+      slot: castello
     steps:
-      - uses: core/lease-task
       - uses: core/setup-worktree
       - uses: core/codex-sdk
       - await:

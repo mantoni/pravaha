@@ -1,7 +1,7 @@
 ---
 Kind: contract
 Id: mixed-graph-flow-surface
-Status: proposed
+Status: done
 Decided by:
   - docs/decisions/runtime/trigger-driven-codex-runtime.md
   - docs/decisions/runtime/job-and-step-execution-semantics.md
