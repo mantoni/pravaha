@@ -21,6 +21,9 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
   `with` for that plugin.
 - Require each plugin to declare emitted signal kinds as a map from signal name
   to Zod payload schema.
+- Require plugin runtime behavior to live in `async run(context)`.
+- Require plugins to emit signals through
+  `await context.emit(signal_name, payload)`.
 - Treat review, notification, ingress, and other interaction mechanics as
   ordinary plugin-backed steps instead of as built-in flow constructs.
 - Restrict `await` validation to signal kinds emitted by plugins referenced in
@@ -36,5 +39,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
   documentation consistent.
 - Required Zod schemas move plugin and signal compatibility checks into flow
   validation instead of delaying them until runtime.
+- One explicit `context.emit(...)` runtime surface keeps signal production in
+  the plugin contract instead of introducing parallel flow syntax for plugin
+  outputs.
 - Treating human and external interactions as ordinary steps preserves one
   execution model across worker, review, and integration behavior.
