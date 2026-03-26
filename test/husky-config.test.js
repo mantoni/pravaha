@@ -25,7 +25,10 @@ it('installs husky and wires pre-commit to the package checks', async () => {
   expect(all_script).not.toMatch(/(^|&& )npm run test($| &&)/);
   expect(package_json['lint-staged']).toEqual({
     '*.{js,ts,json,md}': 'prettier --check',
-    '*.{js,ts}': ['eslint', 'vitest related --run --passWithNoTests'],
+    '*.{js,ts}': [
+      'eslint',
+      "vitest related --run --passWithNoTests --tagsFilter='!lint-staged-excluded'",
+    ],
   });
 
   const pre_commit_hook = await readTextFile(

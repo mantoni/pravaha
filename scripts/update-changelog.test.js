@@ -1,4 +1,5 @@
 // @module-tag integration
+// @module-tag lint-staged-excluded
 
 import { execFile } from 'node:child_process';
 import { mkdtemp, readFile, writeFile } from 'node:fs/promises';

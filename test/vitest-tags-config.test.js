@@ -19,6 +19,10 @@ it('defines tag-aware Vitest timeout profiles and a higher slow-test threshold',
         timeout: 15_000,
       }),
       expect.objectContaining({
+        name: 'lint-staged-excluded',
+        timeout: 15_000,
+      }),
+      expect.objectContaining({
         name: 'smoke',
         timeout: 30_000,
       }),
@@ -35,12 +39,23 @@ it('marks tagged integration and smoke tests in the expected files', async () =>
     new URL('../test/package-install-smoke.test.js', import.meta.url),
     'utf8',
   );
+  const run_happy_path_test_text = await readFile(
+    new URL('../lib/run-happy-path.test.js', import.meta.url),
+    'utf8',
+  );
   const package_metadata_test_text = await readFile(
     new URL('../test/package-metadata.test.js', import.meta.url),
     'utf8',
   );
 
   expect(update_changelog_test).toContain('@module-tag integration');
+  expect(update_changelog_test).toContain('@module-tag lint-staged-excluded');
   expect(smoke_test_text).toContain('@module-tag smoke');
-  expect(package_metadata_test_text).toContain("tags: ['integration']");
+  expect(smoke_test_text).toContain('@module-tag lint-staged-excluded');
+  expect(run_happy_path_test_text).toContain(
+    '@module-tag lint-staged-excluded',
+  );
+  expect(package_metadata_test_text).toContain(
+    "tags: ['integration', 'lint-staged-excluded']",
+  );
 });

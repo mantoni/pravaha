@@ -60,7 +60,7 @@ it('defines publish metadata for the npm package', async () => {
 
 it(
   'excludes test artifacts from the packed npm tarball',
-  { tags: ['integration'] },
+  { tags: ['integration', 'lint-staged-excluded'] },
   async () => {
     const temp_directory = await createTempDirectory();
 

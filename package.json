@@ -48,7 +48,7 @@
     "*.{js,ts,json,md}": "prettier --check",
     "*.{js,ts}": [
       "eslint",
-      "vitest related --run --passWithNoTests"
+      "vitest related --run --passWithNoTests --tagsFilter='!lint-staged-excluded'"
     ]
   },
   "dependencies": {
