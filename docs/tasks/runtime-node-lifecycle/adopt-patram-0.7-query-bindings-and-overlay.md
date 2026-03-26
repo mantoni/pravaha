@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: adopt-patram-0.7-query-bindings-and-overlay
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/runtime-node-lifecycle.md
 Implements: docs/contracts/runtime/runtime-node-lifecycle.md
 Decided by:

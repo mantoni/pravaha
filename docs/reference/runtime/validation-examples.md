@@ -78,7 +78,7 @@ scope: contract
 
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == document and status == ready
+    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: ephemeral
     steps:

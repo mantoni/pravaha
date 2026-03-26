@@ -33,6 +33,12 @@ export interface BuildGraphResult {
   nodes: Record<string, GraphNode>;
 }
 
+export interface QueryGraphOptions {
+  bindings?: Record<string, string>;
+  limit?: number;
+  offset?: number;
+}
+
 export type RepoConfigLike =
   | RepoConfig
   | { relations?: Record<string, unknown> };
@@ -54,7 +60,8 @@ export interface GraphApi {
   query_graph: (
     graph: BuildGraphResult,
     where_clause: string,
-    repo_config?: RepoConfigLike,
+    repo_config_or_query_options?: RepoConfigLike | QueryGraphOptions,
+    query_options?: QueryGraphOptions,
   ) => QueryResult;
 }
 

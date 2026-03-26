@@ -43,7 +43,7 @@ scope: contract
 
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == document and status == ready
+    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: ephemeral
     steps:
@@ -95,7 +95,7 @@ scope: contract
 
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == document and status == ready
+    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: named
       slot: castello
@@ -114,7 +114,7 @@ jobs:
   review_feature:
     needs: [implement_ready_tasks]
     if:
-      none($class == task and tracked_in == document and status not in [done,
+      none($class == task and tracked_in == @document and status not in [done,
       dropped])
     steps:
       - name: Request feature review
@@ -134,7 +134,7 @@ runtime state.
 ```yaml
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == document and status == ready
+    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: ephemeral
     steps:

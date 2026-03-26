@@ -42,7 +42,7 @@ scope: contract
 
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == document and status == ready
+    select: $class == task and tracked_in == @document and status == ready
     steps:
       - uses: core/setup-worktree
       - uses: core/codex-exec
