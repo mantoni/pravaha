@@ -12,6 +12,15 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 - Fan out one job instance per document selected by `jobs.<name>.select`.
 - Treat `needs` as a coarse scheduling barrier that waits for all upstream job
   instances to finish before the dependent job becomes eligible.
+- In the single-flight scheduler-depth slice, treat an upstream job as finished
+  enough when reconcile can find no runnable work for it under the current job
+  semantics.
+- Choose the next runnable job deterministically in flow declaration order and,
+  for selected-task jobs, choose the next task deterministically in query result
+  order.
+- Keep single-flight runtime limits in force while adding scheduler depth: start
+  at most one runtime attempt, keep at most one active lease, and keep at most
+  one unresolved runtime record.
 - Keep business-specific readiness and terminal checks in `if` and `await`
   expressions rather than encoding them into `needs`.
 - Tie leasing to the configured semantic `ready` state and the configured
