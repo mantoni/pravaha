@@ -35,7 +35,8 @@ Depends on:
 - Implement trigger-driven reconciliation with manual resume.
 - Implement task leasing gated by semantic `ready` states and dependency
   relations.
-- Implement reusable worktree lifecycle support with prepare and cleanup steps.
+- Implement job-level worktree assignment or reuse and execute ordinary ordered
+  job steps inside the assigned worktree.
 - Implement one first-class Codex backend with local process supervision and
   run-to-completion worker sessions.
 - Evaluate candidate Codex launch modes and choose the first backend based on
@@ -65,8 +66,9 @@ Depends on:
   - strict machine-local runtime persistence with manual resume
   - widened mixed-graph flow surface
   - job-level worktree policy
+  - scheduler depth with single-flight `needs` barriers
+  - ordered ordinary step execution inside the assigned worktree
 - Current next chunk: expose reserved machine-local runtime nodes more directly
   through the mixed graph and tighten their lifecycle semantics.
-- Then add scheduler depth such as dependency barriers and multi-task runs.
-- Then refine prepare and cleanup lifecycle behavior on top of the job-level
-  worktree policy surface.
+- Keep worktree setup and cleanup as ordinary checked-in steps instead of
+  special lifecycle hooks in `v0.1`.

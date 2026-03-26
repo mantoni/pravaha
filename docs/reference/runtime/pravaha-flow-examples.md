@@ -143,6 +143,36 @@ jobs:
           $class == $signal and kind == worker_completed and subject == task
 ```
 
+## Ordered Step Execution In One Worktree
+
+Worktree policy selects assignment or reuse mode for the whole job. Ordinary
+steps then execute in the declared order inside that assigned worktree.
+
+```yaml
+jobs:
+  implement_ready_tasks:
+    select: $class == task and tracked_in == @document and status == ready
+    worktree:
+      mode: named
+      slot: castello
+    steps:
+      - uses: core/lease-task
+      - run: npm ci
+      - uses: core/codex-sdk
+      - run: npm test
+      - await:
+          $class == $signal and kind == worker_completed and subject == task
+```
+
+In this slice:
+
+- `run` and `uses` are ordinary steps in the same ordered list.
+- There is no special `worktree.prepare` or `worktree.cleanup` step form.
+- Setup and cleanup are expressed as ordinary steps when the flow author wants
+  them.
+- A failing step halts the job and leaves the assigned worktree in place for
+  operator follow-up.
+
 ## Flow Shape Summary
 
 ```json
