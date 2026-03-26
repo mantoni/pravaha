@@ -1,7 +1,7 @@
 ---
 Kind: contract
 Id: plugin-backed-ordered-step-execution
-Status: active
+Status: done
 Decided by:
   - docs/decisions/runtime/ordered-steps-over-worktree-lifecycle-hooks.md
   - docs/decisions/runtime/pluggable-step-plugins-and-signal-contracts.md

@@ -1,7 +1,7 @@
 ---
 Kind: contract
 Id: run-scoped-step-progress-and-plugin-signals
-Status: active
+Status: done
 Decided by:
   - docs/decisions/runtime/pluggable-step-plugins-and-signal-contracts.md
   - docs/decisions/runtime/run-scoped-plugin-signal-emission.md
