@@ -18,5 +18,8 @@ it('defines semantic role and state mappings for Pravaha flows', () => {
       review: ['review'],
       terminal: ['accepted', 'done', 'dropped', 'superseded'],
     },
+    plugins: {
+      local_directory: 'plugins',
+    },
   });
 });
