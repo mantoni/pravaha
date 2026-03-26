@@ -36,7 +36,7 @@ const COMMON_JS_RULES = {
 
 const JSDOC_RULES = {
   'jsdoc/check-param-names': 'error',
-  'jsdoc/check-tag-names': 'error',
+  'jsdoc/check-tag-names': ['error', { definedTags: ['patram'] }],
   'jsdoc/check-types': 'error',
   'jsdoc/prefer-import-tag': 'error',
   'jsdoc/require-param': 'warn',
