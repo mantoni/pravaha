@@ -19,10 +19,10 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 - Require plugins to manage their own idempotency and any private observer
   state.
 - Do not persist plugin-private observer state in the core runtime.
-- Allow Pravaha to expose convenience observer APIs for simple run-scoped local
-  mechanisms such as file watches or git-hook integrations.
-- Allow plugins to implement their own monitoring mechanisms when they need
-  something more elaborate than the convenience observer APIs.
+- Keep local observation such as file watching plugin-owned instead of exposing
+  a broad observer API on plugin context in `v0.1`.
+- Treat git hooks as one wake or ingress path into Pravaha rather than as a
+  separate plugin observer substrate.
 - Tear down the plugin step lifecycle after the first emitted signal for that
   run.
 
@@ -34,5 +34,7 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
   restarts without forcing plugin-private state into the core runtime.
 - Keeping plugin-private observer state out of the runtime preserves a clean
   plugin boundary and avoids premature observer persistence machinery.
+- Keeping observation plugin-owned avoids growing the `context` API before the
+  real local-integration needs are proven.
 - First-signal teardown gives the runtime one simple completion rule for
   interaction plugins without needing plugin-specific terminal-signal metadata.
