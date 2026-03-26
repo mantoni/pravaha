@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@openai/codex-sdk": "^0.116.0",
-    "patram": "^0.7.0",
+    "patram": "^0.8.0",
     "yaml": "^2.8.3"
   },
   "devDependencies": {
