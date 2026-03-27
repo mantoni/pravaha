@@ -7,9 +7,10 @@ Status: active
 # Single-Task Flow Reconciler
 
 This root flow captures the first interpreted reconciler slice. It stays inside
-the currently validated flow surface while the reconciler reads the checked-in
-contract flow through `pravaha reconcile`. The reconciler acquires the task
-lease and worktree assignment before the declared step list begins.
+the currently validated trigger-bound flow surface while the reconciler reads
+the checked-in contract flow through `pravaha reconcile`. The reconciler
+acquires the task lease and worktree assignment before the declared step list
+begins.
 
 ```yaml
 kind: flow
@@ -17,10 +18,12 @@ id: single-task-flow-reconciler
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   reconcile_first_ready_task:
-    select:
-      role: task
     worktree:
       mode: ephemeral
     steps:

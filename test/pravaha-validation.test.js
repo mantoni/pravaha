@@ -12,13 +12,15 @@ import { validateRepo } from '../lib/pravaha.js';
 it('validates flow semantic references against the repo config', async () => {
   const temp_directory = await createFixtureRepo({
     flow_yaml: [
+      'on:',
+      '  task:',
+      '    where: $class == task and tracked_in == @document',
       'jobs:',
       '  review-task:',
-      '    select:',
-      '      role: task',
       '    steps:',
       '      - transition:',
-      '          to: review',
+      '          target: task',
+      '          status: review',
       '',
     ].join('\n'),
   });
@@ -36,10 +38,11 @@ it('validates flow semantic references against the repo config', async () => {
 it('reports unknown semantic roles and states in flow documents', async () => {
   const temp_directory = await createFixtureRepo({
     flow_yaml: [
+      'on:',
+      '  lease:',
+      '    where: $class == worker and tracked_in == @document',
       'jobs:',
       '  lease-task:',
-      '    select:',
-      '      role: worker',
       '    steps:',
       '      - transition: waiting',
       '',
@@ -58,7 +61,7 @@ it('reports unknown semantic roles and states in flow documents', async () => {
       {
         file_path: flow_file_path,
         message:
-          'Unknown semantic role "worker" at flow.jobs.lease-task.select.role.',
+          'Unknown semantic role "worker" in select query. in flow.on.lease.where.',
       },
       {
         file_path: flow_file_path,
@@ -162,6 +165,9 @@ function createFlowDocument(flow_yaml) {
  */
 function createDefaultFlowYaml() {
   return [
+    'on:',
+    '  task:',
+    '    where: $class == task and tracked_in == @document',
     'jobs:',
     '  smoke:',
     '    steps:',

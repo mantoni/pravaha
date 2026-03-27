@@ -17,9 +17,12 @@ id: run-scoped-step-progress-and-plugin-signals
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   progress_and_emit_within_one_run:
-    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: named
       slot: castello

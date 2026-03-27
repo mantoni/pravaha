@@ -6,7 +6,7 @@ Status: active
 
 # Plugin-Backed Ordered Step Execution
 
-This root flow captures the slice where selected-task jobs still run as one
+This root flow captures the slice where task-triggered jobs still run as one
 ordinary ordered step list inside the assigned worktree while `uses` may load
 checked-in local plugins or installed npm plugins directly from the declared
 flow policy. The task lease and initial worktree assignment remain engine-owned
@@ -18,9 +18,12 @@ id: plugin-backed-ordered-step-execution
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: named
       slot: castello

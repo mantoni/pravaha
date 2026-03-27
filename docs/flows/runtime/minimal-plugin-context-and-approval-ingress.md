@@ -17,9 +17,12 @@ id: minimal-plugin-context-and-approval-ingress
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   wait_within_one_plugin_step:
-    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: named
       slot: castello

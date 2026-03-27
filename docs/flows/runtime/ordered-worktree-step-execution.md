@@ -6,7 +6,7 @@ Status: active
 
 # Ordered Worktree Step Execution
 
-This root flow captures the slice where one selected-task job executes one
+This root flow captures the slice where one task-triggered job executes one
 ordinary ordered step list inside its assigned worktree. The engine acquires the
 task lease and resolves the worktree before the declared step list begins. Setup
 and cleanup stay in the checked-in step list rather than moving into special
@@ -18,9 +18,12 @@ id: ordered-worktree-step-execution
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: named
       slot: castello

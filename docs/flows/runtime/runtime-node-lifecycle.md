@@ -17,10 +17,12 @@ id: runtime-node-lifecycle
 status: proposed
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   implement_ready_tasks:
-    select:
-      role: task
     worktree:
       mode: named
       slot: castello

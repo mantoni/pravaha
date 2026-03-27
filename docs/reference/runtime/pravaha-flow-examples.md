@@ -41,9 +41,12 @@ id: task-reviewed-then-merge
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: ephemeral
     steps:
@@ -90,9 +93,12 @@ id: feature-branch-review
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: named
       slot: castello
@@ -129,9 +135,12 @@ The same query language can address durable workflow state and machine-local
 runtime state.
 
 ```yaml
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: ephemeral
     steps:
@@ -147,9 +156,12 @@ acquires the task lease and resolves the assigned worktree before ordinary steps
 execute in the declared order inside that worktree.
 
 ```yaml
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: named
       slot: castello
@@ -178,8 +190,8 @@ In this slice:
 
 ```json
 {
-  "top_level_keys": ["kind", "id", "status", "scope", "jobs"],
-  "job_keys": ["select", "needs", "if", "worktree", "steps"],
+  "top_level_keys": ["kind", "id", "status", "scope", "on", "jobs"],
+  "job_keys": ["needs", "if", "worktree", "steps"],
   "step_keys": [
     "name",
     "uses",

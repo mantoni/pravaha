@@ -76,9 +76,12 @@ id: simple-task-flow
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: ephemeral
     steps:
@@ -89,11 +92,11 @@ jobs:
 
 ## Invalid Flow Examples
 
-Invalid because `select` appears on a step instead of a job:
+Invalid because root trigger selection is required for every flow:
 
 ```yaml
 kind: flow
-id: invalid-step-select
+id: invalid-missing-trigger
 status: active
 scope: contract
 
@@ -102,8 +105,7 @@ jobs:
     worktree:
       mode: ephemeral
     steps:
-      - select: $class == task and status == ready
-        uses: core/codex-exec
+      - uses: core/codex-exec
 ```
 
 Invalid because the step uses a checked-in mutation shape outside the approved
@@ -114,6 +116,10 @@ kind: flow
 id: invalid-generic-update
 status: active
 scope: contract
+
+on:
+  task:
+    where: $class == task and tracked_in == @document
 
 jobs:
   implement:
@@ -127,17 +133,41 @@ jobs:
             status: review
 ```
 
-Invalid because `jobs.<name>.select` does not resolve to one durable class:
+Invalid because `jobs.<name>.select` is no longer allowed:
 
 ```yaml
 kind: flow
-id: invalid-ambiguous-select
+id: invalid-job-select
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document
+
 jobs:
-  mixed:
-    select: $class in [task, contract]
+  implement:
+    select: $class == task and tracked_in == @document
+    worktree:
+      mode: ephemeral
+    steps:
+      - uses: core/codex-exec
+```
+
+Invalid because `on.<binding>.where` does not resolve to one durable class:
+
+```yaml
+kind: flow
+id: invalid-ambiguous-trigger
+status: active
+scope: contract
+
+on:
+  item:
+    where: $class in [task, contract]
+
+jobs:
+  implement:
     worktree:
       mode: ephemeral
     steps:
@@ -151,6 +181,10 @@ kind: flow
 id: invalid-step-worktree
 status: active
 scope: contract
+
+on:
+  task:
+    where: $class == task and tracked_in == @document
 
 jobs:
   implement:
@@ -170,6 +204,10 @@ kind: flow
 id: invalid-named-worktree
 status: active
 scope: contract
+
+on:
+  task:
+    where: $class == task and tracked_in == @document
 
 jobs:
   implement:

@@ -16,9 +16,12 @@ id: single-flight-scheduler-depth
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document
+
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == @document
     worktree:
       mode: ephemeral
     steps:

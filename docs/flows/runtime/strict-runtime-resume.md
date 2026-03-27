@@ -19,10 +19,12 @@ id: strict-runtime-resume
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   reconcile_or_resume_first_ready_task:
-    select:
-      role: task
     worktree:
       mode: ephemeral
     steps:

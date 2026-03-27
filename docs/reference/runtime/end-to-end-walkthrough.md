@@ -40,9 +40,12 @@ id: walkthrough
 status: active
 scope: contract
 
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
 jobs:
   implement_ready_tasks:
-    select: $class == task and tracked_in == @document and status == ready
     worktree:
       mode: ephemeral
     steps:
