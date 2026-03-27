@@ -7,8 +7,9 @@ Status: active
 # Job-Level Worktree Policy
 
 This root flow captures the slice where checked-in flow policy declares the
-worktree lifecycle at job scope. It models both disposable and exact-slot named
-worktrees while keeping the current step surface intact.
+worktree assignment and reuse policy at job scope. It models both disposable and
+exact-slot named worktrees while keeping setup inside the ordinary declared step
+list.
 
 ```yaml
 kind: flow
@@ -24,7 +25,7 @@ jobs:
       mode: named
       slot: castello
     steps:
-      - uses: core/setup-worktree
+      - run: npm ci
       - uses: core/codex-sdk
       - await:
           $class == $signal and kind == worker_completed and subject == task

@@ -47,9 +47,6 @@ jobs:
     worktree:
       mode: ephemeral
     steps:
-      - name: Setup worktree
-        uses: core/setup-worktree
-
       - name: Install dependencies
         run: npm ci
 
@@ -100,7 +97,7 @@ jobs:
       mode: named
       slot: castello
     steps:
-      - uses: core/setup-worktree
+      - run: npm ci
       - uses: core/codex-exec
       - await:
           $class == $signal and kind == worker_completed and subject == task
@@ -168,6 +165,8 @@ In this slice:
 
 - Leasing and initial worktree assignment are engine-owned runtime behavior, not
   ordinary `uses` steps.
+- Preparing the assigned worktree is also engine-owned runtime behavior rather
+  than a bundled step.
 - `run` and `uses` are ordinary steps in the same ordered list.
 - There is no special `worktree.prepare` or `worktree.cleanup` step form.
 - Setup and cleanup are expressed as ordinary steps when the flow author wants

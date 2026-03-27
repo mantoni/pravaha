@@ -43,8 +43,10 @@ scope: contract
 jobs:
   implement_ready_tasks:
     select: $class == task and tracked_in == @document and status == ready
+    worktree:
+      mode: ephemeral
     steps:
-      - uses: core/setup-worktree
+      - run: npm ci
       - uses: core/codex-exec
       - await:
           $class == $signal and kind == worker_completed and subject == task
@@ -80,5 +82,7 @@ jobs:
 
 - The flow may continue at task scope or contract scope depending on later job
   conditions.
+- Worktree assignment and preparation happen before the declared steps rather
+  than through a bundled `uses` step.
 - The runtime may be idle between triggers even though the shared workflow state
   stays durable in git.

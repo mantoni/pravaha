@@ -23,7 +23,6 @@ jobs:
     worktree:
       mode: ephemeral
     steps:
-      - uses: core/setup-worktree
       - uses: core/codex-sdk
       - await:
           $class == $signal and kind == worker_completed and subject == task

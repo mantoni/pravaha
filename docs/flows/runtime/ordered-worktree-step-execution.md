@@ -26,7 +26,6 @@ jobs:
       slot: castello
     steps:
       - run: npm ci
-      - uses: core/setup-worktree
       - uses: core/codex-sdk
       - run: npm test
       - await:

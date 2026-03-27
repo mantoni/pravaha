@@ -10,7 +10,8 @@ This root flow captures the intended single-task vertical slice for the first
 SDK-backed runtime contract. The hard-coded entrypoint may further narrow this
 to the first semantic `ready` task until the full query surface lands. The
 current executable entrypoint is `pravaha run-happy-path`. The engine acquires
-the task lease and prepares the worktree before these declared steps run.
+the task lease and prepares the worktree before these declared steps run, while
+project-specific setup remains an ordinary declared step.
 
 ```yaml
 kind: flow
@@ -25,7 +26,7 @@ jobs:
     worktree:
       mode: ephemeral
     steps:
-      - uses: core/setup-worktree
+      - run: npm ci
       - uses: core/codex-sdk
       - await:
           $class == $signal and kind == worker_completed and subject == task

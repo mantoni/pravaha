@@ -4,6 +4,7 @@ Id: job-level-worktree-policy
 Status: done
 Decided by:
   - docs/decisions/runtime/engine-owned-task-leasing.md
+  - docs/decisions/runtime/engine-owned-worktree-assignment.md
   - docs/decisions/runtime/trigger-driven-codex-runtime.md
   - docs/decisions/runtime/job-and-step-execution-semantics.md
   - docs/decisions/runtime/mixed-runtime-graph-and-bindings.md
@@ -21,7 +22,7 @@ Root flow: docs/flows/runtime/job-level-worktree-policy.md
 ## Intent
 
 - Move worktree choice into checked-in flow policy so one job declares one
-  worktree lifecycle model, including reuse mode and exact named-slot selection.
+  worktree assignment and reuse model, including exact named-slot selection.
 
 ## Inputs
 

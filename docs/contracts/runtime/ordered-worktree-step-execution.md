@@ -4,6 +4,7 @@ Id: ordered-worktree-step-execution
 Status: done
 Decided by:
   - docs/decisions/runtime/engine-owned-task-leasing.md
+  - docs/decisions/runtime/engine-owned-worktree-assignment.md
   - docs/decisions/runtime/trigger-driven-codex-runtime.md
   - docs/decisions/runtime/job-and-step-execution-semantics.md
   - docs/decisions/runtime/mixed-runtime-graph-and-bindings.md

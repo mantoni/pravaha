@@ -10,7 +10,8 @@ This root flow captures the strict runtime persistence and manual resume slice.
 It stays within the current validated flow surface while the runtime blocks new
 reconcile work whenever unresolved local state exists and resumes through
 `pravaha resume`. Lease acquisition still happens before declared steps and is
-reused from the persisted runtime record on resume.
+reused from the persisted runtime record on resume. Worktree preparation also
+stays on the engine side of that boundary.
 
 ```yaml
 kind: flow
@@ -25,7 +26,6 @@ jobs:
     worktree:
       mode: ephemeral
     steps:
-      - uses: core/setup-worktree
       - uses: core/codex-sdk
       - await:
           $class == $signal and kind == worker_completed and subject == task

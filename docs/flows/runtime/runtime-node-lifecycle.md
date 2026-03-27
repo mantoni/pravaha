@@ -25,7 +25,7 @@ jobs:
       mode: named
       slot: castello
     steps:
-      - uses: core/setup-worktree
+      - run: npm ci
       - uses: core/codex-sdk
       - await:
           $class == $signal and kind == worker_completed and subject == task

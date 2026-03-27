@@ -4,6 +4,7 @@ Id: plugin-backed-ordered-step-execution
 Status: done
 Decided by:
   - docs/decisions/runtime/engine-owned-task-leasing.md
+  - docs/decisions/runtime/engine-owned-worktree-assignment.md
   - docs/decisions/runtime/ordered-steps-over-worktree-lifecycle-hooks.md
   - docs/decisions/runtime/pluggable-step-plugins-and-signal-contracts.md
   - docs/decisions/runtime/job-and-step-execution-semantics.md
@@ -84,7 +85,8 @@ Root flow: docs/flows/runtime/plugin-backed-ordered-step-execution.md
   `definePlugin(...)` default contract.
 - Plugin-backed `uses` steps rely on a separate registry file or other
   indirection instead of the checked-in `uses` string.
-- Engine-owned task leasing still appears as a fake bundled plugin step.
+- Engine-owned task leasing or worktree assignment still appears as a fake
+  bundled plugin step.
 - `with` values fail late at runtime instead of during validation and flow
   interpretation.
 - `await` can reference signal kinds that no plugin in the same flow emits.
