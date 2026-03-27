@@ -106,6 +106,108 @@ it('reports invalid semantic-state mappings in pravaha.json', async () => {
   }
 });
 
+it('validates state-machine flow documents against the repo config', async () => {
+  const temp_directory = await createFixtureRepo({
+    flow_yaml: createValidStateMachineFlowYaml(),
+  });
+
+  try {
+    await expect(validateRepo(temp_directory)).resolves.toEqual({
+      checked_flow_count: 1,
+      diagnostics: [],
+    });
+  } finally {
+    await rm(temp_directory, { force: true, recursive: true });
+  }
+});
+
+it('rejects mixed legacy and state-machine flow surfaces', async () => {
+  const temp_directory = await createFixtureRepo({
+    flow_yaml: createMixedFlowYaml(),
+  });
+
+  try {
+    const validation_result = await validateRepo(temp_directory);
+    const flow_file_path = join(
+      temp_directory,
+      'docs/flows/runtime/test-flow.md',
+    );
+
+    expect(validation_result.checked_flow_count).toBe(1);
+    expect(validation_result.diagnostics).toContainEqual({
+      file_path: flow_file_path,
+      message:
+        'State-machine jobs must not be mixed with legacy step-based jobs in the same flow.',
+    });
+  } finally {
+    await rm(temp_directory, { force: true, recursive: true });
+  }
+});
+
+it('rejects invalid state-machine workspace diagnostics', async () => {
+  await expectValidationDiagnostic(
+    createValidStateMachineFlowYaml().replace(
+      'type: git.workspace',
+      'type: shell.workspace',
+    ),
+    'Expected flow.workspace.type to be "git.workspace".',
+  );
+  await expectValidationDiagnostic(
+    createValidStateMachineFlowYaml().replace('kind: repo', 'kind: remote'),
+    'Expected flow.workspace.source.kind to be "repo".',
+  );
+  await expectValidationDiagnostic(
+    createValidStateMachineFlowYaml().replace(
+      'mode: ephemeral',
+      'mode: shared',
+    ),
+    'Expected flow.workspace.materialize.mode to be "ephemeral" or "pooled".',
+  );
+});
+
+it('rejects invalid state-machine job diagnostics', async () => {
+  await expectValidationDiagnostic(
+    createValidStateMachineFlowYaml().replace('next: done', 'next: missing'),
+    'Unknown next target "missing" at flow.jobs.retry.next.',
+  );
+  await expectValidationDiagnostic(
+    createValidStateMachineFlowYaml().replace('max-visits: 3', 'max-visits: 0'),
+    'Expected flow.jobs.retry.limits.max-visits to be a positive integer.',
+  );
+  await expectValidationDiagnostic(
+    createValidStateMachineFlowYaml().replace('end: success', 'end: ""'),
+    'Expected flow.jobs.done.end to be a non-empty string.',
+  );
+  await expectValidationDiagnostic(
+    createValidStateMachineFlowYaml().replace(
+      '      - if: ${{ result.exit_code == 0 }}\n        goto: done',
+      '      - goto: done\n      - if: ${{ result.exit_code == 0 }}\n        goto: retry',
+    ),
+    'Only the final flow.jobs.implement.next branch may omit if.',
+  );
+  await expectValidationDiagnostic(
+    createValidStateMachineFlowYaml().replace(
+      'on:\n  task:\n    where: $class == task and tracked_in == @document',
+      'on:\n  document:\n    where: $class == task and tracked_in == @document',
+    ),
+    'Reserved trigger binding name "document" is not allowed at flow.on.document.',
+  );
+  await expectValidationDiagnostic(
+    createValidStateMachineFlowYaml().replace(
+      'on:\n  task:\n    where: $class == task and tracked_in == @document',
+      'on:\n  task: {}',
+    ),
+    'Expected flow.on.task.where to be a string.',
+  );
+  await expectValidationDiagnostic(
+    createValidStateMachineFlowYaml().replace(
+      '    next: done',
+      '    select: role\n    next: done',
+    ),
+    'Flow jobs must not define flow.jobs.retry.select because root-level on.<binding>.where owns durable instance selection.',
+  );
+});
+
 /**
  * @param {{
  *   flow_yaml?: string,
@@ -174,4 +276,102 @@ function createDefaultFlowYaml() {
     '      - run: npm run all',
     '',
   ].join('\n');
+}
+
+/**
+ * @returns {string}
+ */
+function createValidStateMachineFlowYaml() {
+  return [
+    'workspace:',
+    '  type: git.workspace',
+    '  source:',
+    '    kind: repo',
+    '    id: app',
+    '  materialize:',
+    '    kind: worktree',
+    '    mode: ephemeral',
+    '    ref: main',
+    'on:',
+    '  task:',
+    '    where: $class == task and tracked_in == @document',
+    'jobs:',
+    '  implement:',
+    '    uses: core/agent',
+    '    with:',
+    '      provider: codex-sdk',
+    '      prompt: Implement the task.',
+    '    next:',
+    '      - if: ${{ result.exit_code == 0 }}',
+    '        goto: done',
+    '      - goto: retry',
+    '  retry:',
+    '    uses: core/run',
+    '    with:',
+    '      command: npm test',
+    '    limits:',
+    '      max-visits: 3',
+    '    next: done',
+    '  done:',
+    '    end: success',
+    '',
+  ].join('\n');
+}
+
+/**
+ * @returns {string}
+ */
+function createMixedFlowYaml() {
+  return [
+    'workspace:',
+    '  type: git.workspace',
+    '  source:',
+    '    kind: repo',
+    '    id: app',
+    '  materialize:',
+    '    kind: worktree',
+    '    mode: pooled',
+    '    ref: main',
+    'on:',
+    '  task:',
+    '    where: $class == task and tracked_in == @document',
+    'jobs:',
+    '  implement:',
+    '    uses: core/agent',
+    '    next: done',
+    '  legacy_review:',
+    '    steps:',
+    '      - transition:',
+    '          target: task',
+    '          status: review',
+    '  done:',
+    '    end: success',
+    '',
+  ].join('\n');
+}
+
+/**
+ * @param {string} flow_yaml
+ * @param {string} expected_message
+ * @returns {Promise<void>}
+ */
+async function expectValidationDiagnostic(flow_yaml, expected_message) {
+  const temp_directory = await createFixtureRepo({
+    flow_yaml,
+  });
+
+  try {
+    const validation_result = await validateRepo(temp_directory);
+    const flow_file_path = join(
+      temp_directory,
+      'docs/flows/runtime/test-flow.md',
+    );
+
+    expect(validation_result.diagnostics).toContainEqual({
+      file_path: flow_file_path,
+      message: expected_message,
+    });
+  } finally {
+    await rm(temp_directory, { force: true, recursive: true });
+  }
 }
