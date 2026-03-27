@@ -9,7 +9,8 @@ Status: active
 This root flow captures the intended single-task vertical slice for the first
 SDK-backed runtime contract. The hard-coded entrypoint may further narrow this
 to the first semantic `ready` task until the full query surface lands. The
-current executable entrypoint is `pravaha run-happy-path`.
+current executable entrypoint is `pravaha run-happy-path`. The engine acquires
+the task lease and prepares the worktree before these declared steps run.
 
 ```yaml
 kind: flow
@@ -24,7 +25,6 @@ jobs:
     worktree:
       mode: ephemeral
     steps:
-      - uses: core/lease-task
       - uses: core/setup-worktree
       - uses: core/codex-sdk
       - await:

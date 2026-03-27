@@ -3,6 +3,7 @@ Kind: contract
 Id: ordered-worktree-step-execution
 Status: done
 Decided by:
+  - docs/decisions/runtime/engine-owned-task-leasing.md
   - docs/decisions/runtime/trigger-driven-codex-runtime.md
   - docs/decisions/runtime/job-and-step-execution-semantics.md
   - docs/decisions/runtime/mixed-runtime-graph-and-bindings.md
@@ -36,14 +37,17 @@ Root flow: docs/flows/runtime/ordered-worktree-step-execution.md
   jobs.
 - Runtime support for ordinary `run` and `uses` steps executed inside the
   assigned worktree.
+- Runtime support that acquires the task lease and resolves the assigned
+  worktree before the first declared step runs.
 - Runtime support that stops a job on the first failing step.
 - Runtime behavior that leaves the assigned worktree in place for operator
   inspection after failure.
-- Backward compatibility for existing narrow happy-path flows.
 
 ## Side Effects
 
 - Worktree policy continues to choose assignment or reuse mode only.
+- Task leasing remains engine-owned runtime behavior rather than a checked-in
+  flow step.
 - Flow authors may express setup and cleanup as ordinary steps in the same job
   step list.
 - Named worktrees may accumulate operator-visible state across runs when the job
@@ -54,6 +58,8 @@ Root flow: docs/flows/runtime/ordered-worktree-step-execution.md
 - Worktree policy remains job-scoped and limited to assignment or reuse mode.
 - Selected-task job steps execute in the exact declared order.
 - `run` and `uses` are both ordinary executable steps in the same ordered list.
+- Task leasing and initial worktree assignment stay outside the declared step
+  list.
 - There is no special `worktree.prepare`, `worktree.cleanup`, or equivalent
   lifecycle phase in this slice.
 - A failing step halts the job immediately.
@@ -63,8 +69,8 @@ Root flow: docs/flows/runtime/ordered-worktree-step-execution.md
 
 ## Step Execution Rules
 
-- Resolve the job worktree once from the declared job policy before executing
-  ordinary steps.
+- Acquire the task lease and resolve the job worktree once from the declared job
+  policy before executing ordinary steps.
 - Execute every supported ordinary step inside that assigned worktree.
 - Treat `run` as a normal shell-command step and `uses` as a normal handler
   step.

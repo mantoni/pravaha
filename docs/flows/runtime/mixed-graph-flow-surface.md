@@ -23,7 +23,6 @@ jobs:
     worktree:
       mode: ephemeral
     steps:
-      - uses: core/lease-task
       - uses: core/setup-worktree
       - uses: core/codex-sdk
       - await:

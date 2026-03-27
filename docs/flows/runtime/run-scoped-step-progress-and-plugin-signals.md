@@ -24,7 +24,6 @@ jobs:
       mode: named
       slot: castello
     steps:
-      - uses: core/lease-task
       - run: npm test
       - uses: core/codex-sdk
       - await:

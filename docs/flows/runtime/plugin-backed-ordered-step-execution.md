@@ -9,7 +9,8 @@ Status: active
 This root flow captures the slice where selected-task jobs still run as one
 ordinary ordered step list inside the assigned worktree while `uses` may load
 checked-in local plugins or installed npm plugins directly from the declared
-flow policy.
+flow policy. The task lease and initial worktree assignment remain engine-owned
+runtime behavior rather than user-authored plugin steps.
 
 ```yaml
 kind: flow
@@ -24,7 +25,6 @@ jobs:
       mode: named
       slot: castello
     steps:
-      - uses: core/lease-task
       - uses: local/prepare-worktree
         with:
           command: npm test

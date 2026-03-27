@@ -7,8 +7,10 @@ Status: active
 # Ordered Worktree Step Execution
 
 This root flow captures the slice where one selected-task job executes one
-ordinary ordered step list inside its assigned worktree. Setup and cleanup stay
-in the checked-in step list rather than moving into special lifecycle hooks.
+ordinary ordered step list inside its assigned worktree. The engine acquires the
+task lease and resolves the worktree before the declared step list begins. Setup
+and cleanup stay in the checked-in step list rather than moving into special
+lifecycle hooks.
 
 ```yaml
 kind: flow
@@ -23,7 +25,6 @@ jobs:
       mode: named
       slot: castello
     steps:
-      - uses: core/lease-task
       - run: npm ci
       - uses: core/setup-worktree
       - uses: core/codex-sdk

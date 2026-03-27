@@ -3,6 +3,7 @@ Kind: contract
 Id: plugin-backed-ordered-step-execution
 Status: done
 Decided by:
+  - docs/decisions/runtime/engine-owned-task-leasing.md
   - docs/decisions/runtime/ordered-steps-over-worktree-lifecycle-hooks.md
   - docs/decisions/runtime/pluggable-step-plugins-and-signal-contracts.md
   - docs/decisions/runtime/job-and-step-execution-semantics.md
@@ -39,6 +40,8 @@ Root flow: docs/flows/runtime/plugin-backed-ordered-step-execution.md
   plugin directory that Pravaha may override through checked-in config.
 - Runtime support for loading `npm/<name>` plugins from installed package
   entrypoints.
+- Runtime support that keeps engine-owned lease acquisition outside the
+  plugin-backed `uses` surface.
 - Flow validation that checks plugin input contracts, forbids `with` when the
   referenced plugin omits a `with` schema, and restricts `await` to signal kinds
   emitted by plugins referenced in the same flow.
@@ -64,6 +67,7 @@ Root flow: docs/flows/runtime/plugin-backed-ordered-step-execution.md
   assigned worktree.
 - `local/<name>` and `npm/<name>` are resolved directly from the checked-in
   `uses` value without a second registry mapping layer.
+- Engine-owned lease acquisition is not represented as a `uses` plugin.
 - Plugins must export `default definePlugin({...})`.
 - `with` is optional in the plugin contract and forbidden in the flow when the
   referenced plugin omits it.
@@ -80,6 +84,7 @@ Root flow: docs/flows/runtime/plugin-backed-ordered-step-execution.md
   `definePlugin(...)` default contract.
 - Plugin-backed `uses` steps rely on a separate registry file or other
   indirection instead of the checked-in `uses` string.
+- Engine-owned task leasing still appears as a fake bundled plugin step.
 - `with` values fail late at runtime instead of during validation and flow
   interpretation.
 - `await` can reference signal kinds that no plugin in the same flow emits.

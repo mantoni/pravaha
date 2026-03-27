@@ -145,8 +145,9 @@ jobs:
 
 ## Ordered Step Execution In One Worktree
 
-Worktree policy selects assignment or reuse mode for the whole job. Ordinary
-steps then execute in the declared order inside that assigned worktree.
+Worktree policy selects assignment or reuse mode for the whole job. The engine
+acquires the task lease and resolves the assigned worktree before ordinary steps
+execute in the declared order inside that worktree.
 
 ```yaml
 jobs:
@@ -156,7 +157,6 @@ jobs:
       mode: named
       slot: castello
     steps:
-      - uses: core/lease-task
       - run: npm ci
       - uses: core/codex-sdk
       - run: npm test
@@ -166,6 +166,8 @@ jobs:
 
 In this slice:
 
+- Leasing and initial worktree assignment are engine-owned runtime behavior, not
+  ordinary `uses` steps.
 - `run` and `uses` are ordinary steps in the same ordered list.
 - There is no special `worktree.prepare` or `worktree.cleanup` step form.
 - Setup and cleanup are expressed as ordinary steps when the flow author wants

@@ -3,6 +3,7 @@ Kind: contract
 Id: job-level-worktree-policy
 Status: done
 Decided by:
+  - docs/decisions/runtime/engine-owned-task-leasing.md
   - docs/decisions/runtime/trigger-driven-codex-runtime.md
   - docs/decisions/runtime/job-and-step-execution-semantics.md
   - docs/decisions/runtime/mixed-runtime-graph-and-bindings.md
@@ -35,7 +36,8 @@ Root flow: docs/flows/runtime/job-level-worktree-policy.md
 - One job-level `worktree` policy surface in flow documents.
 - Validation for allowed worktree modes and job-scoped policy placement.
 - Runtime support for `ephemeral` and exact-slot `named` worktree modes.
-- Prepare and cleanup lifecycle hooks tied to the resolved job worktree policy.
+- Engine-owned lease acquisition and worktree preparation tied to the resolved
+  job worktree policy.
 - Resume behavior that reuses the exact recorded worktree assignment for the
   in-flight run.
 
@@ -72,8 +74,8 @@ Root flow: docs/flows/runtime/job-level-worktree-policy.md
 - Named worktree mode accepts ambiguous or missing slot names.
 - Resume loses the resolved worktree identity and restarts in a different
   workspace.
-- Prepare and cleanup semantics diverge between ephemeral and named worktrees
-  without being visible in flow policy.
+- Engine-owned lease or worktree preparation semantics diverge between ephemeral
+  and named worktrees without being visible in flow policy.
 
 ## Review Gate
 

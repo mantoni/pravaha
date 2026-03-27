@@ -8,7 +8,8 @@ Status: active
 
 This root flow captures the first interpreted reconciler slice. It stays inside
 the currently validated flow surface while the reconciler reads the checked-in
-contract flow through `pravaha reconcile`.
+contract flow through `pravaha reconcile`. The reconciler acquires the task
+lease and worktree assignment before the declared step list begins.
 
 ```yaml
 kind: flow
@@ -23,7 +24,6 @@ jobs:
     worktree:
       mode: ephemeral
     steps:
-      - uses: core/lease-task
       - uses: core/setup-worktree
       - uses: core/codex-sdk
       - await:
