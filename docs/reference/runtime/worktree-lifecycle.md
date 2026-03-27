@@ -12,8 +12,8 @@ This document captures the working model for reusable Pravaha worktrees.
 ## Core Rules
 
 - One leaseable document occupies one worktree at a time.
-- Checked-in flow policy declares worktree mode at job scope.
-- Worktrees may be named, long-lived, and reused across runs.
+- Checked-in flow policy declares workspace materialization at flow scope.
+- Worktrees may be ephemeral for one run or pooled for reuse across runs.
 - Reuse requires explicit prepare and cleanup work.
 
 ## Lifecycle
@@ -50,28 +50,39 @@ graph LR
 ## Reuse Scenarios
 
 - Ephemeral worktree: Created for one run and discarded afterward.
-- Named worktree: Reused as a slot such as `abbot` or `castello`.
 - Pooled worktree: Assigned dynamically from a bounded local pool.
+- Checkout shapes for `remote` and `bare` sources are separate workspace
+  materializations and are not part of the repo-backed worktree slice.
 
 ## Checked-In Policy
 
 ```yaml
-jobs:
-  implement_ready_tasks:
-    worktree:
-      mode: ephemeral
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: ephemeral
+    ref: main
 ```
 
 ```yaml
-jobs:
-  implement_ready_tasks:
-    worktree:
-      mode: named
-      slot: castello
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: pooled
+    ref: main
 ```
 
-- Declare worktree policy only at job scope.
-- `named` requires the exact slot name in the checked-in flow.
+- Declare workspace policy once at flow scope.
+- Repo-backed checked-in worktrees currently allow only `ephemeral` and `pooled`
+  modes.
 - Resume reuses the recorded resolved assignment instead of selecting again.
 
 ## Health Expectations

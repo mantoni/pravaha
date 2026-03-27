@@ -6,12 +6,9 @@ Status: active
 
 # Codex SDK Happy Path
 
-This root flow captures the intended single-task vertical slice for the first
-SDK-backed runtime contract. The hard-coded entrypoint may further narrow this
-to the first semantic `ready` task until the full query surface lands. The
-current executable entrypoint is `pravaha run-happy-path`. The engine acquires
-the task lease and prepares the worktree before these declared steps run, while
-project-specific setup remains an ordinary declared step.
+This root flow captures the checked-in happy-path runtime slice. The engine
+binds one flow-level workspace for the whole run and advances the happy path
+through explicit action jobs instead of an ordered step list.
 
 ```yaml
 kind: flow
@@ -19,27 +16,52 @@ id: codex-sdk-happy-path
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: ephemeral
+    ref: main
+
 on:
   task:
     where: $class == task and tracked_in == @document and status == ready
 
 jobs:
-  run_first_ready_task:
-    worktree:
-      mode: ephemeral
-    steps:
-      - run: npm ci
-      - uses: core/codex-sdk
-      - await:
-          $class == $signal and kind == worker_completed and subject == task
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == success
-        transition:
-          to: review
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == failure
-        transition:
-          to: blocked
+  prepare_workspace:
+    uses: core/run
+    with:
+      command: 'true'
+    next:
+      - if: ${{ result.exit_code == 0 }}
+        goto: implement_task
+      - goto: failed
+
+  implement_task:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: Implement the task in ${{ task.path }}.
+    next:
+      - if: ${{ result.outcome == "success" }}
+        goto: finalize_workspace
+      - goto: failed
+
+  finalize_workspace:
+    uses: core/run
+    with:
+      command: "printf ''"
+    next:
+      - if: ${{ result.exit_code == 0 }}
+        goto: done
+      - goto: failed
+
+  done:
+    end: success
+
+  failed:
+    end: failure
 ```

@@ -7,8 +7,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 # Validation Examples
 
-This document captures example validation cases for `.pravaha.json` and flow
-documents.
+This document captures example validation cases for `.pravaha.json` and state-
+machine flow documents.
 
 ## Valid Config Example
 
@@ -76,18 +76,42 @@ id: simple-task-flow
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: ephemeral
+    ref: main
+
 on:
   task:
     where: $class == task and tracked_in == @document and status == ready
 
 jobs:
-  implement_ready_tasks:
-    worktree:
-      mode: ephemeral
-    steps:
-      - uses: core/codex-exec
-      - await:
-          $class == $signal and kind == worker_completed and subject == task
+  implement:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: Implement the task in ${{ task.path }}.
+    next: test
+
+  test:
+    uses: core/run
+    with:
+      command: npm test
+    next:
+      - if: ${{ result.exit_code == 0 }}
+        goto: done
+      - goto: failed
+
+  done:
+    end: success
+
+  failed:
+    end: failure
 ```
 
 ## Invalid Flow Examples
@@ -100,16 +124,27 @@ id: invalid-missing-trigger
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: ephemeral
+    ref: main
+
 jobs:
   implement:
-    worktree:
-      mode: ephemeral
-    steps:
-      - uses: core/codex-exec
+    uses: core/agent
+    next: done
+
+  done:
+    end: success
 ```
 
-Invalid because the step uses a checked-in mutation shape outside the approved
-semantic set:
+Invalid because plugin-shaped mutation fields such as `update` are not part of
+the flow engine surface:
 
 ```yaml
 kind: flow
@@ -117,20 +152,31 @@ id: invalid-generic-update
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: ephemeral
+    ref: main
+
 on:
   task:
-    where: $class == task and tracked_in == @document
+    where: $class == task and tracked_in == @document and status == ready
 
 jobs:
   implement:
-    worktree:
-      mode: ephemeral
-    steps:
-      - uses: core/request-review
-        update:
-          target: task
-          set:
-            status: review
+    uses: core/approval
+    update:
+      target: task
+      set:
+        status: review
+    next: done
+
+  done:
+    end: success
 ```
 
 Invalid because `jobs.<name>.select` is no longer allowed:
@@ -141,17 +187,28 @@ id: invalid-job-select
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: ephemeral
+    ref: main
+
 on:
   task:
-    where: $class == task and tracked_in == @document
+    where: $class == task and tracked_in == @document and status == ready
 
 jobs:
   implement:
     select: $class == task and tracked_in == @document
-    worktree:
-      mode: ephemeral
-    steps:
-      - uses: core/codex-exec
+    uses: core/agent
+    next: done
+
+  done:
+    end: success
 ```
 
 Invalid because `on.<binding>.where` does not resolve to one durable class:
@@ -162,57 +219,81 @@ id: invalid-ambiguous-trigger
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: ephemeral
+    ref: main
+
 on:
   item:
     where: $class in [task, contract]
 
 jobs:
   implement:
-    worktree:
-      mode: ephemeral
-    steps:
-      - uses: core/codex-exec
+    uses: core/agent
+    next: done
+
+  done:
+    end: success
 ```
 
-Invalid because worktree is declared on a step instead of a job:
+Invalid because worktree policy moved to the flow-level `workspace` block:
 
 ```yaml
 kind: flow
-id: invalid-step-worktree
+id: invalid-job-workspace
 status: active
 scope: contract
 
 on:
   task:
-    where: $class == task and tracked_in == @document
-
-jobs:
-  implement:
-    worktree:
-      mode: ephemeral
-    steps:
-      - uses: core/codex-exec
-        worktree:
-          mode: named
-          slot: castello
-```
-
-Invalid because `named` worktree mode is missing the exact slot:
-
-```yaml
-kind: flow
-id: invalid-named-worktree
-status: active
-scope: contract
-
-on:
-  task:
-    where: $class == task and tracked_in == @document
+    where: $class == task and tracked_in == @document and status == ready
 
 jobs:
   implement:
     worktree:
       mode: named
-    steps:
-      - uses: core/codex-exec
+      slot: castello
+    uses: core/agent
+    next: done
+
+  done:
+    end: success
+```
+
+Invalid because repo-backed workspaces currently accept only `ephemeral` and
+`pooled` worktree modes:
+
+```yaml
+kind: flow
+id: invalid-workspace-mode
+status: active
+scope: contract
+
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: shared
+    ref: main
+
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
+jobs:
+  implement:
+    uses: core/agent
+    next: done
+
+  done:
+    end: success
 ```

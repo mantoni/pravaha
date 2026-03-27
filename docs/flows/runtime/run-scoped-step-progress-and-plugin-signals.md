@@ -6,10 +6,9 @@ Status: active
 
 # Run-Scoped Step Progress And Plugin Signals
 
-This root flow captures the slice where all ordered job steps share one
-persisted step-progress model. Plugin-backed steps use that same persisted
-position model and stay run-scoped when they emit through `context.emit(...)`
-instead of through a global signal bus.
+This root flow captures the slice where plugin-backed jobs emit structured
+results that later jobs in the same run may query and the runtime records
+progress strongly enough to resume from the current job.
 
 ```yaml
 kind: flow
@@ -17,28 +16,43 @@ id: run-scoped-step-progress-and-plugin-signals
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: pooled
+    ref: main
+
 on:
   task:
     where: $class == task and tracked_in == @document and status == ready
 
 jobs:
-  progress_and_emit_within_one_run:
-    worktree:
-      mode: named
-      slot: castello
-    steps:
-      - run: npm test
-      - uses: core/codex-sdk
-      - await:
-          $class == $signal and kind == worker_completed and subject == task
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == success
-        transition:
-          to: review
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == failure
-        transition:
-          to: blocked
+  prepare:
+    uses: core/run
+    with:
+      command: 'true'
+    next:
+      - if: ${{ result.exit_code == 0 }}
+        goto: implement
+      - goto: failed
+
+  implement:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: Implement the task in ${{ task.path }}.
+    next:
+      - if: ${{ result.outcome == "success" }}
+        goto: done
+      - goto: failed
+
+  done:
+    end: success
+
+  failed:
+    end: failure
 ```

@@ -8,7 +8,7 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 # End-To-End Walkthrough
 
 This document captures the intended happy-path execution model from contract to
-integration.
+integration for the state-machine flow surface.
 
 ## Scenario
 
@@ -23,13 +23,13 @@ integration.
 graph LR
   A["Contract with root flow"] --> B["Ready task"]
   B --> C["Reconcile trigger"]
-  C --> D["Lease task"]
-  D --> E["Assign worktree"]
-  E --> F["Prepare worktree"]
-  F --> G["Start Codex worker"]
-  G --> H["Emit $signal worker_completed"]
-  H --> I["Request review or integration action"]
-  I --> J["Project explicit task or contract state change"]
+  C --> D["Create durable job instance"]
+  D --> E["Materialize flow workspace"]
+  E --> F["Run first declared job"]
+  F --> G["Persist result and latest job outputs"]
+  G --> H["Evaluate next"]
+  H --> I["Advance to one successor job"]
+  I --> J["Reach terminal end"]
 ```
 
 ## Example Flow
@@ -40,26 +40,70 @@ id: walkthrough
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: ephemeral
+    ref: main
+
 on:
   task:
     where: $class == task and tracked_in == @document and status == ready
 
 jobs:
-  implement_ready_tasks:
-    worktree:
-      mode: ephemeral
-    steps:
-      - run: npm ci
-      - uses: core/codex-exec
-      - await:
-          $class == $signal and kind == worker_completed and subject == task
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == success
-        uses: core/request-review
-        transition:
-          target: task
-          status: review
+  implement:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: Implement the task in ${{ task.path }}.
+    next: test
+
+  test:
+    uses: core/run
+    with:
+      command: npm test
+      capture: [stdout, stderr]
+    next:
+      - if: ${{ result.exit_code == 0 }}
+        goto: review
+      - goto: fix
+
+  fix:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: |
+        The test run failed for ${{ task.path }}.
+
+        stdout:
+        ${{ jobs.test.outputs.stdout }}
+
+        stderr:
+        ${{ jobs.test.outputs.stderr }}
+    limits:
+      max-visits: 3
+    next: test
+
+  review:
+    uses: core/approval
+    with:
+      title: Review ${{ task.path }}
+      message: Approve or reject this task.
+      options: [approve, reject]
+    next:
+      - if: ${{ result.verdict == "approve" }}
+        goto: done
+      - goto: rejected
+
+  done:
+    end: success
+
+  rejected:
+    end: rejected
 ```
 
 ## State Split
@@ -69,23 +113,22 @@ jobs:
   "checked_in": [
     "contract status",
     "task status",
-    "review intent",
-    "merge intent"
+    "workspace policy",
+    "job graph"
   ],
   "machine_local": [
-    "lease ownership",
-    "worktree state",
-    "worker state",
-    "runtime signals"
+    "instance cursor",
+    "latest job outputs",
+    "visit counts",
+    "worktree materialization state"
   ]
 }
 ```
 
 ## Notes
 
-- The flow may continue at task scope or contract scope depending on later job
-  conditions.
-- Worktree assignment and preparation happen before the declared steps rather
-  than through a bundled `uses` step.
-- The runtime may be idle between triggers even though the shared workflow state
-  stays durable in git.
+- The first declared job is the entrypoint for each matched task instance.
+- The runtime evaluates `next` against the current visit through `result`.
+- Prior node data remains available through `jobs.<name>.outputs`.
+- Waiting for people or systems is expressed through plugins such as
+  `core/approval` rather than engine-level `await`.

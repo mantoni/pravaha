@@ -7,8 +7,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 # Pravaha Flow Examples
 
-This document captures illustrative Pravaha config and flow examples discussed
-while shaping the runtime model.
+This document captures illustrative state-machine flow examples for the checked-
+in runtime surface.
 
 ## Example Repo Config
 
@@ -33,7 +33,7 @@ while shaping the runtime model.
 }
 ```
 
-## Task Review Then Merge
+## Implement Then Review
 
 ```yaml
 kind: flow
@@ -41,166 +41,159 @@ id: task-reviewed-then-merge
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: ephemeral
+    ref: main
+
 on:
   task:
     where: $class == task and tracked_in == @document and status == ready
 
 jobs:
-  implement_ready_tasks:
-    worktree:
-      mode: ephemeral
-    steps:
-      - name: Install dependencies
-        run: npm ci
+  implement:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: Implement the task in ${{ task.path }}.
+    next: review
 
-      - name: Implement task
-        uses: core/codex-exec
+  review:
+    uses: core/approval
+    with:
+      title: Review ${{ task.path }}
+      message: Approve or request another revision.
+      options: [approve, revise]
+    next:
+      - if: ${{ result.verdict == "approve" }}
+        goto: maybe_commit
+      - goto: revise
 
-      - name: Wait for worker completion
-        await:
-          $class == $signal and kind == worker_completed and subject == task
+  revise:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: |
+        Address the latest review feedback for ${{ task.path }}.
 
-      - name: Request human review
-        if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == success
-        uses: core/request-review
-        with:
-          reviewer: human
-        transition:
-          target: task
-          status: review
+        ${{ jobs.review.outputs.comment }}
+    limits:
+      max-visits: 2
+    next: review
 
-      - name: Wait for review completion
-        await:
-          $class == $signal and kind == review_completed and subject == task
+  maybe_commit:
+    uses: core/git-status
+    next:
+      - if: ${{ result.dirty }}
+        goto: commit
+      - goto: done
 
-      - name: Enqueue merge
-        if:
-          $class == $signal and kind == review_completed and subject == task and
-          outcome == approved
-        uses: core/enqueue-merge
-        transition:
-          target: task
-          status: done
+  commit:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: Commit the current changes for ${{ task.path }}.
+    next: done
+
+  done:
+    end: success
 ```
 
-## Contract-Level Review After Task Work
+## Implement Then Handoff
 
 ```yaml
 kind: flow
-id: feature-branch-review
+id: integration-handoff
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: pooled
+    ref: main
+
 on:
   task:
     where: $class == task and tracked_in == @document and status == ready
 
 jobs:
-  implement_ready_tasks:
-    worktree:
-      mode: named
-      slot: castello
-    steps:
-      - run: npm ci
-      - uses: core/codex-exec
-      - await:
-          $class == $signal and kind == worker_completed and subject == task
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == success
-        transition:
-          target: task
-          status: done
+  implement:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: Implement the task in ${{ task.path }}.
+    next: test
 
-  review_feature:
-    needs: [implement_ready_tasks]
-    if:
-      none($class == task and tracked_in == @document and status not in [done,
-      dropped])
-    steps:
-      - name: Request feature review
-        uses: core/request-review
-        with:
-          reviewer: human
-        transition:
-          target: document
-          status: review
+  test:
+    uses: core/run
+    with:
+      command: npm test
+      capture: [stdout, stderr]
+    next:
+      - if: ${{ result.exit_code == 0 }}
+        goto: handoff
+      - goto: fix
+
+  fix:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: |
+        The tests failed for ${{ task.path }}.
+
+        stdout:
+        ${{ jobs.test.outputs.stdout }}
+
+        stderr:
+        ${{ jobs.test.outputs.stderr }}
+    limits:
+      max-visits: 3
+    next: test
+
+  handoff:
+    uses: core/flow-dispatch
+    with:
+      flow: integration
+      wait: false
+      inputs:
+        task_path: ${{ task.path }}
+        ref: ${{ git.head }}
+    next: done
+
+  done:
+    end: success
 ```
-
-## Runtime Query Pattern
-
-The same query language can address durable workflow state and machine-local
-runtime state.
-
-```yaml
-on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
-
-jobs:
-  implement_ready_tasks:
-    worktree:
-      mode: ephemeral
-    steps:
-      - uses: core/codex-exec
-      - await:
-          $class == $signal and kind == worker_completed and subject == task
-```
-
-## Ordered Step Execution In One Worktree
-
-Worktree policy selects assignment or reuse mode for the whole job. The engine
-acquires the task lease and resolves the assigned worktree before ordinary steps
-execute in the declared order inside that worktree.
-
-```yaml
-on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
-
-jobs:
-  implement_ready_tasks:
-    worktree:
-      mode: named
-      slot: castello
-    steps:
-      - run: npm ci
-      - uses: core/codex-sdk
-      - run: npm test
-      - await:
-          $class == $signal and kind == worker_completed and subject == task
-```
-
-In this slice:
-
-- Leasing and initial worktree assignment are engine-owned runtime behavior, not
-  ordinary `uses` steps.
-- Preparing the assigned worktree is also engine-owned runtime behavior rather
-  than a bundled step.
-- `run` and `uses` are ordinary steps in the same ordered list.
-- There is no special `worktree.prepare` or `worktree.cleanup` step form.
-- Setup and cleanup are expressed as ordinary steps when the flow author wants
-  them.
-- A failing step halts the job and leaves the assigned worktree in place for
-  operator follow-up.
 
 ## Flow Shape Summary
 
 ```json
 {
-  "top_level_keys": ["kind", "id", "status", "scope", "on", "jobs"],
-  "job_keys": ["needs", "if", "worktree", "steps"],
-  "step_keys": [
-    "name",
-    "uses",
-    "run",
-    "with",
-    "if",
-    "await",
-    "transition",
-    "relate"
+  "top_level_keys": [
+    "kind",
+    "id",
+    "status",
+    "scope",
+    "workspace",
+    "on",
+    "jobs"
+  ],
+  "job_keys": ["uses", "with", "limits", "next", "end"],
+  "runtime_bindings": ["result", "jobs.<name>.outputs", "task", "git"],
+  "invariants": [
+    "The first declared job is the entrypoint.",
+    "Each visit chooses exactly one next job or terminates with end.",
+    "If no next branch matches, the flow fails implicitly.",
+    "jobs.<name>.outputs resolves to the latest completed visit."
   ]
 }
 ```

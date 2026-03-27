@@ -6,12 +6,9 @@ Status: active
 
 # Strict Runtime Resume
 
-This root flow captures the strict runtime persistence and manual resume slice.
-It stays within the current validated flow surface while the runtime blocks new
-reconcile work whenever unresolved local state exists and resumes through
-`pravaha resume`. Lease acquisition still happens before declared steps and is
-reused from the persisted runtime record on resume. Worktree preparation also
-stays on the engine side of that boundary.
+This root flow captures the slice where unresolved runs resume from the exact
+recorded job node and keep the same selected task, workspace, and next-branch
+contract.
 
 ```yaml
 kind: flow
@@ -19,26 +16,45 @@ id: strict-runtime-resume
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: pooled
+    ref: main
+
 on:
   task:
     where: $class == task and tracked_in == @document and status == ready
 
 jobs:
-  reconcile_or_resume_first_ready_task:
-    worktree:
-      mode: ephemeral
-    steps:
-      - uses: core/codex-sdk
-      - await:
-          $class == $signal and kind == worker_completed and subject == task
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == success
-        transition:
-          to: review
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == failure
-        transition:
-          to: blocked
+  implement:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: Implement the task in ${{ task.path }}.
+    next:
+      - if: ${{ result.outcome == "success" }}
+        goto: done
+      - goto: retry
+
+  retry:
+    uses: core/run
+    with:
+      command: printf ''
+    limits:
+      max-visits: 2
+    next:
+      - if: ${{ result.exit_code == 0 }}
+        goto: done
+      - goto: failed
+
+  done:
+    end: success
+
+  failed:
+    end: failure
 ```

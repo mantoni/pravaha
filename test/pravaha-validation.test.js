@@ -12,15 +12,33 @@ import { validateRepo } from '../lib/pravaha.js';
 it('validates flow semantic references against the repo config', async () => {
   const temp_directory = await createFixtureRepo({
     flow_yaml: [
+      'workspace:',
+      '  type: git.workspace',
+      '  source:',
+      '    kind: repo',
+      '    id: app',
+      '  materialize:',
+      '    kind: worktree',
+      '    mode: ephemeral',
+      '    ref: main',
       'on:',
       '  task:',
       '    where: $class == task and tracked_in == @document',
       'jobs:',
       '  review-task:',
-      '    steps:',
-      '      - transition:',
-      '          target: task',
-      '          status: review',
+      '    uses: core/approval',
+      '    with:',
+      '      title: Review',
+      '      message: Approve the task.',
+      '      options: [approve, reject]',
+      '    next:',
+      '      - if: ${{ result.verdict == "approve" }}',
+      '        goto: done',
+      '      - goto: rejected',
+      '  done:',
+      '    end: success',
+      '  rejected:',
+      '    end: rejected',
       '',
     ].join('\n'),
   });
@@ -38,13 +56,26 @@ it('validates flow semantic references against the repo config', async () => {
 it('reports unknown semantic roles and states in flow documents', async () => {
   const temp_directory = await createFixtureRepo({
     flow_yaml: [
+      'workspace:',
+      '  type: git.workspace',
+      '  source:',
+      '    kind: repo',
+      '    id: app',
+      '  materialize:',
+      '    kind: worktree',
+      '    mode: ephemeral',
+      '    ref: main',
       'on:',
       '  lease:',
-      '    where: $class == worker and tracked_in == @document',
+      '    where: $class == worker and tracked_in == @document and status == ready',
       'jobs:',
       '  lease-task:',
-      '    steps:',
-      '      - transition: waiting',
+      '    uses: core/run',
+      '    with:',
+      '      command: npm test',
+      '    next: done',
+      '  done:',
+      '    end: success',
       '',
     ].join('\n'),
   });
@@ -62,11 +93,6 @@ it('reports unknown semantic roles and states in flow documents', async () => {
         file_path: flow_file_path,
         message:
           'Unknown semantic role "worker" in select query. in flow.on.lease.where.',
-      },
-      {
-        file_path: flow_file_path,
-        message:
-          'Unknown semantic state "waiting" at flow.jobs.lease-task.steps[0].transition.',
       },
     ]);
   } finally {
@@ -267,13 +293,26 @@ function createFlowDocument(flow_yaml) {
  */
 function createDefaultFlowYaml() {
   return [
+    'workspace:',
+    '  type: git.workspace',
+    '  source:',
+    '    kind: repo',
+    '    id: app',
+    '  materialize:',
+    '    kind: worktree',
+    '    mode: ephemeral',
+    '    ref: main',
     'on:',
     '  task:',
     '    where: $class == task and tracked_in == @document',
     'jobs:',
     '  smoke:',
-    '    steps:',
-    '      - run: npm run all',
+    '    uses: core/run',
+    '    with:',
+    '      command: npm run all',
+    '    next: done',
+    '  done:',
+    '    end: success',
     '',
   ].join('\n');
 }

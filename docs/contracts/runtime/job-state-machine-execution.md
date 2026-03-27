@@ -37,14 +37,14 @@ on:
 
 jobs:
   implement:
-    uses: core/agent@v1
+    uses: core/agent
     with:
       provider: codex-sdk
       prompt: Implement ${{ task.path }}.
     next: test
 
   test:
-    uses: core/run@v1
+    uses: core/run
     with:
       command: npm test
     next:
@@ -53,7 +53,7 @@ jobs:
       - goto: fix
 
   fix:
-    uses: core/agent@v1
+    uses: core/agent
     limits:
       max-visits: 3
     next: test

@@ -7,7 +7,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 # Runtime Node Model
 
-This document captures the working model for the mixed runtime graph.
+This document captures the working model for the mixed runtime graph under the
+state-machine engine.
 
 ## Reserved Runtime Classes
 
@@ -25,21 +26,27 @@ This document captures the working model for the mixed runtime graph.
 
 ## Roles
 
-| Class            | Role                                                                       |
-| ---------------- | -------------------------------------------------------------------------- |
-| `$flow_instance` | Local runtime state for one flow execution rooted at one durable work item |
-| `$lease`         | Local ownership record for a leaseable document                            |
-| `$worktree`      | Local execution slot and its lifecycle state                               |
-| `$worker`        | One supervised local Codex run                                             |
-| `$signal`        | Runtime event emitted by steps, workers, reviews, or integrations          |
+| Class            | Role                                                                     |
+| ---------------- | ------------------------------------------------------------------------ |
+| `$flow_instance` | Local runtime state for one durable job chain rooted at one durable item |
+| `$lease`         | Local ownership record for a leaseable document                          |
+| `$worktree`      | Local workspace materialization and reuse state                          |
+| `$worker`        | One supervised local agent or command execution                          |
+| `$signal`        | Runtime event emitted by plugins, approvals, or integrations             |
 
 ## Expected Shape
 
 ```json
 {
-  "$flow_instance": ["root_document", "flow_document", "state"],
+  "$flow_instance": [
+    "root_document",
+    "flow_document",
+    "current_job_name",
+    "job_outputs",
+    "visit_counts"
+  ],
   "$lease": ["subject", "owner", "state"],
-  "$worktree": ["name", "path", "state"],
+  "$worktree": ["name", "path", "state", "mode"],
   "$worker": ["subject", "worktree", "state", "backend"],
   "$signal": ["kind", "subject", "outcome", "emitted_at"]
 }
@@ -47,17 +54,21 @@ This document captures the working model for the mixed runtime graph.
 
 ## Query Model
 
-- Flow `if` and `await` expressions may query runtime nodes and durable workflow
-  documents together.
-- Runtime nodes are machine-local and transient even though they participate in
-  the same query model.
-- `jobs.<name>.select` still fans out only over durable workflow documents.
+- Root-level `on.<binding>.where` still selects the durable document that owns
+  one flow instance.
+- `next` expressions evaluate the current visit through `result`.
+- Historical node data is exposed through `jobs.<name>.outputs`.
+- Runtime nodes remain machine-local even though they can participate in the
+  same query model as durable workflow documents.
 
-## Example Query
+## Example Branch
 
 ```yaml
-await: $class == $signal and kind == worker_completed and subject == task
+next:
+  - if: ${{ result.exit_code == 0 }}
+    goto: done
+  - goto: failed
 ```
 
-This expression uses a runtime node to observe progress for one durable work
-item.
+This expression branches on the current job visit while the engine persists the
+latest completed outputs for future jobs.

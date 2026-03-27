@@ -1,44 +1,56 @@
 ---
 Kind: flow
 Id: runtime-node-lifecycle
-Status: proposed
+Status: active
 ---
 
 # Runtime Node Lifecycle
 
-This root flow captures the next slice where the runtime-node lifecycle becomes
-explicit enough for flows to query the current run predictably through the mixed
-graph: active runtime signals stay visible for the whole unresolved run, while
-only the minimal terminal snapshot remains after completion.
+This root flow captures the slice where reserved runtime nodes keep a stable
+view of the current run and its retained terminal snapshot while the checked-in
+flow surface advances through explicit job nodes.
 
 ```yaml
 kind: flow
 id: runtime-node-lifecycle
-status: proposed
+status: active
 scope: contract
+
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: pooled
+    ref: main
 
 on:
   task:
     where: $class == task and tracked_in == @document and status == ready
 
 jobs:
-  implement_ready_tasks:
-    worktree:
-      mode: named
-      slot: castello
-    steps:
-      - run: npm ci
-      - uses: core/codex-sdk
-      - await:
-          $class == $signal and kind == worker_completed and subject == task
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == success
-        transition:
-          to: review
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == failure
-        transition:
-          to: blocked
+  implement:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: Implement the task in ${{ task.path }}.
+    next:
+      - if: ${{ result.outcome == "success" }}
+        goto: inspect_workspace
+      - goto: failed
+
+  inspect_workspace:
+    uses: core/git-status
+    next:
+      - if: ${{ result.dirty == true }}
+        goto: done
+      - goto: failed
+
+  done:
+    end: success
+
+  failed:
+    end: failure
 ```

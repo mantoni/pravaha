@@ -6,10 +6,9 @@ Status: active
 
 # Job-Level Worktree Policy
 
-This root flow captures the slice where checked-in flow policy declares the
-worktree assignment and reuse policy at job scope. It models both disposable and
-exact-slot named worktrees while keeping setup inside the ordinary declared step
-list.
+This root flow captures the migrated slice where checked-in flows express
+disposable and reusable pooled worktrees through one flow-level workspace
+contract rather than through job-local policy.
 
 ```yaml
 kind: flow
@@ -17,28 +16,34 @@ id: job-level-worktree-policy
 status: active
 scope: contract
 
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: pooled
+    ref: main
+
 on:
   task:
     where: $class == task and tracked_in == @document and status == ready
 
 jobs:
-  implement_ready_tasks:
-    worktree:
-      mode: named
-      slot: castello
-    steps:
-      - run: npm ci
-      - uses: core/codex-sdk
-      - await:
-          $class == $signal and kind == worker_completed and subject == task
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == success
-        transition:
-          to: review
-      - if:
-          $class == $signal and kind == worker_completed and subject == task and
-          outcome == failure
-        transition:
-          to: blocked
+  implement:
+    uses: core/agent
+    with:
+      provider: codex-sdk
+      prompt: Implement the task in ${{ task.path }}.
+    next:
+      - if: ${{ result.outcome == "success" }}
+        goto: done
+      - goto: failed
+
+  done:
+    end: success
+
+  failed:
+    end: failure
 ```
