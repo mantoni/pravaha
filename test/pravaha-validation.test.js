@@ -147,7 +147,7 @@ it('validates state-machine flow documents against the repo config', async () =>
   }
 });
 
-it('rejects mixed legacy and state-machine flow surfaces', async () => {
+it('rejects legacy step-based flow fields after the breaking migration', async () => {
   const temp_directory = await createFixtureRepo({
     flow_yaml: createMixedFlowYaml(),
   });
@@ -163,7 +163,7 @@ it('rejects mixed legacy and state-machine flow surfaces', async () => {
     expect(validation_result.diagnostics).toContainEqual({
       file_path: flow_file_path,
       message:
-        'State-machine jobs must not be mixed with legacy step-based jobs in the same flow.',
+        'Expected flow.jobs.legacy_review to define a supported state-machine job.',
     });
   } finally {
     await rm(temp_directory, { force: true, recursive: true });
