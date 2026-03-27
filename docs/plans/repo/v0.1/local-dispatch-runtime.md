@@ -5,6 +5,7 @@ Status: active
 Depends on:
   - docs/contracts/runtime/local-dispatch-runtime.md
   - docs/decisions/runtime/dispatcher-owned-local-worker-pool.md
+  - docs/decisions/runtime/automatic-follower-failover.md
   - docs/decisions/runtime/flow-trigger-entrypoints-and-instance-binding.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
   - docs/reference/runtime/pravaha-runtime-architecture.md
@@ -44,6 +45,8 @@ Depends on:
   no dispatcher is alive.
 - The dispatcher rescans authoritative state on startup and takeover and
   rediscovers unfinished flow instances safely.
+- Connected followers remain in the worker pool across dispatcher loss and one
+  of them can take over leadership automatically.
 - Connected workers receive concrete assignments from the dispatcher instead of
   running the old local select loop themselves.
 - Worktree and runtime state remain queryable and do not allow duplicate active

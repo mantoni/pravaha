@@ -5,6 +5,7 @@ Status: proposed
 Decided by:
   - docs/decisions/runtime/flow-trigger-entrypoints-and-instance-binding.md
   - docs/decisions/runtime/dispatcher-owned-local-worker-pool.md
+  - docs/decisions/runtime/automatic-follower-failover.md
 Depends on:
   - docs/contracts/runtime/ordered-worktree-step-execution.md
   - docs/contracts/runtime/runtime-node-lifecycle.md
@@ -41,6 +42,8 @@ Depends on:
   state and assigns them to available workers.
 - Runtime persistence that makes worker takeover and rediscovery safe after
   notification loss, dispatcher failure, or worker failure.
+- Connected followers that lose the dispatcher re-enter election and either
+  become the new dispatcher or reconnect to the new leader.
 
 ## Side Effects
 
@@ -63,10 +66,14 @@ Depends on:
   system is idle.
 - A worker may supervise at most one active assignment at a time in the first
   slice.
+- Dispatcher loss does not require operators to restart surviving followers
+  before takeover can happen.
 
 ## Failure Modes
 
 - Dispatcher takeover fails to rediscover pending flow instances after a crash.
+- Surviving followers exit instead of re-entering leader election after
+  dispatcher loss.
 - Two workers believe they own the same flow instance or worktree assignment.
 - A lost notification leaves work stranded until a later manual dispatch or
   worker restart.
@@ -85,6 +92,8 @@ Depends on:
   which worker is leader.
 - Dispatcher takeover rescans and redispatches durable pending work after a
   crash.
+- A connected follower can take over leadership after dispatcher shutdown
+  without requiring a manual worker restart.
 - The runtime keeps one active assignment per worker and avoids duplicate
   ownership of a durable flow instance.
 - `npm run all` passes.
