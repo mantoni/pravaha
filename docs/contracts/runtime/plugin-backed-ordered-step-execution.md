@@ -15,7 +15,6 @@ Depends on:
   - docs/contracts/runtime/single-flight-scheduler-depth.md
   - docs/contracts/runtime/strict-runtime-resume.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
-Root flow: docs/flows/runtime/plugin-backed-ordered-step-execution.md
 ---
 
 # Plugin-Backed Ordered Step Execution

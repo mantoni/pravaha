@@ -84,7 +84,7 @@ it('reports unknown semantic roles and states in flow documents', async () => {
     const validation_result = await validateRepo(temp_directory);
     const flow_file_path = join(
       temp_directory,
-      'docs/flows/runtime/test-flow.md',
+      'docs/flows/runtime/test-flow.yaml',
     );
 
     expect(validation_result.checked_flow_count).toBe(1);
@@ -156,7 +156,7 @@ it('rejects legacy step-based flow fields after the breaking migration', async (
     const validation_result = await validateRepo(temp_directory);
     const flow_file_path = join(
       temp_directory,
-      'docs/flows/runtime/test-flow.md',
+      'docs/flows/runtime/test-flow.yaml',
     );
 
     expect(validation_result.checked_flow_count).toBe(1);
@@ -245,7 +245,7 @@ async function createFixtureRepo(options = {}) {
   const temp_directory = await mkdtemp(join(tmpdir(), 'pravaha-validation-'));
   const flow_file_path = join(
     temp_directory,
-    'docs/flows/runtime/test-flow.md',
+    'docs/flows/runtime/test-flow.yaml',
   );
   const patram_config_path = join(temp_directory, '.patram.json');
   const pravaha_config_path = join(temp_directory, 'pravaha.json');
@@ -272,20 +272,7 @@ async function createFixtureRepo(options = {}) {
  * @returns {string}
  */
 function createFlowDocument(flow_yaml) {
-  return [
-    '---',
-    'Kind: flow',
-    'Id: test-flow',
-    'Status: active',
-    '---',
-    '',
-    '# Test Flow',
-    '',
-    '```yaml',
-    flow_yaml.trimEnd(),
-    '```',
-    '',
-  ].join('\n');
+  return flow_yaml.trimEnd().concat('\n');
 }
 
 /**
@@ -403,7 +390,7 @@ async function expectValidationDiagnostic(flow_yaml, expected_message) {
     const validation_result = await validateRepo(temp_directory);
     const flow_file_path = join(
       temp_directory,
-      'docs/flows/runtime/test-flow.md',
+      'docs/flows/runtime/test-flow.yaml',
     );
 
     expect(validation_result.diagnostics).toContainEqual({

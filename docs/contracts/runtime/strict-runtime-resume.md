@@ -13,7 +13,6 @@ Depends on:
   - docs/reference/runtime/pravaha-runtime-architecture.md
   - docs/reference/runtime/runtime-node-model.md
   - docs/reference/runtime/end-to-end-walkthrough.md
-Root flow: docs/flows/runtime/strict-runtime-resume.md
 ---
 
 # Strict Runtime Resume

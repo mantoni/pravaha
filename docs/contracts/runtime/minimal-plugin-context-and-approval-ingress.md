@@ -11,7 +11,6 @@ Depends on:
   - docs/contracts/runtime/run-scoped-step-progress-and-plugin-signals.md
   - docs/contracts/runtime/strict-runtime-resume.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
-Root flow: docs/flows/runtime/minimal-plugin-context-and-approval-ingress.md
 ---
 
 # Minimal Plugin Context And Approval Ingress

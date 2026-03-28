@@ -14,7 +14,6 @@ Depends on:
   - docs/reference/runtime/worktree-lifecycle.md
   - docs/reference/runtime/pravaha-flow-examples.md
   - docs/reference/runtime/validation-examples.md
-Root flow: docs/flows/runtime/job-level-worktree-policy.md
 ---
 
 # Job-Level Worktree Policy

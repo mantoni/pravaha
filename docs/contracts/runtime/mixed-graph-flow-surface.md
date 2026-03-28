@@ -14,7 +14,6 @@ Depends on:
   - docs/reference/runtime/runtime-node-model.md
   - docs/reference/runtime/pravaha-flow-examples.md
   - docs/reference/runtime/validation-examples.md
-Root flow: docs/flows/runtime/mixed-graph-flow-surface.md
 ---
 
 # Mixed-Graph Flow Surface

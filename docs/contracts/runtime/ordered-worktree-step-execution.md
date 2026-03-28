@@ -14,7 +14,6 @@ Depends on:
   - docs/contracts/runtime/strict-runtime-resume.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
   - docs/reference/runtime/pravaha-flow-examples.md
-Root flow: docs/flows/runtime/ordered-worktree-step-execution.md
 ---
 
 # Ordered Worktree Step Execution

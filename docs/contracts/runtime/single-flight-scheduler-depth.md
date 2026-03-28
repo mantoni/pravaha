@@ -11,7 +11,6 @@ Depends on:
   - docs/contracts/runtime/strict-runtime-resume.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
   - docs/reference/runtime/pravaha-flow-examples.md
-Root flow: docs/flows/runtime/single-flight-scheduler-depth.md
 ---
 
 # Single-Flight Scheduler Depth

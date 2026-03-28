@@ -13,7 +13,6 @@ Depends on:
   - docs/reference/runtime/pravaha-runtime-architecture.md
   - docs/reference/runtime/end-to-end-walkthrough.md
   - docs/reference/runtime/codex-backend-evaluation.md
-Root flow: docs/flows/runtime/codex-sdk-happy-path.md
 ---
 
 # Codex SDK Happy Path

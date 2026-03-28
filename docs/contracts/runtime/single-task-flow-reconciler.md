@@ -12,7 +12,6 @@ Depends on:
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
   - docs/reference/runtime/pravaha-runtime-architecture.md
   - docs/reference/runtime/end-to-end-walkthrough.md
-Root flow: docs/flows/runtime/single-task-flow-reconciler.md
 ---
 
 # Single-Task Flow Reconciler
