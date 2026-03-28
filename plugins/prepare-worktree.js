@@ -11,7 +11,6 @@ export default definePlugin({
   with: z.object({
     command: z.string(),
   }),
-  emits: {},
   /**
    * @param {{
    *   with?: unknown,

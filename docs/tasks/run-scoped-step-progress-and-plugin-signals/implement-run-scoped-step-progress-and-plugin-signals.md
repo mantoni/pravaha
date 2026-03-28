@@ -10,16 +10,11 @@ Decided by:
   - docs/decisions/runtime/generic-step-progress-persistence.md
 ---
 
-# Implement Run-Scoped Step Progress And Plugin Signals
+# Implement Run-Scoped Step Progress
 
 - Persist the current ordered-step position for all step kinds in the runtime
   record.
 - Resume unresolved runs from the first incomplete step without re-running
   already completed earlier steps for the same run.
-- Add plugin `context.emit(kind, payload)` runtime enforcement against declared
-  `emits` schemas.
-- Complete plugin steps on the first successful emitted signal.
-- Keep emitted signals limited to the current run and its bound workflow
-  subjects.
 - Expose one stable run-scoped plugin idempotency identifier without persisting
   plugin-private observer state.

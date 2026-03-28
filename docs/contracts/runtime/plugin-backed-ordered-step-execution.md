@@ -30,7 +30,7 @@ Depends on:
 - The completed ordered worktree step execution slice.
 - The accepted trigger-driven runtime and job execution semantics decisions.
 - Root flows that declare plugin-backed `uses`, optional plugin `with` inputs,
-  and `await` queries over flow-local emitted runtime signals.
+  and `next` branches over current plugin results and prior job outputs.
 
 ## Outputs
 
@@ -41,9 +41,8 @@ Depends on:
   entrypoints.
 - Runtime support that keeps engine-owned lease acquisition outside the
   plugin-backed `uses` surface.
-- Flow validation that checks plugin input contracts, forbids `with` when the
-  referenced plugin omits a `with` schema, and restricts `await` to signal kinds
-  emitted by plugins referenced in the same flow.
+- Flow validation that checks plugin input contracts and forbids `with` when the
+  referenced plugin omits a `with` schema.
 - Runtime support that executes plugin-backed `uses` steps in declared order and
   keeps the assigned worktree in place on first failure.
 
@@ -53,8 +52,8 @@ Depends on:
   literal `uses` value.
 - Repo-local plugin policy may move by changing checked-in Pravaha config rather
   than machine-local runtime state.
-- Runtime records may retain flow-local plugin-emitted signal payloads strongly
-  enough for the current run to satisfy `await` and transition evaluation.
+- Runtime records retain typed plugin result values strongly enough for current
+  `next` evaluation and resume.
 
 ## Invariants
 
@@ -70,10 +69,7 @@ Depends on:
 - Plugins must export `default definePlugin({...})`.
 - `with` is optional in the plugin contract and forbidden in the flow when the
   referenced plugin omits it.
-- `emits` is required in the plugin contract as a map from signal kind to Zod
-  payload schema.
-- `await` validation stays flow-local and may reference only signal kinds
-  emitted by plugins referenced in the same flow.
+- Plugins do not declare `emits` signal schemas.
 - The runtime stops on the first failing ordered step and leaves the worktree
   as-is.
 
@@ -87,7 +83,6 @@ Depends on:
   bundled plugin step.
 - `with` values fail late at runtime instead of during validation and flow
   interpretation.
-- `await` can reference signal kinds that no plugin in the same flow emits.
 - Ordered step execution regresses into special worktree lifecycle phases or
   starts cleaning worktrees automatically after failure.
 
@@ -98,8 +93,6 @@ Depends on:
 - Invalid plugin exports fail clearly during validation or interpretation.
 - Plugin `with` inputs are validated against the declared Zod schema.
 - Flows reject `with` when the referenced plugin omits a `with` schema.
-- Flows reject `await` signal kinds that no referenced plugin in the same flow
-  emits.
 - Ordered task-step execution still stops on first failure without introducing
   worktree lifecycle hooks.
 - Existing non-plugin-backed flows keep working where this slice still intends

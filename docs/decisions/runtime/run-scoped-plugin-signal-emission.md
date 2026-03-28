@@ -1,40 +1,25 @@
 ---
 Kind: decision
 Id: run-scoped-plugin-signal-emission
-Status: accepted
+Status: superseded
 Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 ---
 
 # Run-Scoped Plugin Signal Emission
 
-- Treat plugin-backed interaction and observation as run-scoped in `v0.1`.
-- Allow plugins to emit only signal kinds they declare in their own `emits`
-  contract.
-- Limit plugin-emitted signals to the current run and its bound workflow
-  subjects.
-- Expose signal production to plugins through
-  `await context.emit(kind, payload)`.
-- Provide a stable run-scoped identifier on plugin context for use as an
-  idempotency key.
-- Require plugins to manage their own idempotency and any private observer
-  state.
-- Do not persist plugin-private observer state in the core runtime.
-- Keep local observation such as file watching plugin-owned instead of exposing
-  a broad observer API on plugin context in `v0.1`.
-- Treat git hooks as one wake or ingress path into Pravaha rather than as a
-  separate plugin observer substrate.
-- Tear down the plugin step lifecycle after the first emitted signal for that
-  run.
+- Pravaha no longer exposes plugin signal emission in `v0.1`.
+- Plugins do not declare `emits` schemas.
+- Plugins do not receive `context.emit(...)`.
+- Typed plugin result values remain the one flow-visible output surface for a
+  completed job visit.
+- Persistent waits stay on explicit plugin helpers such as
+  `context.requestApproval()`.
 
 ## Rationale
 
-- Run-scoped signal emission keeps flow progression auditable and avoids
-  cross-flow coupling through arbitrary plugin events.
-- A stable idempotency key gives plugins a practical way to tolerate retries and
-  restarts without forcing plugin-private state into the core runtime.
-- Keeping plugin-private observer state out of the runtime preserves a clean
-  plugin boundary and avoids premature observer persistence machinery.
-- Keeping observation plugin-owned avoids growing the `context` API before the
-  real local-integration needs are proven.
-- First-signal teardown gives the runtime one simple completion rule for
-  interaction plugins without needing plugin-specific terminal-signal metadata.
+- The state-machine runtime already evaluates `next` from job result values and
+  prior job outputs.
+- Removing plugin signal emission avoids two competing output models for one job
+  visit.
+- Approval remains explicit without retaining a second signal-oriented runtime
+  contract.

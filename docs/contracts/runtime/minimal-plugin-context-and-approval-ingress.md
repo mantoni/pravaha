@@ -35,8 +35,7 @@ Depends on:
 
 - A curated stable plugin `context` contract limited to `run_id`,
   `repo_directory`, `worktree_path`, parsed `with`, bound `document` and `task`
-  metadata when available, existing `emit(kind, payload)` support,
-  `dispatchFlow({...})`, and a console helper.
+  metadata when available, `dispatchFlow({...})`, and a console helper.
 - One built-in pending interaction primitive on plugin `context`:
   `await context.requestApproval()`.
 - One built-in CLI ingress path: `pravaha approve --token <run_id>`.
@@ -62,6 +61,8 @@ Depends on:
   `context`.
 - Pravaha does not expose a file-watch API or a broad observer API on plugin
   `context`.
+- Pravaha does not expose `context.emit(...)` or plugin signal schemas in this
+  slice.
 - Pravaha does not expose a general subprocess or process-launch API on plugin
   `context`.
 - `context.requestApproval()` is argument-free in `v0.1`.

@@ -23,7 +23,6 @@ export interface CorePluginContext<TWith> {
     options: DispatchFlowOptions,
   ) => Promise<Record<string, unknown>>;
   document?: BindingTarget;
-  emit: (signal_kind: string, payload: unknown) => Promise<void>;
   repo_directory: string;
   requestApproval: () => Promise<void>;
   run_id: string;

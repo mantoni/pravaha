@@ -34,7 +34,7 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
   outputs of previously visited jobs.
 - Define `jobs.<name>.outputs` as the latest completed visit for that job in the
   current flow instance.
-- Keep plugin-emitted properties typed and machine-readable so validation and
+- Keep plugin result properties typed and machine-readable so validation and
   `next` evaluation can reason over the checked-in flow without plugin-specific
   ad hoc conventions.
 - Remove engine-level `await`, `transition`, and `relate` from flows migrated to

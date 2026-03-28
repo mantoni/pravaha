@@ -14,7 +14,6 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 - Expose parsed plugin `with` input.
 - Expose current bound workflow documents through `document` and `task` when
   those bindings exist for the run.
-- Expose `await context.emit(kind, payload)` for run-scoped signal production.
 - Expose `await context.dispatchFlow({...})` for runtime-native downstream flow
   dispatch.
 - Expose a console helper for operator-facing output.

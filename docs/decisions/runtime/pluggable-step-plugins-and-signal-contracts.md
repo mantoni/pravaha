@@ -5,7 +5,7 @@ Status: accepted
 Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 ---
 
-# Pluggable Step Plugins And Signal Contracts
+# Pluggable Step Plugins And Public Contracts
 
 - Make `uses` step implementations pluggable in `v0.1`.
 - Resolve `uses: local/<name>` from a standard repo-local plugin directory that
@@ -21,17 +21,11 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 - Require each plugin to declare a machine-readable input contract through a Zod
   `with` schema or omit `with` entirely, in which case the flow may not provide
   `with` for that plugin.
-- Require each plugin to declare emitted signal kinds as a map from signal name
-  to Zod payload schema.
 - Require plugin runtime behavior to live in `async run(context)`.
-- Require plugins to emit signals through
-  `await context.emit(signal_name, payload)`.
 - Keep bundled core plugins on the same public plugin contract as repo-local and
   npm plugins rather than giving them a privileged runtime-only execution path.
 - Treat review, notification, ingress, and other interaction mechanics as
   ordinary plugin-backed steps instead of as built-in flow constructs.
-- Restrict `await` validation to signal kinds emitted by plugins referenced in
-  the same flow.
 
 ## Rationale
 
@@ -43,10 +37,7 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
   self-contained and avoids a second indirection layer.
 - One `definePlugin(...)` contract keeps plugin loading, validation, and
   documentation consistent.
-- Required Zod schemas move plugin and signal compatibility checks into flow
-  validation instead of delaying them until runtime.
-- One explicit `context.emit(...)` runtime surface keeps signal production in
-  the plugin contract instead of introducing parallel flow syntax for plugin
-  outputs.
+- Required Zod schemas for `with` values move plugin compatibility checks into
+  flow validation instead of delaying them until runtime.
 - Treating human and external interactions as ordinary steps preserves one
   execution model across worker, review, and integration behavior.
