@@ -4,6 +4,7 @@ Id: job-state-machine-execution
 Status: proposed
 Decided by:
   - docs/decisions/runtime/job-state-machine-flow-shape.md
+  - docs/decisions/runtime/current-truth-run-snapshot-persistence.md
 Depends on:
   - docs/contracts/runtime/pravaha-flow-foundation.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
@@ -65,7 +66,7 @@ jobs:
 
 - The completed repository foundation for checked-in flow documents and
   contract-bound root flows.
-- The completed unresolved-attempt persistence slice.
+- The completed current-truth run-snapshot persistence slice.
 - The accepted job state-machine flow shape decision.
 - Root flows that declare one flow-level `workspace`, one root-level `on`
   binding, and `jobs` entries shaped as executable `uses` nodes or terminal
@@ -88,6 +89,8 @@ jobs:
 - Runtime support that resolves one flow-level workspace contract for the whole
   durable chain and reuses that materialization across loops in the same flow
   instance.
+- Runtime support that checkpoints current durable execution truth after each
+  completed job visit and at every persistent wait or terminal outcome.
 - Clear validation and runtime failures when a flow relies on removed
   step-surface constructs.
 
@@ -123,6 +126,8 @@ jobs:
 - Workspace policy is flow-scoped rather than job-scoped.
 - One flow instance owns at most one resolved workspace materialization at a
   time.
+- Interruption may lose in-flight worker execution, but the durable run snapshot
+  preserves the latest completed job boundary.
 - Flows in this slice do not declare `steps`, `needs`, `await`, `transition`,
   `relate`, job-scoped `worktree`, or job-scoped `select`.
 
@@ -153,12 +158,13 @@ jobs:
 - Expose only prior completed job visits through `jobs.<name>.outputs` during
   branch evaluation.
 - Evaluate branch lists in declaration order and take the first matching branch.
-- Persist the current job's outputs as its latest visit only after the job visit
-  completes and before the chosen successor begins.
+- Persist the current job's outputs and visit counts as the latest durable
+  checkpoint only after the job visit completes and before the chosen successor
+  begins.
 - Fail the flow instance clearly when no `next` branch matches.
 - Fail the flow instance clearly when a job exceeds its configured visit limit.
-- Keep strict unresolved-runtime blocking and exact-instance resume semantics in
-  force.
+- Re-enter after interruption from the latest durable checkpoint or wait state
+  instead of from mid-visit worker-session state.
 
 ## Failure Modes
 
@@ -171,6 +177,8 @@ jobs:
   branches read stale data.
 - Workspace resolution happens per node visit instead of once per durable flow
   instance.
+- Visit counts are not checkpointed durably and bounded retry loops become
+  incorrect after interruption.
 - A no-match `next` case hangs or silently falls through instead of failing
   explicitly.
 - Visit limits are ignored and retry loops can run without a checked-in bound.
@@ -191,4 +199,5 @@ jobs:
 - `limits.max-visits` stops bounded retry loops after the configured number of
   visits.
 - One flow instance reuses one resolved workspace materialization across loops.
+- Completed job visits are durably checkpointed before the next job begins.
 - `npm run all` passes.

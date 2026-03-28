@@ -30,9 +30,11 @@ Depends on:
 - Add one repo-level Pravaha JSON config file for semantic roles and semantic
   states.
 - Implement YAML loading and strict validation for Pravaha flow documents.
-- Implement a mixed query graph that combines checked-in Patram documents with
-  machine-local runtime nodes.
-- Implement a trigger-driven local runtime with explicit crash recovery.
+- Implement a canonical current-truth run snapshot that combines checked-in
+  workflow inputs with one machine-local durable execution snapshot per live
+  task.
+- Implement checkpointed re-entry from durable job-boundary and wait snapshots
+  instead of exact worker-session recovery.
 - Implement task leasing gated by semantic `ready` states and dependency
   relations.
 - Implement job-level worktree assignment or reuse and execute ordinary ordered
@@ -47,14 +49,16 @@ Depends on:
 - Contracts can reference exactly one root flow document.
 - Pravaha validates flow documents against the configured semantic role and
   state model.
-- Flow jobs can use `select`, `needs`, `if`, `await`, `uses`, `run`,
-  `transition`, and `relate` in the approved YAML format.
+- Flow jobs use the state-machine YAML shape with one `uses` or `end` node per
+  job, optional `with`, optional `limits`, and `next` branching on non-terminal
+  jobs.
 - Only documents in configured semantic `ready` states are leaseable.
-- The runtime exposes mixed-graph runtime nodes through reserved `$...` classes.
+- The runtime exposes one canonical durable run snapshot instead of requiring
+  separate persisted runtime-node classes.
 - One task can be leased into one prepared worktree and executed through one
   locally supervised Codex worker.
-- Restart recovery keeps shared workflow state intact without requiring implicit
-  runtime healing.
+- Interruption never requires mid-visit worker recovery. Durable job-boundary
+  and wait checkpoints remain sufficient to continue safely.
 
 ## Sequencing
 
@@ -67,7 +71,8 @@ Depends on:
   - job-level worktree policy
   - scheduler depth with single-flight `needs` barriers
   - ordered ordinary step execution inside the assigned worktree
-- Current next chunk: expose reserved machine-local runtime nodes more directly
-  through the mixed graph and tighten their lifecycle semantics.
+- Current next chunk: collapse durable runtime persistence to one canonical
+  current-truth run snapshot and tighten checkpoint semantics around waits and
+  completed job visits.
 - Keep worktree setup and cleanup as ordinary checked-in steps instead of
   special lifecycle hooks in `v0.1`.

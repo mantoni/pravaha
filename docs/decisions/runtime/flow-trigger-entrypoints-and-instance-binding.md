@@ -15,8 +15,9 @@ Tracked in: docs/plans/repo/v0.1/local-dispatch-runtime.md
   instance.
 - Create one flow instance per matched trigger document and treat that bound
   flow instance as the scheduler and worker assignment unit.
-- Keep `if`, `await`, `transition`, `relate`, `uses`, and `run` inside jobs and
-  steps. Jobs no longer fan out durable work through their own `select` queries.
+- Keep job-local condition evaluation and plugin execution inside jobs, with
+  `next` as the only in-flow control surface. Jobs no longer fan out durable
+  work through their own `select` queries.
 - Keep flow entrypoints anchored to durable checked-in workflow documents and
   reject runtime-class triggers in `on.*.where`.
 - Preserve the flow root binding as `document` for contract-scoped expressions

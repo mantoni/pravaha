@@ -5,8 +5,7 @@ Status: proposed
 Decided by:
   - docs/decisions/runtime/trigger-driven-codex-runtime.md
   - docs/decisions/runtime/job-and-step-execution-semantics.md
-  - docs/decisions/runtime/mixed-runtime-graph-and-bindings.md
-  - docs/decisions/runtime/active-run-signal-visibility-and-minimal-terminal-snapshot.md
+  - docs/decisions/runtime/current-truth-run-snapshot-persistence.md
 Depends on:
   - docs/contracts/runtime/job-level-worktree-policy.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
@@ -15,110 +14,81 @@ Depends on:
   - docs/reference/runtime/end-to-end-walkthrough.md
 ---
 
-# Runtime Node Lifecycle
+# Run Snapshot Lifecycle
 
 ## Intent
 
-- Stabilize the lifecycle semantics of reserved machine-local runtime nodes so
-  flows can query the current run predictably without depending on arbitrary
-  historical local state.
+- Stabilize the lifecycle semantics of the canonical machine-local run snapshot
+  so flows can query current durable progress predictably without depending on
+  separate runtime-node history.
 
 ## Inputs
 
-- The completed mixed-graph flow surface slice.
+- The completed flow-surface slice that allows conditions over the current run
+  snapshot.
 - The completed job-level worktree policy slice.
-- The current machine-local runtime store for flow instances, leases, worktrees,
-  workers, and signals.
-- The accepted runtime node model and mixed-graph architecture references.
+- The current machine-local runtime store for checkpointed run snapshots and
+  persistent waits.
+- The accepted run-snapshot model and runtime architecture references.
 
 ## Outputs
 
-- Stable lifecycle rules for `$flow_instance`, `$lease`, `$worktree`, `$worker`,
-  and `$signal`.
-- Runtime support that keeps active execution nodes queryable while a run is in
-  progress.
-- Runtime support that keeps active non-terminal runtime signals queryable for
-  the whole unresolved run they belong to.
-- Runtime support that keeps only the current terminal run snapshot queryable
-  until a later matching run replaces it or the local record is otherwise
-  cleared.
+- Stable lifecycle rules for one canonical durable run snapshot per live task.
+- Runtime support that checkpoints current durable execution truth after every
+  completed job visit and at every persistent wait or terminal outcome.
+- Runtime support that embeds wait state inside the run snapshot instead of
+  relying on separate signal records.
 - Validation and execution semantics that prevent flows from depending on
-  arbitrary stale local history.
+  transient worker ownership or stale local history.
 - No dedicated operator-facing inspection or cleanup surface in this slice.
 
 ## Side Effects
 
-- Mixed-graph queries gain a more explicit contract for what runtime nodes may
-  exist at each stage of a run.
-- Active plugin-emitted and other non-terminal signals may remain queryable for
-  the duration of the unresolved run.
-- Terminal signal records may remain queryable after run completion only as the
-  current matching run snapshot.
-- Short-lived execution nodes remain machine-local operational state rather than
-  long-lived history.
+- Flow-visible local execution state becomes one snapshot-oriented query surface
+  instead of a family of runtime-node records.
+- Active worker, lease, and worktree ownership remain transient operational
+  state instead of part of the durable contract.
+- Interrupted in-flight job visits may be lost even though the latest durable
+  checkpoint remains available.
 
 ## Invariants
 
-- Active runtime nodes remain queryable during the active run they describe.
-- Active non-terminal `$signal` nodes remain queryable for the whole unresolved
-  run they belong to.
-- `$signal` terminal outcomes remain queryable only as the current matching run
-  snapshot.
-- `$flow_instance` for the current run remains queryable only as the current
-  matching run snapshot.
-- `$lease` and `$worker` do not become arbitrary long-lived historical records.
-- Flows may observe the current run and its terminal signals but must not depend
-  on unrelated old local runtime state.
+- At most one durable run snapshot exists for a task at a time.
+- The durable run snapshot records only the current truth needed for correct
+  continuation and not a richer history.
+- Prior job outputs and job visit counts remain durable because later branching
+  and visit limits depend on them.
+- Persistent waits live inside the run snapshot rather than in separate signal
+  records.
+- Flows may observe the current run snapshot but must not depend on unrelated
+  old local runtime state.
 - Anything that must matter after run completion must already be projected into
   durable checked-in workflow state.
-- Ambiguous matching runtime records fail closed instead of exposing arbitrary
-  retained local history.
-- Strict unresolved-runtime blocking and exact-task resume semantics remain in
-  force.
-
-## Runtime Node Semantics
-
-- `$flow_instance`: Represents the current local execution context for one
-  contract-bound run and remains queryable while active or as the retained
-  current terminal snapshot.
-- `$lease`: Represents active lease ownership for the current in-flight task and
-  may disappear after the run resolves.
-- `$worktree`: Represents the resolved worktree assignment for the current run
-  and remains queryable while the run is active.
-- `$worker`: Represents the active worker run and may disappear after the run
-  resolves.
-- `$signal`: Represents runtime events, including terminal completion outcomes,
-  remains queryable for the whole unresolved run, and retains only terminal
-  completion outcomes as the retained current run snapshot after resolution.
+- Re-entry after interruption starts from the latest durable checkpoint instead
+  of from in-flight worker-session state.
 
 ## Failure Modes
 
-- Runtime nodes disappear too early for `await`, `if`, or resume semantics to
-  work reliably.
-- Active plugin-emitted or other non-terminal signals disappear before later
-  steps in the same unresolved run can query them.
-- Runtime nodes linger without replacement rules and flows start depending on
-  stale local history instead of only the current run snapshot.
-- Plugin-emitted interaction signals remain retained after completion and become
-  a richer local history surface instead of requiring durable projection.
-- Multiple retained matches make the current run ambiguous but the runtime does
-  not fail closed.
-- The runtime node model diverges between actual execution and the mixed-graph
+- The durable snapshot omits prior outputs or visit counts and later branching
+  becomes incorrect.
+- Wait state is split across the run snapshot and a second signal store.
+- Active worker ownership is mistaken for durable truth and blocks later
+  re-entry after interruption.
+- Multiple live snapshots exist for the same task and flow execution becomes
+  ambiguous.
+- The run-snapshot model diverges between execution semantics and the query
   contract exposed to flows.
 
 ## Review Gate
 
-- Active runtime nodes are queryable during an in-flight run.
-- Active non-terminal signals remain queryable for the unresolved run that
-  emitted them.
-- Terminal completion signals remain queryable only as the current retained run
-  snapshot.
-- Flows can observe the current run and terminal signals without depending on
-  arbitrary historical runtime nodes.
+- Flows can observe the current durable run snapshot without depending on a
+  richer runtime-node graph.
+- Prior job outputs and visit counts remain available at the latest durable
+  checkpoint.
+- Persistent waits are represented inside the run snapshot.
 - Anything that must matter after run completion is projected into durable
   workflow state before completion.
-- Later matching runs replace the retained terminal snapshot when the current
-  run is unambiguous.
-- Ambiguous matching runtime records fail closed.
-- Existing reconcile, resume, and worktree-policy behavior remain intact.
+- Re-entry after interruption restarts from the latest durable checkpoint rather
+  than from mid-visit worker state.
+- Worktree policy remains compatible with the narrower durable snapshot model.
 - `npm run all` passes.

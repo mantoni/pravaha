@@ -16,10 +16,9 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 | Root work item | The durable document that owns a flow instance, bound as `document`                                          |
 | Leaseable unit | The durable document class that may be acquired for execution when semantically ready                        |
 | Job            | A named unit of flow execution that may fan out across selected durable documents                            |
-| Step           | One operation within a job, such as `uses`, `run`, `await`, `transition`, or `relate`                        |
-| Runtime node   | A machine-local Patram-style node such as `$signal` or `$worker`                                             |
-| Mixed graph    | The query model that combines durable repository documents with machine-local runtime nodes                  |
+| Step           | One plugin-backed or command-backed operation executed during a job visit                                    |
+| Run snapshot   | The canonical machine-local durable record for one live task run at the latest completed checkpoint          |
+| Wait state     | The embedded durable gate inside a run snapshot that blocks continuation on human input                      |
 | Worktree       | A git checkout slot used to isolate one leased document at a time                                            |
 | Worker         | One supervised local Codex run tied to a leased document and worktree                                        |
-| Signal         | A runtime event used by `if` and `await` expressions                                                         |
 | Semantic state | A scheduler-facing meaning such as `ready`, `review`, or `done`, mapped onto repository status values        |

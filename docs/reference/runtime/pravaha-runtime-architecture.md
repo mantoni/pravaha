@@ -25,7 +25,7 @@ graph TD
   B --> D["Lease manager"]
   D --> E["Worktree pool<br/>named or ephemeral"]
   E --> F["Worker supervisor<br/>Codex run-to-completion workers"]
-  F --> G["Local runtime store<br/>$flow_instance, $lease, $worktree, $worker, $signal"]
+  F --> G["Local runtime store<br/>canonical run snapshots"]
   C --> H["Review and integration actions"]
   H --> A
 ```
@@ -46,20 +46,19 @@ graph TD
     "review and merge intent"
   ],
   "machine_local_runtime_truth": [
-    "worker ownership",
-    "worktree assignment",
-    "current flow node",
+    "current durable run snapshot",
+    "prior job outputs",
+    "job visit counts",
     "pending waits",
-    "heartbeats",
-    "logs",
-    "retries"
+    "terminal outcomes at the current checkpoint"
   ]
 }
 ```
 
 ## Core Execution Loop
 
-Pravaha reconciles durable workflow state with machine-local runtime state.
+Pravaha reconciles durable workflow state with one machine-local durable run
+snapshot per live task.
 
 ```mermaid
 graph LR
@@ -67,7 +66,7 @@ graph LR
   B --> C["assign or create worktree"]
   C --> D["prepare worktree"]
   D --> E["start Codex worker"]
-  E --> F["emit runtime graph state"]
+  E --> F["checkpoint run snapshot"]
   F --> G["evaluate flow conditions"]
   G --> H["project explicit shared-state changes"]
 ```
@@ -79,7 +78,8 @@ graph LR
 - A job `select` binds the selected durable document under its Patram class
   name, such as `task` or `ticket`.
 - `jobs.<name>.select` only fans out over durable workflow documents.
-- `if` and `await` may query both durable workflow documents and runtime nodes.
+- Flow branch conditions may query durable workflow documents plus the current
+  run snapshot.
 - Leasing is tied to the configured semantic `ready` state.
 - One leased task or equivalent leaseable document occupies one worktree at a
   time.

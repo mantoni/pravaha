@@ -5,61 +5,63 @@ Status: active
 Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 ---
 
-# Runtime Node Model
+# Run Snapshot Model
 
-This document captures the working model for the mixed runtime graph under the
-state-machine engine.
+This document captures the working model for durable local runtime state under
+the state-machine engine.
 
-## Reserved Runtime Classes
+## Canonical Durable Shape
 
 ```json
 {
-  "runtime_classes": [
-    "$flow_instance",
-    "$lease",
-    "$worktree",
-    "$worker",
-    "$signal"
+  "run_snapshot": [
+    "task_id",
+    "task_path",
+    "flow_path",
+    "run_id",
+    "current_job_name",
+    "status",
+    "job_outputs",
+    "job_visit_counts",
+    "wait"
   ]
 }
 ```
 
-## Roles
+## Role
 
-| Class            | Role                                                                     |
-| ---------------- | ------------------------------------------------------------------------ |
-| `$flow_instance` | Local runtime state for one durable job chain rooted at one durable item |
-| `$lease`         | Local ownership record for a leaseable document                          |
-| `$worktree`      | Local workspace materialization and reuse state                          |
-| `$worker`        | One supervised local agent or command execution                          |
-| `$signal`        | Runtime event emitted by plugins, approvals, or integrations             |
+The canonical run snapshot is the durable machine-local record for one live task
+run. It preserves only the execution memory required to continue safely from the
+latest checkpoint. Active worker, lease, and worktree ownership remain transient
+operational state and are not part of the durable contract.
 
 ## Expected Shape
 
 ```json
 {
-  "$flow_instance": [
-    "root_document",
+  "run_snapshot": [
+    "task_id",
+    "task_path",
     "flow_document",
     "current_job_name",
     "job_outputs",
-    "visit_counts"
-  ],
-  "$lease": ["subject", "owner", "state"],
-  "$worktree": ["name", "path", "state", "mode"],
-  "$worker": ["subject", "worktree", "state", "backend"],
-  "$signal": ["kind", "subject", "outcome", "emitted_at"]
+    "job_visit_counts",
+    "status",
+    "wait"
+  ]
 }
 ```
 
 ## Query Model
 
 - Root-level `on.<binding>.where` still selects the durable document that owns
-  one flow instance.
+  one run snapshot.
 - `next` expressions evaluate the current visit through `result`.
 - Historical node data is exposed through `jobs.<name>.outputs`.
-- Runtime nodes remain machine-local even though they can participate in the
-  same query model as durable workflow documents.
+- Visit-count state remains durable because revisits and node-local limits are
+  part of correct current execution truth.
+- Separate durable runtime-node classes are no longer required for waits or
+  other flow-visible runtime state.
 
 ## Example Branch
 
