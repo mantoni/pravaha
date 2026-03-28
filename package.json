@@ -31,7 +31,7 @@
   "license": "MIT",
   "scripts": {
     "all": "npm run check:lint && npm run check:format && npm run check:types && npm run check:patram && npm run test:coverage && npm run check:dupes",
-    "check:dupes": "jscpd --min-tokens 100 --min-lines 6 --mode mild --threshold 0 --reporters console --gitignore .",
+    "check:dupes": "jscpd --min-tokens 100 --min-lines 6 --mode mild --threshold 0 --reporters console --gitignore --ignore \"**/.pravaha/**\" .",
     "check:format": "prettier --check .",
     "check:lint": "eslint .",
     "check:patram": "patram check && node ./bin/pravaha.js validate",

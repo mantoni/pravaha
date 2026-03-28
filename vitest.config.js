@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 const GLOBAL_SLOW_TEST_THRESHOLD = 5_000;
 const INTEGRATION_TEST_TAG = 'integration';
@@ -7,6 +7,7 @@ const SMOKE_TEST_TAG = 'smoke';
 
 export default defineConfig({
   test: {
+    exclude: [...configDefaults.exclude, '**/.pravaha/**'],
     include: ['**/*.test.js'],
     slowTestThreshold: GLOBAL_SLOW_TEST_THRESHOLD,
     tags: [
