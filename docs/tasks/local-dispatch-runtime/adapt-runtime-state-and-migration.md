@@ -15,8 +15,6 @@ Decided by:
 
 - Rework runtime records, resume behavior, and mixed-graph exposure for the
   dispatcher-backed worker pool.
-- Migrate representative flows, fixtures, and examples from `jobs.<name>.select`
-  to the root-level `on` trigger surface.
 - Add takeover, worker-loss, and duplicate-notify coverage for the new runtime
   model.
 - Keep surviving followers in the worker pool across dispatcher loss by

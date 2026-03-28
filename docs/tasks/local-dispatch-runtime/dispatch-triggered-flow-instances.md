@@ -15,7 +15,7 @@ Decided by:
 # Dispatch Triggered Flow Instances
 
 - Discover pending flow instances from authoritative state instead of from the
-  old local reconcile select loop.
+  old local reconcile loop.
 - Assign one bound flow instance to one ready worker at a time.
 - Keep the dispatcher responsible for worktree assignment and duplicate
   ownership prevention.

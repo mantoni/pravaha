@@ -179,38 +179,6 @@ jobs:
     end: success
 ```
 
-Invalid because `jobs.<name>.select` is no longer allowed:
-
-```yaml
-kind: flow
-id: invalid-job-select
-status: active
-scope: contract
-
-workspace:
-  type: git.workspace
-  source:
-    kind: repo
-    id: app
-  materialize:
-    kind: worktree
-    mode: ephemeral
-    ref: main
-
-on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
-
-jobs:
-  implement:
-    select: $class == task and tracked_in == @document
-    uses: core/agent
-    next: done
-
-  done:
-    end: success
-```
-
 Invalid because `on.<binding>.where` does not resolve to one durable class:
 
 ```yaml

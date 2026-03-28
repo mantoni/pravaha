@@ -58,7 +58,6 @@ Depends on:
 - Phase 1: Flow surface
   - Add the root-level `on` schema and validation rules.
   - Bind the trigger document into the interpreted flow instance.
-  - Reject dispatched flows that still depend on `jobs.<name>.select`.
 - Phase 2: Runtime entrypoints
   - Add `pravaha worker` and `pravaha dispatch`.
   - Add the endpoint abstraction and the newline-delimited internal protocol.

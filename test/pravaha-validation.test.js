@@ -147,6 +147,24 @@ it('validates state-machine flow documents against the repo config', async () =>
   }
 });
 
+it('accepts state-machine flows that still define jobs.<name>.select', async () => {
+  const temp_directory = await createFixtureRepo({
+    flow_yaml: createValidStateMachineFlowYaml().replace(
+      '    next: done',
+      '    select: role\n    next: done',
+    ),
+  });
+
+  try {
+    await expect(validateRepo(temp_directory)).resolves.toEqual({
+      checked_flow_count: 1,
+      diagnostics: [],
+    });
+  } finally {
+    await rm(temp_directory, { force: true, recursive: true });
+  }
+});
+
 it('rejects legacy step-based flow fields after the breaking migration', async () => {
   const temp_directory = await createFixtureRepo({
     flow_yaml: createMixedFlowYaml(),
@@ -224,13 +242,6 @@ it('rejects invalid state-machine job diagnostics', async () => {
       'on:\n  task: {}',
     ),
     'Expected flow.on.task.where to be a string.',
-  );
-  await expectValidationDiagnostic(
-    createValidStateMachineFlowYaml().replace(
-      '    next: done',
-      '    select: role\n    next: done',
-    ),
-    'Flow jobs must not define flow.jobs.retry.select because root-level on.<binding>.where owns durable instance selection.',
   );
 });
 

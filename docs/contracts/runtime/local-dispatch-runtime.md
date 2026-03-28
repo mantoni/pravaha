@@ -52,8 +52,6 @@ Depends on:
 - A machine-local IPC endpoint exists while the dispatcher is alive.
 - Dispatcher memory carries transient worker registration and in-flight
   assignment state between rescans.
-- Existing sample and fixture flows that rely on `jobs.<name>.select` need
-  migration to the new trigger surface before they can run on the dispatcher.
 
 ## Invariants
 
@@ -84,8 +82,7 @@ Depends on:
 
 ## Review Gate
 
-- Dispatchable flows validate with a root-level `on` trigger and fail clearly
-  when they still rely on unsupported job-level fan-out.
+- Dispatchable flows validate with a root-level `on` trigger.
 - `pravaha worker` can start as dispatcher or follower and reports its role
   clearly.
 - `pravaha dispatch` wakes the dispatcher without requiring the caller to know
