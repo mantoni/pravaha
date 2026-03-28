@@ -92,10 +92,10 @@ on:
 
 jobs:
   implement:
-    uses: core/agent
+    uses: core/run-codex
     with:
-      provider: codex-sdk
       prompt: Implement the task in ${{ task.path }}.
+      reasoning: medium
     next: test
 
   test:
@@ -136,7 +136,7 @@ workspace:
 
 jobs:
   implement:
-    uses: core/agent
+    uses: core/run-codex
     next: done
 
   done:
@@ -203,7 +203,7 @@ on:
 
 jobs:
   implement:
-    uses: core/agent
+    uses: core/run-codex
     next: done
 
   done:
@@ -227,7 +227,7 @@ jobs:
     worktree:
       mode: named
       slot: castello
-    uses: core/agent
+    uses: core/run-codex
     next: done
 
   done:
@@ -259,7 +259,7 @@ on:
 
 jobs:
   implement:
-    uses: core/agent
+    uses: core/run-codex
     next: done
 
   done:

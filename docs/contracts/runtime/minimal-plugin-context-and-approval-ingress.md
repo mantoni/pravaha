@@ -3,6 +3,7 @@ Kind: contract
 Id: minimal-plugin-context-and-approval-ingress
 Status: proposed
 Decided by:
+  - docs/decisions/runtime/bundled-core-plugins-own-implementations.md
   - docs/decisions/runtime/minimal-curated-plugin-context.md
   - docs/decisions/runtime/approval-only-command-ingress.md
   - docs/decisions/runtime/current-truth-run-snapshot-persistence.md
@@ -34,8 +35,8 @@ Depends on:
 
 - A curated stable plugin `context` contract limited to `run_id`,
   `repo_directory`, `worktree_path`, parsed `with`, bound `document` and `task`
-  metadata when available, existing `emit(kind, payload)` support, and a console
-  helper.
+  metadata when available, existing `emit(kind, payload)` support,
+  `dispatchFlow({...})`, and a console helper.
 - One built-in pending interaction primitive on plugin `context`:
   `await context.requestApproval()`.
 - One built-in CLI ingress path: `pravaha approve --token <run_id>`.
@@ -60,6 +61,8 @@ Depends on:
 - Pravaha does not preload full workflow document contents into plugin
   `context`.
 - Pravaha does not expose a file-watch API or a broad observer API on plugin
+  `context`.
+- Pravaha does not expose a general subprocess or process-launch API on plugin
   `context`.
 - `context.requestApproval()` is argument-free in `v0.1`.
 - Approval stays one plugin-backed step lifecycle and does not introduce a
@@ -89,6 +92,8 @@ Depends on:
 
 - Plugins receive the curated stable `context` fields and no broad runtime
   object.
+- `context.dispatchFlow({...})` remains available for runtime-native downstream
+  flow handoff.
 - `context.requestApproval()` prints standard approval instructions from Pravaha
   and keeps the plugin step unresolved until approval arrives.
 - `pravaha approve --token <run_id>` routes approval to the matching unresolved

@@ -37,10 +37,10 @@ on:
 
 jobs:
   implement:
-    uses: core/agent
+    uses: core/run-codex
     with:
-      provider: codex-sdk
       prompt: Implement ${{ task.path }}.
+      reasoning: medium
     next: test
 
   test:
@@ -53,7 +53,7 @@ jobs:
       - goto: fix
 
   fix:
-    uses: core/agent
+    uses: core/run-codex
     limits:
       max-visits: 3
     next: test

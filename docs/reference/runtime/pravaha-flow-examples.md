@@ -57,10 +57,10 @@ on:
 
 jobs:
   implement:
-    uses: core/agent
+    uses: core/run-codex
     with:
-      provider: codex-sdk
       prompt: Implement the task in ${{ task.path }}.
+      reasoning: medium
     next: review
 
   review:
@@ -75,13 +75,13 @@ jobs:
       - goto: revise
 
   revise:
-    uses: core/agent
+    uses: core/run-codex
     with:
-      provider: codex-sdk
       prompt: |
         Address the latest review feedback for ${{ task.path }}.
 
         ${{ jobs.review.outputs.comment }}
+      reasoning: medium
     limits:
       max-visits: 2
     next: review
@@ -94,10 +94,10 @@ jobs:
       - goto: done
 
   commit:
-    uses: core/agent
+    uses: core/run-codex
     with:
-      provider: codex-sdk
       prompt: Commit the current changes for ${{ task.path }}.
+      reasoning: medium
     next: done
 
   done:
@@ -128,10 +128,10 @@ on:
 
 jobs:
   implement:
-    uses: core/agent
+    uses: core/run-codex
     with:
-      provider: codex-sdk
       prompt: Implement the task in ${{ task.path }}.
+      reasoning: medium
     next: test
 
   test:
@@ -145,9 +145,8 @@ jobs:
       - goto: fix
 
   fix:
-    uses: core/agent
+    uses: core/run-codex
     with:
-      provider: codex-sdk
       prompt: |
         The tests failed for ${{ task.path }}.
 
@@ -156,6 +155,7 @@ jobs:
 
         stderr:
         ${{ jobs.test.outputs.stderr }}
+      reasoning: medium
     limits:
       max-visits: 3
     next: test

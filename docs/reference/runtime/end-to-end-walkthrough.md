@@ -56,10 +56,10 @@ on:
 
 jobs:
   implement:
-    uses: core/agent
+    uses: core/run-codex
     with:
-      provider: codex-sdk
       prompt: Implement the task in ${{ task.path }}.
+      reasoning: medium
     next: test
 
   test:
@@ -73,9 +73,8 @@ jobs:
       - goto: fix
 
   fix:
-    uses: core/agent
+    uses: core/run-codex
     with:
-      provider: codex-sdk
       prompt: |
         The test run failed for ${{ task.path }}.
 
@@ -84,6 +83,7 @@ jobs:
 
         stderr:
         ${{ jobs.test.outputs.stderr }}
+      reasoning: medium
     limits:
       max-visits: 3
     next: test

@@ -12,6 +12,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
   Pravaha may override through checked-in Pravaha config.
 - Resolve `uses: npm/<name>` from an installed npm package whose entrypoint
   provides the plugin implementation.
+- Resolve `uses: core/<name>` from bundled plugin modules that ship inside the
+  Pravaha package.
 - Do not add a separate plugin registry layer. The `uses` value in the flow is
   the authoritative plugin reference.
 - Require plugins to export a default `definePlugin(...)` contract from the
@@ -24,6 +26,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 - Require plugin runtime behavior to live in `async run(context)`.
 - Require plugins to emit signals through
   `await context.emit(signal_name, payload)`.
+- Keep bundled core plugins on the same public plugin contract as repo-local and
+  npm plugins rather than giving them a privileged runtime-only execution path.
 - Treat review, notification, ingress, and other interaction mechanics as
   ordinary plugin-backed steps instead of as built-in flow constructs.
 - Restrict `await` validation to signal kinds emitted by plugins referenced in
@@ -33,6 +37,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 - Pluggable steps let Pravaha keep a small core while still allowing
   repo-specific and reusable npm-backed integrations.
+- Bundled `core/<name>` plugins keep the checked-in flow surface stable without
+  forcing core behavior to live in special engine-only switch statements.
 - Encoding plugin identity directly in `uses` keeps checked-in policy
   self-contained and avoids a second indirection layer.
 - One `definePlugin(...)` contract keeps plugin loading, validation, and
