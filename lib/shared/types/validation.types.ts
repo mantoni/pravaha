@@ -1,0 +1,19 @@
+export interface ValidationDiagnostic {
+  file_path: string;
+  message: string;
+}
+
+export interface ValidationResult {
+  checked_flow_count: number;
+  diagnostics: ValidationDiagnostic[];
+}
+
+export interface JsonReadResult {
+  value: unknown | null;
+  diagnostics: ValidationDiagnostic[];
+}
+
+export interface SemanticModel {
+  semantic_role_names: Set<string>;
+  semantic_state_names: Set<string>;
+}
