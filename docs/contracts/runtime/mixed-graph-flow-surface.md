@@ -7,7 +7,6 @@ Decided by:
   - docs/decisions/runtime/job-and-step-execution-semantics.md
   - docs/decisions/runtime/mixed-runtime-graph-and-bindings.md
 Depends on:
-  - docs/contracts/runtime/strict-runtime-resume.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
   - docs/reference/runtime/pravaha-runtime-architecture.md
   - docs/reference/runtime/runtime-node-model.md
@@ -25,12 +24,11 @@ Depends on:
 
 ## Inputs
 
-- The completed single-task interpreted reconciler.
-- The completed strict runtime persistence and manual resume slice.
+- The completed single-flight state-machine runtime slice.
+- The completed runtime persistence slice for unresolved attempts.
 - One machine-local runtime store that exposes runtime records for the current
   in-flight run.
 - One contract with exactly one root flow.
-- One supported runtime command surface for `reconcile` and `resume`.
 
 ## Outputs
 
@@ -55,8 +53,8 @@ Depends on:
 
 - `jobs.<name>.select` fans out only over durable checked-in workflow documents.
 - Runtime classes remain engine-owned under the protected `$...` namespace.
-- The runtime still processes at most one eligible task per invocation.
-- Strict unresolved-runtime blocking and exact-task resume semantics remain in
+- The runtime still processes at most one eligible task at a time.
+- Unresolved-attempt persistence and exact-task run re-entry semantics remain in
   force.
 - Shared workflow mutations remain explicit and auditable.
 
@@ -67,7 +65,7 @@ Depends on:
   reserved runtime classes.
 - Support explicit transition targets such as `task` and `document`.
 - Keep one contract root flow at a time.
-- Keep one selected task processed per reconcile invocation.
+- Keep one selected task processed per runtime attempt.
 - Defer multi-job dependency scheduling depth, multi-task draining, fairness,
   and parallel execution.
 
@@ -89,5 +87,6 @@ Depends on:
 - `if` and `await` can observe reserved runtime nodes through the mixed graph.
 - Explicit transition targets are validated and executed correctly.
 - Unsupported flow shapes fail clearly in validation or runtime.
-- Existing single-task reconcile and strict-resume behavior remain intact.
+- Existing single-flight task execution and unresolved-attempt persistence
+  behavior remain intact.
 - `npm run all` passes.

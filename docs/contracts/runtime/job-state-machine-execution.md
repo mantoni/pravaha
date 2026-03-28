@@ -6,7 +6,6 @@ Decided by:
   - docs/decisions/runtime/job-state-machine-flow-shape.md
 Depends on:
   - docs/contracts/runtime/pravaha-flow-foundation.md
-  - docs/contracts/runtime/strict-runtime-resume.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
   - docs/reference/runtime/pravaha-runtime-architecture.md
 ---
@@ -66,7 +65,7 @@ jobs:
 
 - The completed repository foundation for checked-in flow documents and
   contract-bound root flows.
-- The completed strict unresolved-runtime resume slice.
+- The completed unresolved-attempt persistence slice.
 - The accepted job state-machine flow shape decision.
 - Root flows that declare one flow-level `workspace`, one root-level `on`
   binding, and `jobs` entries shaped as executable `uses` nodes or terminal

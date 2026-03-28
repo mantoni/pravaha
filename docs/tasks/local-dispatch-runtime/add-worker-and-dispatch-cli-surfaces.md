@@ -12,5 +12,6 @@ Decided by:
 
 - Add `pravaha worker` as the long-running worker-pool entrypoint.
 - Add `pravaha dispatch` as the best-effort wake-up command.
+- Remove the legacy `pravaha reconcile` and `pravaha resume` command surfaces.
 - Make worker terminal output identify worker id, leadership role, and assigned
   flow instance clearly enough for operator supervision.

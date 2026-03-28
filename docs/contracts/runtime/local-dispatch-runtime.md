@@ -36,6 +36,8 @@ Depends on:
 - One `pravaha worker` command that joins the local worker pool and can become
   dispatcher.
 - One `pravaha dispatch` command that sends a best-effort wake-up notification.
+- Removal of the legacy single-run `pravaha reconcile` and `pravaha resume`
+  command surfaces.
 - Flow validation and interpretation for one root-level durable trigger binding
   per dispatchable flow.
 - Dispatcher scheduling that discovers pending flow instances from authoritative
@@ -87,6 +89,8 @@ Depends on:
   clearly.
 - `pravaha dispatch` wakes the dispatcher without requiring the caller to know
   which worker is leader.
+- Pravaha help and public docs expose `worker`, `dispatch`, and `approve`
+  without the removed `reconcile` or `resume` commands.
 - Dispatcher takeover rescans and redispatches durable pending work after a
   crash.
 - A connected follower can take over leadership after dispatcher shutdown

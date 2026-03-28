@@ -7,8 +7,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 # Job And Step Execution Semantics
 
-- Reconcile flows through explicit triggers and keep manual resume after machine
-  restart in `v0.1`.
+- Activate flows through explicit triggers and keep crash recovery explicit
+  after machine restart in `v0.1`.
 - Fan out one job instance per document selected by `jobs.<name>.select`.
 - Treat `needs` as a coarse scheduling barrier that waits for all upstream job
   instances to finish before the dependent job becomes eligible.
@@ -41,7 +41,7 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 ## Rationale
 
-- Trigger-driven reconciliation plus manual resume keeps the first runtime
+- Trigger-driven activation plus explicit crash recovery keeps the first runtime
   simple without losing durability.
 - Coarse `needs` barriers make execution order legible without turning job
   dependencies into a second policy language.

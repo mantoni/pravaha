@@ -32,7 +32,7 @@ Depends on:
 - Implement YAML loading and strict validation for Pravaha flow documents.
 - Implement a mixed query graph that combines checked-in Patram documents with
   machine-local runtime nodes.
-- Implement trigger-driven reconciliation with manual resume.
+- Implement a trigger-driven local runtime with explicit crash recovery.
 - Implement task leasing gated by semantic `ready` states and dependency
   relations.
 - Implement job-level worktree assignment or reuse and execute ordinary ordered
@@ -53,8 +53,8 @@ Depends on:
 - The runtime exposes mixed-graph runtime nodes through reserved `$...` classes.
 - One task can be leased into one prepared worktree and executed through one
   locally supervised Codex worker.
-- Reconciliation can be resumed manually after restart without losing shared
-  workflow state.
+- Restart recovery keeps shared workflow state intact without requiring implicit
+  runtime healing.
 
 ## Sequencing
 
@@ -62,7 +62,7 @@ Depends on:
   semantic validation are in place.
 - Completed executable slices:
   - single-task interpreted reconciler
-  - strict machine-local runtime persistence with manual resume
+  - strict machine-local runtime persistence for explicit crash recovery
   - widened mixed-graph flow surface
   - job-level worktree policy
   - scheduler depth with single-flight `needs` barriers

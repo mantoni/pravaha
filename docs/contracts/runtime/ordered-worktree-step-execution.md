@@ -11,7 +11,6 @@ Decided by:
 Depends on:
   - docs/contracts/runtime/job-level-worktree-policy.md
   - docs/contracts/runtime/single-flight-scheduler-depth.md
-  - docs/contracts/runtime/strict-runtime-resume.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
   - docs/reference/runtime/pravaha-flow-examples.md
 ---
@@ -27,7 +26,7 @@ Depends on:
 
 - The completed job-level worktree policy slice.
 - The completed scheduler-depth slice with single-flight job ordering.
-- The completed strict unresolved-runtime resume slice.
+- The completed unresolved-attempt persistence slice.
 - Root flows that declare ordinary `uses`, `run`, `await`, `if`, and
   `transition` steps.
 
@@ -65,7 +64,7 @@ Depends on:
 - A failing step halts the job immediately.
 - The runtime does not auto-heal, auto-reset, or auto-clean the assigned
   worktree in this slice.
-- Single-flight reconcile and strict resume invariants remain in force.
+- Single-flight runtime and exact run re-entry invariants remain in force.
 
 ## Step Execution Rules
 
@@ -86,8 +85,8 @@ Depends on:
 - `run` steps execute outside the assigned worktree or are ignored entirely.
 - Failure in an ordinary step still triggers automatic worktree cleanup or
   reset.
-- Existing single-flight or resume semantics regress while broadening the step
-  surface.
+- Existing single-flight or run re-entry semantics regress while broadening the
+  step surface.
 - Unsupported step shapes fail late or with unclear validation messages.
 
 ## Review Gate

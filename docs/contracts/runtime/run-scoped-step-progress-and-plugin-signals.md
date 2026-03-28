@@ -8,7 +8,6 @@ Decided by:
   - docs/decisions/runtime/generic-step-progress-persistence.md
 Depends on:
   - docs/contracts/runtime/plugin-backed-ordered-step-execution.md
-  - docs/contracts/runtime/strict-runtime-resume.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
 ---
 
@@ -24,7 +23,7 @@ Depends on:
 
 ## Inputs
 
-- The completed strict runtime resume slice.
+- The completed runtime persistence slice for unresolved attempts.
 - The completed plugin-backed ordered step execution slice.
 - Accepted decisions for pluggable plugins, run-scoped signal emission, and
   generic ordered-step progress persistence.

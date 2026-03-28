@@ -9,7 +9,7 @@ Decided by:
 Depends on:
   - docs/contracts/runtime/plugin-backed-ordered-step-execution.md
   - docs/contracts/runtime/run-scoped-step-progress-and-plugin-signals.md
-  - docs/contracts/runtime/strict-runtime-resume.md
+  - docs/contracts/runtime/local-dispatch-runtime.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
 ---
 
@@ -24,7 +24,8 @@ Depends on:
 
 - The completed plugin-backed ordered-step execution slice.
 - The completed run-scoped plugin signal and step-progress slice.
-- The completed strict runtime resume slice.
+- The current runtime persistence and run re-entry semantics used by the worker
+  pool.
 - Accepted decisions for the curated plugin context, approval-only ingress, and
   run-scoped plugin signal emission.
 
@@ -36,8 +37,8 @@ Depends on:
 - One built-in pending interaction primitive on plugin `context`:
   `await context.requestApproval()`.
 - One built-in CLI ingress path: `pravaha approve --token <run_id>`.
-- Runtime behavior that re-enters plugin `run(context)` on resume so plugins may
-  re-register approval waiting idempotently.
+- Runtime behavior that re-enters plugin `run(context)` for the resumed run so
+  plugins may re-register approval waiting idempotently.
 - Standard operator-facing approval output printed by Pravaha when a plugin
   requests approval.
 
@@ -62,8 +63,8 @@ Depends on:
 - Approval stays one plugin-backed step lifecycle and does not introduce a
   separate built-in `await` workflow step.
 - Approval tokens are run-scoped and not step-scoped.
-- Resume and restart re-enter `run(context)` and do not persist plugin callback
-  registrations or plugin-private observer state.
+- Restart and run re-entry do not persist plugin callback registrations or
+  plugin-private observer state.
 - Strict unresolved-runtime blocking and existing step-progress semantics remain
   intact.
 
@@ -75,8 +76,8 @@ Depends on:
   and local file reads.
 - Approval is split across separate `uses` and `await` step mechanics.
 - Approval ingress targets a step id instead of the unresolved run id.
-- Resume skips plugin re-entry and previously pending approval steps cannot
-  complete idempotently.
+- Run re-entry skips plugin re-entry and previously pending approval steps
+  cannot complete idempotently.
 - Core runtime starts persisting plugin-private observers or exposes a generic
   file-watch API too early.
 
@@ -88,8 +89,8 @@ Depends on:
   and keeps the plugin step unresolved until approval arrives.
 - `pravaha approve --token <run_id>` routes approval to the matching unresolved
   run.
-- After approval ingress, resume re-enters `run(context)` and the plugin-backed
-  step completes without a separate workflow `await` step.
+- After approval ingress, the resumed run re-enters `run(context)` and the
+  plugin-backed step completes without a separate workflow `await` step.
 - Plugin `context.emit(...)` continues to work with the same run-scoped signal
   behavior.
 - No file-watch API or broad observer surface is added to plugin `context`.

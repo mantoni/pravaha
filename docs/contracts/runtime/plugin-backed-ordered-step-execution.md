@@ -13,7 +13,6 @@ Depends on:
   - docs/contracts/runtime/job-level-worktree-policy.md
   - docs/contracts/runtime/ordered-worktree-step-execution.md
   - docs/contracts/runtime/single-flight-scheduler-depth.md
-  - docs/contracts/runtime/strict-runtime-resume.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
 ---
 

@@ -15,14 +15,14 @@ for the state-machine flow surface.
 - A contract references one root flow.
 - The contract has one or more tasks.
 - A task becomes semantically `ready`.
-- Pravaha is triggered to reconcile.
+- Pravaha receives a dispatcher wake-up or worker startup rescan.
 
 ## Walkthrough
 
 ```mermaid
 graph LR
   A["Contract with root flow"] --> B["Ready task"]
-  B --> C["Reconcile trigger"]
+  B --> C["Dispatch trigger"]
   C --> D["Create durable job instance"]
   D --> E["Materialize flow workspace"]
   E --> F["Run first declared job"]

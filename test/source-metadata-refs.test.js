@@ -14,30 +14,44 @@ const repo_directory = dirname(
   fileURLToPath(new URL('../package.json', import.meta.url)),
 );
 
-it('exposes runtime decision touch-points through reverse references', async () => {
+it('exposes local dispatch runtime decision touch-points through reverse references', async () => {
   const refs_result = await runPatramRefs(
-    'docs/decisions/runtime/trigger-driven-codex-runtime.md',
+    'docs/decisions/runtime/dispatcher-owned-local-worker-pool.md',
   );
 
   expect(readIncomingPaths(refs_result, 'decided_by')).toEqual(
-    expect.arrayContaining(['lib/reconcile.js', 'lib/resume.js']),
+    expect.arrayContaining(['lib/local-dispatch-runtime.js']),
+  );
+});
+
+it('exposes approval ingress decision touch-points through reverse references', async () => {
+  const refs_result = await runPatramRefs(
+    'docs/decisions/runtime/approval-only-command-ingress.md',
+  );
+
+  expect(readIncomingPaths(refs_result, 'decided_by')).toEqual(
+    expect.arrayContaining(['lib/approve.js']),
   );
 });
 
 it('exposes runtime contract implementation touch-points through reverse references', async () => {
-  const reconcile_refs = await runPatramRefs(
-    'docs/contracts/runtime/single-task-flow-reconciler.md',
+  const local_dispatch_refs = await runPatramRefs(
+    'docs/contracts/runtime/local-dispatch-runtime.md',
   );
-  const resume_refs = await runPatramRefs(
-    'docs/contracts/runtime/strict-runtime-resume.md',
+  const approval_refs = await runPatramRefs(
+    'docs/contracts/runtime/minimal-plugin-context-and-approval-ingress.md',
   );
 
-  expect(readIncomingPaths(reconcile_refs, 'implements')).toContain(
-    'lib/reconcile.js',
-  );
-  expect(readIncomingPaths(resume_refs, 'implements')).toEqual(
+  expect(readIncomingPaths(local_dispatch_refs, 'implements')).toEqual(
     expect.arrayContaining([
-      'lib/resume.js',
+      'lib/local-dispatch-runtime.js',
+      'lib/runtime-attempt-records.js',
+      'lib/runtime-records.js',
+    ]),
+  );
+  expect(readIncomingPaths(approval_refs, 'implements')).toEqual(
+    expect.arrayContaining([
+      'lib/approve.js',
       'lib/runtime-attempt-records.js',
       'lib/runtime-records.js',
     ]),

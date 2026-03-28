@@ -13,8 +13,10 @@ Decided by:
 
 # Adapt Runtime State And Migration
 
-- Rework runtime records, resume behavior, and mixed-graph exposure for the
-  dispatcher-backed worker pool.
+- Rework runtime records and mixed-graph exposure for the dispatcher-backed
+  worker pool.
+- Remove the legacy manual reconcile and resume entrypoints from the migrated
+  runtime surface.
 - Add takeover, worker-loss, and duplicate-notify coverage for the new runtime
   model.
 - Keep surviving followers in the worker pool across dispatcher loss by
