@@ -20,7 +20,7 @@ it('exposes local dispatch runtime decision touch-points through reverse referen
   );
 
   expect(readIncomingPaths(refs_result, 'decided_by')).toEqual(
-    expect.arrayContaining(['lib/local-dispatch-runtime.js']),
+    expect.arrayContaining(['lib/runtime/dispatch/protocol.js']),
   );
 });
 
@@ -44,9 +44,9 @@ it('exposes runtime contract implementation touch-points through reverse referen
 
   expect(readIncomingPaths(local_dispatch_refs, 'implements')).toEqual(
     expect.arrayContaining([
-      'lib/local-dispatch-runtime.js',
       'lib/runtime-attempt-records.js',
       'lib/runtime-records.js',
+      'lib/runtime/dispatch/protocol.js',
     ]),
   );
   expect(readIncomingPaths(approval_refs, 'implements')).toEqual(
