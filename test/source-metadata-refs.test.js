@@ -20,18 +20,11 @@ it('exposes runtime decision touch-points through reverse references', async () 
   );
 
   expect(readIncomingPaths(refs_result, 'decided_by')).toEqual(
-    expect.arrayContaining([
-      'lib/reconcile.js',
-      'lib/resume.js',
-      'lib/run-happy-path.js',
-    ]),
+    expect.arrayContaining(['lib/reconcile.js', 'lib/resume.js']),
   );
 });
 
 it('exposes runtime contract implementation touch-points through reverse references', async () => {
-  const happy_path_refs = await runPatramRefs(
-    'docs/contracts/runtime/codex-sdk-happy-path.md',
-  );
   const reconcile_refs = await runPatramRefs(
     'docs/contracts/runtime/single-task-flow-reconciler.md',
   );
@@ -39,9 +32,6 @@ it('exposes runtime contract implementation touch-points through reverse referen
     'docs/contracts/runtime/strict-runtime-resume.md',
   );
 
-  expect(readIncomingPaths(happy_path_refs, 'implements')).toContain(
-    'lib/run-happy-path.js',
-  );
   expect(readIncomingPaths(reconcile_refs, 'implements')).toContain(
     'lib/reconcile.js',
   );

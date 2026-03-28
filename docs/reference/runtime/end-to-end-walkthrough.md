@@ -7,8 +7,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 # End-To-End Walkthrough
 
-This document captures the intended happy-path execution model from contract to
-integration for the state-machine flow surface.
+This document captures the intended execution model from contract to integration
+for the state-machine flow surface.
 
 ## Scenario
 

@@ -18,7 +18,6 @@ Decided by: docs/decisions/workflow/selective-source-metadata.md
 
 ## Applied Boundaries
 
-- `lib/run-happy-path.js`
 - `lib/reconcile.js`
 - `lib/resume.js`
 - `lib/runtime-records.js`

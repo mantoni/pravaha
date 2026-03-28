@@ -6,7 +6,6 @@ Decided by:
   - docs/decisions/runtime/trigger-driven-codex-runtime.md
   - docs/decisions/runtime/job-and-step-execution-semantics.md
   - docs/decisions/runtime/mixed-runtime-graph-and-bindings.md
-  - docs/decisions/runtime/codex-sdk-happy-path-backend.md
 Depends on:
   - docs/contracts/runtime/single-task-flow-reconciler.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md

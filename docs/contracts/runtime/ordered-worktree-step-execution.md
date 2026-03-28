@@ -97,6 +97,6 @@ Depends on:
 - Step order is preserved exactly as declared.
 - A failing ordinary step halts the job and leaves the assigned worktree in
   place.
-- Existing happy-path task flows still execute successfully.
+- Existing single-task runtime flows still execute successfully.
 - Unsupported step shapes fail with clear interpretation or validation errors.
 - `npm run all` passes.

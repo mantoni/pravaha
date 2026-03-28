@@ -39,8 +39,8 @@ it('marks tagged integration and smoke tests in the expected files', async () =>
     new URL('../test/package-install-smoke.test.js', import.meta.url),
     'utf8',
   );
-  const run_happy_path_test_text = await readFile(
-    new URL('../lib/run-happy-path.test.js', import.meta.url),
+  const reconcile_test_text = await readFile(
+    new URL('../lib/reconcile.test.js', import.meta.url),
     'utf8',
   );
   const package_metadata_test_text = await readFile(
@@ -52,9 +52,7 @@ it('marks tagged integration and smoke tests in the expected files', async () =>
   expect(update_changelog_test).toContain('@module-tag lint-staged-excluded');
   expect(smoke_test_text).toContain('@module-tag smoke');
   expect(smoke_test_text).toContain('@module-tag lint-staged-excluded');
-  expect(run_happy_path_test_text).toContain(
-    '@module-tag lint-staged-excluded',
-  );
+  expect(reconcile_test_text).toContain('@module-tag lint-staged-excluded');
   expect(package_metadata_test_text).toContain(
     "tags: ['integration', 'lint-staged-excluded']",
   );

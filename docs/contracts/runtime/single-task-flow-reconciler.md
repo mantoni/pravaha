@@ -6,9 +6,7 @@ Decided by:
   - docs/decisions/runtime/trigger-driven-codex-runtime.md
   - docs/decisions/runtime/job-and-step-execution-semantics.md
   - docs/decisions/runtime/mixed-runtime-graph-and-bindings.md
-  - docs/decisions/runtime/codex-sdk-happy-path-backend.md
 Depends on:
-  - docs/contracts/runtime/codex-sdk-happy-path.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
   - docs/reference/runtime/pravaha-runtime-architecture.md
   - docs/reference/runtime/end-to-end-walkthrough.md
@@ -19,12 +17,11 @@ Depends on:
 ## Intent
 
 - Add the first interpreted reconciler that reads one contract root flow and
-  processes at most one eligible task per invocation while keeping
-  `pravaha run-happy-path` available as the explicit hard-coded harness.
+  processes at most one eligible task per invocation through the checked-in flow
+  surface.
 
 ## Inputs
 
-- The completed `pravaha run-happy-path` implementation.
 - Patram library query support through `loadProjectGraph` and `queryGraph`.
 - One contract that references exactly one root flow.
 - One root flow with one supported job shape.
@@ -60,8 +57,6 @@ Depends on:
   hard-coded selection path.
 - The reconciler uses Patram library APIs instead of invoking `patram` as a
   child process.
-- `pravaha run-happy-path` remains available as a narrower debug and fixture
-  entrypoint during this slice.
 - Shared workflow mutations remain explicit and auditable.
 
 ## Supported Flow Surface

@@ -61,7 +61,6 @@ Depends on:
 - Foundation is complete: flow documents, contract-to-flow binding, and repo
   semantic validation are in place.
 - Completed executable slices:
-  - hard-coded Codex SDK happy path
   - single-task interpreted reconciler
   - strict machine-local runtime persistence with manual resume
   - widened mixed-graph flow surface
