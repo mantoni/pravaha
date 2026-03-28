@@ -18,7 +18,7 @@ Decided by: docs/decisions/workflow/selective-source-metadata.md
 
 ## Applied Boundaries
 
-- `lib/local-dispatch-runtime.js`
+- `lib/runtime/dispatch/protocol.js`
 - `lib/approve.js`
 - `lib/runtime-records.js`
 - `lib/runtime-attempt-records.js`

@@ -4,7 +4,7 @@ import { realpath } from 'node:fs/promises';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
-import { main } from '../lib/pravaha-cli.js';
+import { main } from '../lib/cli/main.js';
 
 if (await isEntrypoint(import.meta.url, process.argv[1])) {
   process.exitCode = await main(process.argv.slice(2), {

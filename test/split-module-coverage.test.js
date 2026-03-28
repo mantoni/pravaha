@@ -215,7 +215,8 @@ it('falls back to startThread when a resumed state-machine attempt has no worker
   const resumed_threads = [];
 
   try {
-    const { resumeTaskAttempt } = await import('../lib/runtime-attempt.js');
+    const { resumeTaskAttempt } =
+      await import('../lib/runtime/attempts/state-machine.js');
 
     await expect(
       resumeTaskAttempt(temp_directory, {

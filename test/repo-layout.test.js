@@ -7,117 +7,23 @@ import { expect, it } from 'vitest';
 const repo_directory = dirname(
   fileURLToPath(new URL('../package.json', import.meta.url)),
 );
-/** @type {Array<[string, string]>} */
-const EXPECTED_FACADES = [
-  ['lib/pravaha-cli.js', "export { main } from './cli/main.js';\n"],
-  [
-    'lib/load-flow-definition.js',
-    "export { parseFlowDefinition } from './flow/load-flow-definition.js';\n",
-  ],
-  [
-    'lib/reconcile-flow.js',
-    [
-      'export {',
-      '  loadExecutableDispatchFlow,',
-      '  loadExecutableFlow,',
-      '  loadStateMachineFlow,',
-      "} from './flow/reconcile-flow.js';",
-      '',
-    ].join('\n'),
-  ],
-  [
-    'lib/validate-flow-document.js',
-    "export { validateFlowDocument } from './flow/validate-flow-document.js';\n",
-  ],
-  [
-    'lib/validate-repo.js',
-    "export { validateRepo } from './repo/validate-repo.js';\n",
-  ],
-  [
-    'lib/create-semantic-model.js',
-    "export { createSemanticModel } from './repo/semantics/create-semantic-model.js';\n",
-  ],
-  [
-    'lib/reconcile-semantics.js',
-    "export { loadRuntimeSemantics } from './repo/semantics/reconcile-semantics.js';\n",
-  ],
-  [
-    'lib/validate-semantic-mapping.js',
-    "export { validateSemanticMapping } from './repo/semantics/validate-semantic-mapping.js';\n",
-  ],
-  [
-    'lib/git-process.js',
-    "export { execGitFile } from './shared/git/exec-git-file.js';\n",
-  ],
-  [
-    'lib/validation-helpers.js',
-    [
-      'export {',
-      '  compareText,',
-      '  createDiagnostic,',
-      '  getErrorMessage,',
-      '  isPlainObject,',
-      '  listYamlFiles,',
-      '  readJsonFile,',
-      "} from './shared/diagnostics/validation-helpers.js';",
-      '',
-    ].join('\n'),
-  ],
-  ['lib/patram-types.ts', "export * from './shared/types/patram-types.ts';\n"],
-  [
-    'lib/validation.types.ts',
-    "export * from './shared/types/validation.types.ts';\n",
-  ],
-  [
-    'lib/runtime-attempt.js',
-    [
-      'export {',
-      '  resumeTaskAttempt,',
-      '  runStateMachineAttempt,',
-      "} from './runtime/attempts/state-machine.js';",
-      '',
-    ].join('\n'),
-  ],
-  [
-    'lib/local-dispatch-runtime.js',
-    [
-      'export {',
-      '  handleDispatcherFollowerMessage,',
-      '  handleFollowerMessage,',
-      "} from './runtime/dispatch/dispatcher.js';",
-      'export {',
-      '  createWorkerSignalContext,',
-      '  isTransientFollowerRegistrationError,',
-      '  waitForRetryInterval,',
-      "} from './runtime/dispatch/context.js';",
-      'export {',
-      '  dispatch,',
-      '  startWorkerSession,',
-      '  tryListen,',
-      '  worker,',
-      "} from './runtime/dispatch/session.js';",
-      '',
-    ].join('\n'),
-  ],
-  [
-    'lib/local-dispatch-protocol.js',
-    [
-      'export {',
-      '  canConnectToDispatcher,',
-      '  closeServer,',
-      '  createProtocolConnection,',
-      '  isAddressInUseError,',
-      '  isInitialProbeDisconnect,',
-      '  openProtocolConnection,',
-      '  parseProtocolMessage,',
-      '  removeStaleUnixSocket,',
-      '  reportOperatorError,',
-      '  resolveDispatchEndpoint,',
-      '  waitForMessage,',
-      "} from './runtime/dispatch/protocol.js';",
-      '',
-    ].join('\n'),
-  ],
+/** @type {string[]} */
+const REMOVED_FACADES = [
+  'lib/pravaha-cli.js',
+  'lib/load-flow-definition.js',
+  'lib/reconcile-flow.js',
+  'lib/validate-flow-document.js',
+  'lib/validate-repo.js',
+  'lib/create-semantic-model.js',
+  'lib/reconcile-semantics.js',
+  'lib/validate-semantic-mapping.js',
+  'lib/git-process.js',
+  'lib/validation-helpers.js',
+  'lib/patram-types.ts',
+  'lib/validation.types.ts',
+  'lib/runtime-attempt.js',
+  'lib/local-dispatch-runtime.js',
+  'lib/local-dispatch-protocol.js',
 ];
 
 it('keeps repo-level tests out of lib', async () => {
@@ -140,10 +46,12 @@ it('keeps the migrated subsystem directories in lib', async () => {
   );
 });
 
-it('keeps root compatibility facades for migrated modules', async () => {
-  for (const [file_path, expected_text] of EXPECTED_FACADES) {
-    const facade_text = await readFile(join(repo_directory, file_path), 'utf8');
-
-    expect(facade_text).toBe(expected_text);
+it('removes root compatibility facades for migrated modules', async () => {
+  for (const file_path of REMOVED_FACADES) {
+    await expect(
+      readFile(join(repo_directory, file_path), 'utf8'),
+    ).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
   }
 });

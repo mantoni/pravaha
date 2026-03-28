@@ -1,6 +1,8 @@
 /** @import { Server } from 'node:net' */
+/* eslint-disable max-lines-per-function */
 import { EventEmitter } from 'node:events';
 import { mkdtemp, rm } from 'node:fs/promises';
+import { createServer } from 'node:net';
 import { join } from 'node:path';
 
 import { afterEach, expect, it, vi } from 'vitest';
@@ -34,7 +36,18 @@ it('covers the no-dispatcher branch in the extracted dispatch session module', a
 
 it('covers notify delivery and unexpected acknowledgements in the extracted dispatch session module', async () => {
   vi.resetModules();
-  const protocol_mocks = mockDispatchProtocolSequence([
+  const temp_directory = await mkdtemp('/tmp/pravaha-dispatch-');
+  /** @type {Array<{ source: string, type: 'notify_dispatch' }>} */
+  const received_messages = [];
+  const {
+    closeServer,
+    createProtocolConnection,
+    removeStaleUnixSocket,
+    resolveDispatchEndpoint,
+    waitForMessage,
+  } = await import('../lib/runtime/dispatch/protocol.js');
+  const endpoint = await resolveDispatchEndpoint(temp_directory, 'darwin');
+  const response_messages = [
     {
       dispatcher_id: 'worker-dispatcher',
       type: 'dispatch_notified',
@@ -43,27 +56,67 @@ it('covers notify delivery and unexpected acknowledgements in the extracted disp
       dispatcher_id: 'worker-dispatcher',
       type: 'worker_registered',
     },
-  ]);
-  const { dispatch } = await import('../lib/runtime/dispatch/session.js');
+  ];
+  const server = createServer((socket) => {
+    const protocol_connection = createProtocolConnection(socket);
 
-  await expect(dispatch('/repo')).resolves.toEqual({
-    dispatcher_available: true,
-    dispatcher_id: 'worker-dispatcher',
-    endpoint: '/repo/.pravaha/dispatch/leader.sock',
-    notification_delivered: true,
-    outcome: 'success',
-  });
-  await expect(dispatch('/repo')).rejects.toThrow(
-    'Expected dispatch_notified, received worker_registered.',
-  );
+    void waitForMessage(
+      protocol_connection,
+      'Expected the dispatcher test server to receive notify_dispatch.',
+    ).then((message) => {
+      if (message.type !== 'notify_dispatch') {
+        throw new Error(`Expected notify_dispatch, received ${message.type}.`);
+      }
 
-  expect(protocol_mocks.send).toHaveBeenCalledWith({
-    source: 'dispatch-cli',
-    type: 'notify_dispatch',
+      received_messages.push(message);
+      protocol_connection.send(
+        /** @type {{ dispatcher_id: string, type: 'dispatch_notified' | 'worker_registered' }} */ (
+          response_messages.shift()
+        ),
+      );
+      protocol_connection.close();
+    });
   });
-  expect(protocol_mocks.close).toHaveBeenCalledTimes(1);
-  expect(protocol_mocks.destroy).toHaveBeenCalledTimes(2);
-  expect(protocol_mocks.wait_until_closed).toHaveBeenCalledTimes(1);
+
+  await new Promise((resolve) => {
+    server.listen(endpoint.address, () => {
+      resolve(undefined);
+    });
+  });
+
+  try {
+    const { dispatch } = await import('../lib/runtime/dispatch/session.js');
+
+    await expect(
+      dispatch(temp_directory, { platform: 'darwin' }),
+    ).resolves.toEqual({
+      dispatcher_available: true,
+      dispatcher_id: 'worker-dispatcher',
+      endpoint: endpoint.address,
+      notification_delivered: true,
+      outcome: 'success',
+    });
+    await expect(
+      dispatch(temp_directory, { platform: 'darwin' }),
+    ).rejects.toThrow(
+      'Expected dispatch_notified, received worker_registered.',
+    );
+
+    expect(received_messages).toEqual([
+      {
+        source: 'dispatch-cli',
+        type: 'notify_dispatch',
+      },
+      {
+        source: 'dispatch-cli',
+        type: 'notify_dispatch',
+      },
+    ]);
+  } finally {
+    await closeServer(server);
+    await removeStaleUnixSocket(endpoint.address);
+    await rm(temp_directory, { force: true, recursive: true });
+  }
 });
 
 it('covers tryListen success and address-in-use outcomes in the extracted dispatch session module', async () => {
@@ -102,54 +155,6 @@ it('rethrows unexpected listen errors in the extracted dispatch session module',
     ),
   ).rejects.toThrow('listen boom');
 });
-
-/**
- * @param {Array<{ dispatcher_id: string, type: 'dispatch_notified' | 'worker_registered' }>} response_messages
- * @returns {{
- *   close: ReturnType<typeof vi.fn>,
- *   destroy: ReturnType<typeof vi.fn>,
- *   send: ReturnType<typeof vi.fn>,
- *   wait_until_closed: ReturnType<typeof vi.fn>,
- * }}
- */
-function mockDispatchProtocolSequence(response_messages) {
-  const send = vi.fn();
-  const close = vi.fn();
-  const destroy = vi.fn();
-  const wait_until_closed = vi.fn(async () => {});
-  const wait_for_message = vi.fn();
-
-  for (const response_message of response_messages) {
-    wait_for_message.mockResolvedValueOnce(response_message);
-  }
-
-  vi.doMock('../lib/runtime/dispatch/protocol.js', () => ({
-    canConnectToDispatcher: vi.fn(),
-    closeServer: vi.fn(),
-    createProtocolConnection: vi.fn(),
-    isAddressInUseError: vi.fn(),
-    openProtocolConnection: vi.fn(async () => ({
-      close,
-      destroy,
-      send,
-      wait_until_closed,
-    })),
-    removeStaleUnixSocket: vi.fn(),
-    reportOperatorError: vi.fn(),
-    resolveDispatchEndpoint: vi.fn(async () => ({
-      address: '/repo/.pravaha/dispatch/leader.sock',
-      kind: 'unix-socket',
-    })),
-    waitForMessage: wait_for_message,
-  }));
-
-  return {
-    close,
-    destroy,
-    send,
-    wait_until_closed,
-  };
-}
 
 /**
  * @param {{ error?: Error }} [options]

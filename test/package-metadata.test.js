@@ -69,7 +69,8 @@ it(
 
       expect(packed_file_paths).toContain('bin/pravaha.js');
       expect(packed_file_paths).toContain('lib/pravaha.js');
-      expect(packed_file_paths).toContain('lib/pravaha-cli.js');
+      expect(packed_file_paths).toContain('lib/cli/main.js');
+      expect(packed_file_paths).not.toContain('lib/pravaha-cli.js');
       expect(packed_file_paths).not.toContain('lib/pravaha-cli.test.js');
       expect(packed_file_paths).not.toContain('lib/create-greeting.test.js');
       expect(packed_file_paths).not.toContain(
