@@ -78,7 +78,7 @@ const TEST_GLOBALS = {
 
 export default tseslint.config(
   {
-    ignores: ['**/coverage/**', '**/node_modules/**'],
+    ignores: ['**/coverage/**', '**/node_modules/**', '**/.pravaha/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
