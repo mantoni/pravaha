@@ -52,7 +52,7 @@ jobs:
   handoff:
     uses: core/worktree-handoff
     with:
-      branch: review/ready/${{ task.id }}
+      branch: review/ready/${{ task.id.replaceAll(':', '-') }}
     next: done
 
   done:

@@ -208,7 +208,7 @@ jobs:
   merge_branch:
     uses: core/git-merge
     with:
-      head: review/ready/${{ task.id }}
+      head: review/ready/${{ task.id.replaceAll(':', '-') }}
       message: Merge reviewed work for ${{ task.path }}
     next: done
 
@@ -242,7 +242,7 @@ jobs:
   handoff:
     uses: core/worktree-handoff
     with:
-      branch: review/ready/${{ task.id }}
+      branch: review/ready/${{ task.id.replaceAll(':', '-') }}
     next: publish
 
   publish:
