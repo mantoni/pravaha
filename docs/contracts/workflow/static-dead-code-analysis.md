@@ -50,7 +50,8 @@ Depends on:
 
 ## Review Gate
 
-- `npx vitest run husky-config.test.js github-actions-config.test.js` passes.
+- `npx vitest run test/husky-config.test.js test/github-actions-config.test.js`
+  passes.
 - `npx tsc` passes.
 - `npx eslint --fix` and `npx prettier --write` have been run on touched files.
 - `npm run all` passes.

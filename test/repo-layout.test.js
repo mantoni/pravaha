@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { expect, it } from 'vitest';
 
 const repo_directory = dirname(
-  fileURLToPath(new URL('./package.json', import.meta.url)),
+  fileURLToPath(new URL('../package.json', import.meta.url)),
 );
 /** @type {string[]} */
 const REMOVED_FACADES = [
@@ -28,7 +28,7 @@ const REMOVED_FACADES = [
   'lib/local-dispatch-protocol.js',
 ];
 /** @type {string[]} */
-const MOVED_TESTS = [
+const REMOVED_LEGACY_TEST_BUCKETS = [
   'lib/create-semantic-model.test.js',
   'lib/define-plugin.test.js',
   'lib/flow-query.test.js',
@@ -47,21 +47,40 @@ const MOVED_TESTS = [
   'lib/validate-repo.test.js',
   'lib/validate-semantic-mapping.test.js',
   'lib/validation-helpers.test.js',
-  'test/github-actions-config.test.js',
-  'test/husky-config.test.js',
-  'test/package-install-smoke.test.js',
-  'test/package-metadata.test.js',
-  'test/patram-config.test.js',
-  'test/patram-queries.test.js',
-  'test/pravaha-config.test.js',
   'test/pravaha-validation.test.js',
-  'test/release-config.test.js',
-  'test/repo-layout.test.js',
-  'test/source-metadata-refs.test.js',
   'test/split-dispatch-session-coverage.test.js',
   'test/split-module-coverage.helpers.js',
   'test/split-module-coverage.test.js',
-  'test/vitest-tags-config.test.js',
+];
+/** @type {string[]} */
+const ROOT_LEVEL_TEST_FILES = [
+  'github-actions-config.test.js',
+  'husky-config.test.js',
+  'knip-config.test.js',
+  'package-install-smoke.test.js',
+  'package-metadata.test.js',
+  'patram-config.test.js',
+  'patram-queries.test.js',
+  'pravaha-config.test.js',
+  'release-config.test.js',
+  'repo-layout.test.js',
+  'source-metadata-refs.test.js',
+  'vitest-tags-config.test.js',
+];
+/** @type {string[]} */
+const REPO_TEST_FILES = [
+  'github-actions-config.test.js',
+  'husky-config.test.js',
+  'knip-config.test.js',
+  'package-install-smoke.test.js',
+  'package-metadata.test.js',
+  'patram-config.test.js',
+  'patram-queries.test.js',
+  'pravaha-config.test.js',
+  'release-config.test.js',
+  'repo-layout.test.js',
+  'source-metadata-refs.test.js',
+  'vitest-tags-config.test.js',
 ];
 /** @type {string[]} */
 const REMOVED_TEST_SUPPORT_FILES = [
@@ -74,11 +93,17 @@ const REMOVED_TEST_SUPPORT_FILES = [
 ];
 
 it('keeps repo-level tests out of lib', async () => {
-  const lib_entries = await readdir(new URL('./lib/', import.meta.url));
+  const lib_entries = await readdir(new URL('../lib/', import.meta.url));
 
   expect(lib_entries).not.toContain('github-actions-config.test.js');
   expect(lib_entries).not.toContain('husky-config.test.js');
   expect(lib_entries).not.toContain('release-config.test.js');
+});
+
+it('keeps repo-level tests under test', async () => {
+  const test_entries = await readdir(join(repo_directory, 'test'));
+
+  expect(test_entries).toEqual(expect.arrayContaining(REPO_TEST_FILES));
 });
 
 it('keeps the migrated subsystem directories in lib', async () => {
@@ -104,7 +129,17 @@ it('removes root compatibility facades for migrated modules', async () => {
 });
 
 it('removes the legacy root test buckets after colocating migrated coverage', async () => {
-  for (const file_path of MOVED_TESTS) {
+  for (const file_path of REMOVED_LEGACY_TEST_BUCKETS) {
+    await expect(
+      readFile(join(repo_directory, file_path), 'utf8'),
+    ).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  }
+});
+
+it('removes repo-level test files from the package root', async () => {
+  for (const file_path of ROOT_LEVEL_TEST_FILES) {
     await expect(
       readFile(join(repo_directory, file_path), 'utf8'),
     ).rejects.toMatchObject({

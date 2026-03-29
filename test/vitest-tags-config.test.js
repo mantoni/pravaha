@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 
 import { expect, it } from 'vitest';
 
-import vitest_config from './vitest.config.js';
+import vitest_config from '../vitest.config.js';
 
 it('defines tag-aware Vitest timeout profiles and a higher slow-test threshold', () => {
   const test_config = vitest_config.test;
@@ -32,7 +32,7 @@ it('defines tag-aware Vitest timeout profiles and a higher slow-test threshold',
 
 it('marks tagged integration and smoke tests in the expected files', async () => {
   const update_changelog_test = await readFile(
-    new URL('./scripts/update-changelog.test.js', import.meta.url),
+    new URL('../scripts/update-changelog.test.js', import.meta.url),
     'utf8',
   );
   const smoke_test_text = await readFile(
@@ -40,7 +40,7 @@ it('marks tagged integration and smoke tests in the expected files', async () =>
     'utf8',
   );
   const local_dispatch_test_text = await readFile(
-    new URL('./lib/runtime/dispatch/session.test.js', import.meta.url),
+    new URL('../lib/runtime/dispatch/session.test.js', import.meta.url),
     'utf8',
   );
   const package_metadata_test_text = await readFile(

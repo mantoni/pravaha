@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 
-import pravaha_config from './pravaha.json' with { type: 'json' };
+import pravaha_config from '../pravaha.json' with { type: 'json' };
 
 it('defines semantic role and state mappings for Pravaha flows', () => {
   expect(pravaha_config).toEqual({

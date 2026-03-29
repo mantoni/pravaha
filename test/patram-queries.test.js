@@ -6,11 +6,11 @@ import { promisify } from 'node:util';
 
 import { expect, it } from 'vitest';
 
-import patram_config from './.patram.json' with { type: 'json' };
+import patram_config from '../.patram.json' with { type: 'json' };
 
 const exec_file = promisify(execFile);
 const patram_bin_path = new URL(
-  './node_modules/patram/bin/patram.js',
+  '../node_modules/patram/bin/patram.js',
   import.meta.url,
 );
 

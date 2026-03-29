@@ -13,7 +13,7 @@ import { it } from 'vitest';
 
 const exec_file = promisify(execFile);
 const repo_directory = dirname(
-  fileURLToPath(new URL('./package.json', import.meta.url)),
+  fileURLToPath(new URL('../package.json', import.meta.url)),
 );
 
 it('installs and imports the packed npm package in a consumer project', async () => {

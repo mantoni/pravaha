@@ -4,7 +4,7 @@ import { expect, it } from 'vitest';
 
 it('defines the checks workflow contract', async () => {
   const workflow_text = await readTextFile(
-    new URL('./.github/workflows/checks.yml', import.meta.url),
+    new URL('../.github/workflows/checks.yml', import.meta.url),
   );
 
   expect(workflow_text).toContain('on:');

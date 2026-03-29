@@ -5,7 +5,7 @@
     "bin/**/*.js",
     "lib/**/*.js",
     "scripts/**/*.js",
-    "*.test.js"
+    "test/**/*.js"
   ],
   "classes": {
     "document": {

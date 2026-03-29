@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 
-import patram_config from './.patram.json' with { type: 'json' };
+import patram_config from '../.patram.json' with { type: 'json' };
 
 it('defines the Patram repo contract for docs and source files', () => {
   expect(patram_config).toEqual(createExpectedPatramConfig());
@@ -14,7 +14,7 @@ function createExpectedPatramConfig() {
       'bin/**/*.js',
       'lib/**/*.js',
       'scripts/**/*.js',
-      '*.test.js',
+      'test/**/*.js',
     ],
     classes: createExpectedClasses(),
     fields: createExpectedFields(),

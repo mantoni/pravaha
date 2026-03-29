@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 
 import { expect, it } from 'vitest';
 
-import package_json from './package.json' with { type: 'json' };
+import package_json from '../package.json' with { type: 'json' };
 
 it('defines npm version lifecycle scripts for releases', () => {
   expect(package_json.scripts).toMatchObject({
@@ -15,7 +15,7 @@ it('defines npm version lifecycle scripts for releases', () => {
 
 it('defines the tag-based publish and release workflow contract', async () => {
   const workflow_text = await readTextFile(
-    new URL('./.github/workflows/release.yml', import.meta.url),
+    new URL('../.github/workflows/release.yml', import.meta.url),
   );
 
   expect(workflow_text).toContain('push:');

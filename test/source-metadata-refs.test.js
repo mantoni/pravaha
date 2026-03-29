@@ -7,11 +7,11 @@ import { expect, it } from 'vitest';
 
 const exec_file = promisify(execFile);
 const patram_bin_path = new URL(
-  './node_modules/patram/bin/patram.js',
+  '../node_modules/patram/bin/patram.js',
   import.meta.url,
 );
 const repo_directory = dirname(
-  fileURLToPath(new URL('./package.json', import.meta.url)),
+  fileURLToPath(new URL('../package.json', import.meta.url)),
 );
 
 it('exposes local dispatch runtime decision touch-points through reverse references', async () => {

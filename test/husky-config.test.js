@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 
 import { expect, it } from 'vitest';
 
-import package_json from './package.json' with { type: 'json' };
+import package_json from '../package.json' with { type: 'json' };
 
 it('installs husky and wires pre-commit to the package checks', async () => {
   expect(package_json.dependencies).toMatchObject({
@@ -36,7 +36,7 @@ it('installs husky and wires pre-commit to the package checks', async () => {
   });
 
   const pre_commit_hook = await readTextFile(
-    new URL('./.husky/pre-commit', import.meta.url),
+    new URL('../.husky/pre-commit', import.meta.url),
   );
 
   expect(pre_commit_hook).toContain('npm run check:staged');
@@ -46,7 +46,7 @@ it('wires pre-push to a shell-based fixup check', async () => {
   expect(package_json.scripts).not.toHaveProperty('check:fixups');
 
   const pre_push_hook = await readTextFile(
-    new URL('./.husky/pre-push', import.meta.url),
+    new URL('../.husky/pre-push', import.meta.url),
   );
 
   expect(pre_push_hook).toContain("git rev-parse --verify '@{u}'");

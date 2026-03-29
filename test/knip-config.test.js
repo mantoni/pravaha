@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 
-import knip_config from './knip.json' with { type: 'json' };
+import knip_config from '../knip.json' with { type: 'json' };
 
 it('keeps full-repo knip analysis aware of the test tree', () => {
   expect(knip_config).toMatchObject({

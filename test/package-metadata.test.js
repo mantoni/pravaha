@@ -9,11 +9,11 @@ import { promisify } from 'node:util';
 
 import { expect, it } from 'vitest';
 
-import package_json from './package.json' with { type: 'json' };
+import package_json from '../package.json' with { type: 'json' };
 
 const exec_file = promisify(execFile);
 const repo_directory = dirname(
-  fileURLToPath(new URL('./package.json', import.meta.url)),
+  fileURLToPath(new URL('../package.json', import.meta.url)),
 );
 
 it('defines publish metadata for the npm package', async () => {
@@ -50,7 +50,7 @@ it('defines publish metadata for the npm package', async () => {
   });
 
   const license_text = await readTextFile(
-    new URL('./LICENSE', import.meta.url),
+    new URL('../LICENSE', import.meta.url),
   );
 
   expect(license_text).toContain('MIT License');
