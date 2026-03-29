@@ -290,3 +290,38 @@ jobs:
   done:
     end: success
 ```
+
+Invalid because repo-backed pooled workspaces must declare exactly one of
+`source.id` or `source.ids`:
+
+```yaml
+kind: flow
+id: invalid-workspace-source-mix
+status: active
+scope: contract
+
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+    ids:
+      - app
+      - app-1
+  materialize:
+    kind: worktree
+    mode: pooled
+    ref: main
+
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
+jobs:
+  implement:
+    uses: core/run-codex
+    next: done
+
+  done:
+    end: success
+```

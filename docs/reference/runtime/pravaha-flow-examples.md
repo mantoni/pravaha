@@ -121,7 +121,10 @@ workspace:
   type: git.workspace
   source:
     kind: repo
-    id: app
+    ids:
+      - app
+      - app-1
+      - app-2
   materialize:
     kind: worktree
     mode: pooled

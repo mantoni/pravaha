@@ -73,7 +73,10 @@ workspace:
   type: git.workspace
   source:
     kind: repo
-    id: app
+    ids:
+      - app
+      - app-1
+      - app-2
   materialize:
     kind: worktree
     mode: pooled
@@ -81,6 +84,8 @@ workspace:
 ```
 
 - Declare workspace policy once at flow scope.
+- Use `source.id` for one reusable slot or `source.ids` for multiple pooled
+  slots in declaration order.
 - Repo-backed checked-in worktrees currently allow only `ephemeral` and `pooled`
   modes.
 - Resume reuses the recorded resolved assignment instead of selecting again.
