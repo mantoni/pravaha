@@ -8,6 +8,7 @@ Decided by:
   - docs/decisions/runtime/automatic-follower-failover.md
   - docs/decisions/runtime/current-truth-run-snapshot-persistence.md
   - docs/decisions/runtime/flow-instance-rerun-suppression-and-explicit-dispatch.md
+  - docs/decisions/runtime/unresolved-run-worktree-exclusivity.md
 Depends on:
   - docs/contracts/runtime/ordered-worktree-step-execution.md
   - docs/contracts/runtime/runtime-node-lifecycle.md
@@ -71,6 +72,8 @@ Depends on:
   system is idle.
 - The dispatcher never creates more than one live run snapshot for the same
   task.
+- An unresolved run that owns a reusable worktree keeps that worktree occupied
+  until the run reaches a terminal outcome or performs an explicit handoff.
 - Default dispatcher rescans do not rerun a still-matching flow instance that
   already has a terminal runtime record.
 - A worker may supervise at most one active assignment at a time in the first
@@ -87,6 +90,8 @@ Depends on:
 - Surviving followers exit instead of re-entering leader election after
   dispatcher loss.
 - Two workers create competing live run snapshots for the same task.
+- Dispatcher scheduling reuses a reusable worktree that still belongs to an
+  unresolved approval or queue wait and destroys resumable state.
 - A lost notification leaves work stranded until a later manual dispatch or
   worker restart.
 - Migrated flows still allow hidden fan-out inside jobs and become ambiguous to
@@ -113,4 +118,6 @@ Depends on:
   without requiring a manual worker restart.
 - The runtime keeps one live run snapshot per task and avoids duplicate durable
   ownership of the same flow instance.
+- Dispatcher scheduling reconstructs reusable worktree occupancy from unresolved
+  run snapshots and does not assign conflicting work onto an occupied worktree.
 - `npm run all` passes.
