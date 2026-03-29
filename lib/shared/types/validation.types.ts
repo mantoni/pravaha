@@ -9,7 +9,7 @@ export interface ValidationResult {
 }
 
 export interface JsonReadResult {
-  value: unknown | null;
+  value: unknown;
   diagnostics: ValidationDiagnostic[];
 }
 

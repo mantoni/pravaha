@@ -8,7 +8,7 @@ import { expect, it } from 'vitest';
 
 import patram_config from '../.patram.json' with { type: 'json' };
 
-const exec_file = promisify(execFile);
+const execFileAsync = promisify(execFile);
 const patram_bin_path = new URL(
   '../node_modules/patram/bin/patram.js',
   import.meta.url,
@@ -121,7 +121,7 @@ function createFixtureDocument(options) {
  * @returns {Promise<string[]>}
  */
 async function runPatramQuery(temp_directory, query_name) {
-  const { stdout } = await exec_file(
+  const { stdout } = await execFileAsync(
     process.execPath,
     [patram_bin_path.pathname, 'query', query_name, '--json'],
     {
@@ -129,17 +129,8 @@ async function runPatramQuery(temp_directory, query_name) {
       encoding: 'utf8',
     },
   );
-  const parsed_output = JSON.parse(stdout);
 
-  return parsed_output.results
-    .map(
-      /**
-       * @param {{ '$id': string }} result
-       * @returns {string}
-       */
-      (result) => result.$id,
-    )
-    .sort(compareText);
+  return parseQueryResultIds(stdout).sort(compareText);
 }
 
 /**
@@ -149,6 +140,63 @@ async function runPatramQuery(temp_directory, query_name) {
  */
 function compareText(left_text, right_text) {
   return left_text.localeCompare(right_text, 'en');
+}
+
+/**
+ * @param {string} query_result_text
+ * @returns {string[]}
+ */
+function parseQueryResultIds(query_result_text) {
+  const parsed_output = /** @type {unknown} */ (JSON.parse(query_result_text));
+
+  if (
+    parsed_output === null ||
+    typeof parsed_output !== 'object' ||
+    Array.isArray(parsed_output)
+  ) {
+    throw new Error('Expected patram query --json to return a results array.');
+  }
+
+  const query_result = /** @type {{ results?: unknown }} */ (parsed_output);
+
+  if (!Array.isArray(query_result.results)) {
+    throw new Error('Expected patram query --json to return a results array.');
+  }
+
+  return query_result.results.flatMap((result) => {
+    if (
+      result !== null &&
+      typeof result === 'object' &&
+      !Array.isArray(result)
+    ) {
+      const query_id = readObjectProperty(result, '$id');
+
+      if (typeof query_id !== 'string') {
+        return [];
+      }
+
+      return [query_id];
+    }
+
+    return [];
+  });
+}
+
+/**
+ * @param {unknown} object_value
+ * @param {string} property_name
+ * @returns {unknown}
+ */
+function readObjectProperty(object_value, property_name) {
+  if (
+    object_value === null ||
+    typeof object_value !== 'object' ||
+    Array.isArray(object_value)
+  ) {
+    return undefined;
+  }
+
+  return /** @type {Record<string, unknown>} */ (object_value)[property_name];
 }
 
 /**

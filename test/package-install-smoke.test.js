@@ -11,7 +11,7 @@ import { promisify } from 'node:util';
 
 import { it } from 'vitest';
 
-const exec_file = promisify(execFile);
+const execFileAsync = promisify(execFile);
 const repo_directory = dirname(
   fileURLToPath(new URL('../package.json', import.meta.url)),
 );
@@ -55,9 +55,9 @@ async function packRepo(parent_directory) {
       npm_config_cache: npm_cache_directory,
     },
   );
-  const pack_result = JSON.parse(stdout);
+  const pack_result = parsePackResult(stdout);
 
-  return join(parent_directory, pack_result[0].filename);
+  return join(parent_directory, pack_result.filename);
 }
 
 /**
@@ -137,6 +137,38 @@ async function createTempDirectory() {
 }
 
 /**
+ * @param {string} pack_result_text
+ * @returns {{ filename: string }}
+ */
+function parsePackResult(pack_result_text) {
+  const parsed_value = /** @type {unknown} */ (JSON.parse(pack_result_text));
+
+  if (!Array.isArray(parsed_value) || parsed_value.length === 0) {
+    throw new Error('Expected npm pack to return at least one result.');
+  }
+
+  /** @type {unknown[]} */
+  const parsed_results = parsed_value;
+  const [first_result] = parsed_results;
+
+  if (
+    first_result === null ||
+    typeof first_result !== 'object' ||
+    Array.isArray(first_result)
+  ) {
+    throw new Error('Expected npm pack to return a filename.');
+  }
+
+  const pack_result = /** @type {{ filename?: unknown }} */ (first_result);
+
+  if (typeof pack_result.filename !== 'string') {
+    throw new Error('Expected npm pack to return a filename.');
+  }
+
+  return /** @type {{ filename: string }} */ (pack_result);
+}
+
+/**
  * @param {string} command
  * @param {string[]} command_arguments
  * @param {string} working_directory
@@ -149,7 +181,7 @@ async function runCommand(
   working_directory,
   environment,
 ) {
-  return exec_file(command, command_arguments, {
+  return execFileAsync(command, command_arguments, {
     cwd: working_directory,
     env: {
       ...process.env,

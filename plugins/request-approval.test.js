@@ -6,8 +6,10 @@ it('requests approval through the plugin context helper', async () => {
   let request_count = 0;
 
   await request_approval_plugin.run({
-    async requestApproval() {
+    requestApproval() {
       request_count += 1;
+
+      return Promise.resolve();
     },
   });
 

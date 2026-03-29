@@ -19,7 +19,7 @@ import {
   updateChangelog,
 } from './update-changelog.js';
 
-const exec_file = promisify(execFile);
+const execFileAsync = promisify(execFile);
 
 it('extracts the latest changelog section', () => {
   const changelog_text = [
@@ -206,7 +206,7 @@ async function createGitProject(version, options = {}) {
  * @returns {Promise<void>}
  */
 async function runGit(project_directory, args) {
-  await exec_file('git', args, {
+  await execFileAsync('git', args, {
     cwd: project_directory,
   });
 }

@@ -9,9 +9,9 @@ it('installs husky and wires pre-commit to the package checks', async () => {
     patram: '^0.8.0',
   });
   expect(package_json.devDependencies).toMatchObject({
-    husky: expect.any(String),
-    knip: expect.any(String),
-    'lint-staged': expect.any(String),
+    husky: asMatcher(expect.any(String)),
+    knip: asMatcher(expect.any(String)),
+    'lint-staged': asMatcher(expect.any(String)),
   });
   expect(package_json.scripts).toMatchObject({
     'check:knip': 'knip',
@@ -61,4 +61,12 @@ it('wires pre-push to a shell-based fixup check', async () => {
  */
 async function readTextFile(file_url) {
   return readFile(file_url, 'utf8');
+}
+
+/**
+ * @param {unknown} matcher
+ * @returns {unknown}
+ */
+function asMatcher(matcher) {
+  return matcher;
 }

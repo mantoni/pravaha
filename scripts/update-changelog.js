@@ -6,7 +6,7 @@ import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
 
-const exec_file = promisify(execFile);
+const execFileAsync = promisify(execFile);
 
 if (isEntrypoint(import.meta.url, process.argv[1])) {
   await main();
@@ -114,16 +114,29 @@ async function main() {
 async function readPackageJson(project_directory) {
   const package_json_path = join(project_directory, 'package.json');
   const package_json_text = await readFile(package_json_path, 'utf8');
-  const package_json = JSON.parse(package_json_text);
+  const package_json = /** @type {unknown} */ (JSON.parse(package_json_text));
 
   if (
-    typeof package_json.version !== 'string' ||
-    package_json.version.length === 0
+    package_json === null ||
+    typeof package_json !== 'object' ||
+    Array.isArray(package_json)
+  ) {
+    throw new Error('Expected package.json to evaluate to an object.');
+  }
+
+  /** @type {{ version?: unknown }} */
+  const package_json_record = package_json;
+
+  if (
+    typeof package_json_record.version !== 'string' ||
+    package_json_record.version.length === 0
   ) {
     throw new Error('Expected package.json to define a version string.');
   }
 
-  return package_json;
+  return {
+    version: package_json_record.version,
+  };
 }
 
 /**
@@ -299,7 +312,7 @@ function parseGitLogLine(git_log_line) {
  * @returns {Promise<string>}
  */
 async function execGit(project_directory, args) {
-  const { stdout } = await exec_file('git', args, {
+  const { stdout } = await execFileAsync('git', args, {
     cwd: project_directory,
   });
 

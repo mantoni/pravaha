@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { definePlugin } from 'pravaha';
 
-const exec_file = promisify(execFile);
+const execFileAsync = promisify(execFile);
 
 export default definePlugin({
   with: z.object({
@@ -33,7 +33,7 @@ export default definePlugin({
  * @returns {Promise<void>}
  */
 async function runCommand(worktree_path, command_text) {
-  await exec_file('/bin/sh', ['-c', command_text], {
+  await execFileAsync('/bin/sh', ['-c', command_text], {
     cwd: worktree_path,
     encoding: 'utf8',
   });

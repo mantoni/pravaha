@@ -11,7 +11,7 @@ import { expect, it } from 'vitest';
 
 import package_json from '../package.json' with { type: 'json' };
 
-const exec_file = promisify(execFile);
+const execFileAsync = promisify(execFile);
 const repo_directory = dirname(
   fileURLToPath(new URL('../package.json', import.meta.url)),
 );
@@ -126,12 +126,7 @@ async function listPackedFilePaths(temp_directory) {
       npm_config_cache: join(temp_directory, 'npm-cache'),
     },
   );
-  /** @type {{ files: Array<{ path: string }> }[]} */
-  const pack_results = JSON.parse(stdout);
-  /** @type {string[]} */
-  const packed_file_paths = pack_results[0].files.map(({ path }) => path);
-
-  return packed_file_paths;
+  return parsePackedFilePaths(stdout);
 }
 
 /**
@@ -147,11 +142,76 @@ async function runCommand(
   working_directory,
   environment,
 ) {
-  return exec_file(command, command_arguments, {
+  return execFileAsync(command, command_arguments, {
     cwd: working_directory,
     env: {
       ...process.env,
       ...environment,
     },
   });
+}
+
+/**
+ * @param {string} pack_results_text
+ * @returns {string[]}
+ */
+function parsePackedFilePaths(pack_results_text) {
+  const parsed_value = /** @type {unknown} */ (JSON.parse(pack_results_text));
+
+  if (!Array.isArray(parsed_value) || parsed_value.length === 0) {
+    throw new Error('Expected npm pack --json to return at least one result.');
+  }
+
+  /** @type {unknown[]} */
+  const pack_results = parsed_value;
+  const [first_result] = pack_results;
+
+  if (
+    first_result === null ||
+    typeof first_result !== 'object' ||
+    Array.isArray(first_result)
+  ) {
+    throw new Error('Expected npm pack --json to return file metadata.');
+  }
+
+  const pack_result = /** @type {{ files?: unknown }} */ (first_result);
+
+  if (!Array.isArray(pack_result.files)) {
+    throw new Error('Expected npm pack --json to return file metadata.');
+  }
+
+  return pack_result.files.flatMap((file_entry) => {
+    if (
+      file_entry !== null &&
+      typeof file_entry === 'object' &&
+      !Array.isArray(file_entry)
+    ) {
+      const file_path = readObjectProperty(file_entry, 'path');
+
+      if (typeof file_path !== 'string') {
+        return [];
+      }
+
+      return [file_path];
+    }
+
+    return [];
+  });
+}
+
+/**
+ * @param {unknown} object_value
+ * @param {string} property_name
+ * @returns {unknown}
+ */
+function readObjectProperty(object_value, property_name) {
+  if (
+    object_value === null ||
+    typeof object_value !== 'object' ||
+    Array.isArray(object_value)
+  ) {
+    return undefined;
+  }
+
+  return /** @type {Record<string, unknown>} */ (object_value)[property_name];
 }

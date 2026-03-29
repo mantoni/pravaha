@@ -5,7 +5,7 @@ import { promisify } from 'node:util';
 
 import { expect, it } from 'vitest';
 
-const exec_file = promisify(execFile);
+const execFileAsync = promisify(execFile);
 const patram_bin_path = new URL(
   '../node_modules/patram/bin/patram.js',
   import.meta.url,
@@ -65,7 +65,7 @@ it('exposes runtime contract implementation touch-points through reverse referen
  * }>}
  */
 async function runPatramRefs(relative_path) {
-  const { stdout } = await exec_file(
+  const { stdout } = await execFileAsync(
     process.execPath,
     [patram_bin_path.pathname, 'refs', relative_path, '--json'],
     {
@@ -74,7 +74,7 @@ async function runPatramRefs(relative_path) {
     },
   );
 
-  return JSON.parse(stdout);
+  return parseRefsResult(stdout);
 }
 
 /**
@@ -96,7 +96,7 @@ function readIncomingPaths(refs_result, relation_name) {
        */
       (incoming_path) => typeof incoming_path === 'string',
     )
-    .sort(compare_text);
+    .sort(compareText);
 }
 
 /**
@@ -104,6 +104,26 @@ function readIncomingPaths(refs_result, relation_name) {
  * @param {string} right_text
  * @returns {number}
  */
-function compare_text(left_text, right_text) {
+function compareText(left_text, right_text) {
   return left_text.localeCompare(right_text, 'en');
+}
+
+/**
+ * @param {string} refs_result_text
+ * @returns {{
+ *   incoming?: Record<string, Array<{ '$path'?: string }>>,
+ * }}
+ */
+function parseRefsResult(refs_result_text) {
+  const parsed_value = /** @type {unknown} */ (JSON.parse(refs_result_text));
+
+  if (
+    parsed_value !== null &&
+    typeof parsed_value === 'object' &&
+    !Array.isArray(parsed_value)
+  ) {
+    return parsed_value;
+  }
+
+  throw new Error('Expected patram refs --json to return an object.');
 }
