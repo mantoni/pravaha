@@ -1,6 +1,7 @@
 export {
   createDispatchResult,
   createIoContext,
+  createStatusResult,
   createStoppedWorkerResult,
   createSuccessfulValidationResult,
 };
@@ -56,6 +57,41 @@ function createDispatchResult() {
     dispatcher_id: null,
     endpoint: '/repo/.pravaha/dispatch/leader.sock',
     notification_delivered: false,
+    outcome: 'success',
+  };
+}
+
+/**
+ * @returns {{
+ *   connected_worker_count: number,
+ *   dispatcher_available: false,
+ *   dispatcher_id: null,
+ *   endpoint: string,
+ *   flows_by_status: {
+ *     failed: never[],
+ *     pending: never[],
+ *     running: never[],
+ *     succeeded: never[],
+ *     'waiting-approval': never[],
+ *     'waiting-queue': never[],
+ *   },
+ *   outcome: 'success',
+ * }}
+ */
+function createStatusResult() {
+  return {
+    connected_worker_count: 0,
+    dispatcher_available: false,
+    dispatcher_id: null,
+    endpoint: '/repo/.pravaha/dispatch/leader.sock',
+    flows_by_status: {
+      failed: [],
+      pending: [],
+      running: [],
+      succeeded: [],
+      'waiting-approval': [],
+      'waiting-queue': [],
+    },
     outcome: 'success',
   };
 }
