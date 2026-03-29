@@ -179,6 +179,40 @@ jobs:
     end: success
 ```
 
+## Land A Reviewed Branch
+
+```yaml
+kind: flow
+id: reviewed-branch-landed
+status: active
+scope: contract
+
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: ephemeral
+    ref: main
+
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
+jobs:
+  merge_branch:
+    uses: core/git-merge
+    with:
+      head: review/ready/${{ task.id }}
+      message: Merge reviewed work for ${{ task.path }}
+    next: done
+
+  done:
+    end: success
+```
+
 ## Flow Shape Summary
 
 ```json

@@ -37,7 +37,8 @@ Depends on:
 - One bundled `core/run-codex` plugin with typed `with` inputs such as `prompt`
   and `reasoning`.
 - Runtime and package changes that remove the `@openai/codex-sdk` dependency.
-- Bundled `core/run`, `core/run-codex`, `core/approval`, `core/git-status`, and
+- Bundled `core/run`, `core/run-codex`, `core/approval`, `core/git-status`,
+  `core/git-merge`, `core/git-squash`, `core/git-rebase`, and
   `core/flow-dispatch` plugins implemented as actual modules.
 
 ## Side Effects

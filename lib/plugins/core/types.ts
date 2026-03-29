@@ -43,6 +43,20 @@ export interface FlowDispatchWith {
   wait?: boolean;
 }
 
+export interface GitMergeWith {
+  head: string;
+  message?: string;
+}
+
+export interface GitRebaseWith {
+  head: string;
+}
+
+export interface GitSquashWith {
+  head: string;
+  message?: string;
+}
+
 export interface RunCodexWith {
   prompt: string;
   reasoning?: 'low' | 'medium' | 'high';
