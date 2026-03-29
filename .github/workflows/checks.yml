@@ -51,3 +51,7 @@ jobs:
       - name: Check duplicates
         if: matrix.node-version == 24
         run: npm run check:dupes
+
+      - name: Check dead code
+        if: matrix.node-version == 24
+        run: npm run check:knip

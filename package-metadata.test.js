@@ -31,6 +31,7 @@ it('defines publish metadata for the npm package', async () => {
       'bin/pravaha.js',
       'lib/**/*.js',
       'lib/**/*.ts',
+      '!test/**',
       '!bin/**/*.test.js',
       '!bin/**/*.test-helpers.js',
       '!lib/**/*.test.js',
@@ -70,9 +71,24 @@ it(
       expect(packed_file_paths).toContain('bin/pravaha.js');
       expect(packed_file_paths).toContain('lib/pravaha.js');
       expect(packed_file_paths).toContain('lib/cli/main.js');
+      expect(packed_file_paths).not.toContain(
+        'lib/runtime-fixture-test-helpers.js',
+      );
+      expect(packed_file_paths).not.toContain(
+        'lib/plugin.fixture-test-helpers.js',
+      );
+      expect(packed_file_paths).not.toContain(
+        'lib/reconcile.fixture-test-helpers.js',
+      );
       expect(packed_file_paths).not.toContain('lib/pravaha-cli.js');
       expect(packed_file_paths).not.toContain('lib/pravaha-cli.test.js');
       expect(packed_file_paths).not.toContain('lib/create-greeting.test.js');
+      expect(packed_file_paths).not.toContain(
+        'test/fixtures/runtime-fixture.js',
+      );
+      expect(packed_file_paths).not.toContain(
+        'test/fixtures/plugin-fixture.js',
+      );
       expect(packed_file_paths).not.toContain(
         'scripts/update-changelog.test.js',
       );

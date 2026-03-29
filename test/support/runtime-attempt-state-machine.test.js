@@ -3,11 +3,11 @@ import { join } from 'node:path';
 
 import { expect, it } from 'vitest';
 
-import { FLOW_PATH } from './reconcile.fixture-test-helpers.js';
+import { FLOW_PATH } from '../fixtures/reconcile-fixture.js';
 import {
   createStateMachineFixtureRepo,
   createStateMachinePreamble,
-} from './runtime-attempt.state-machine-test-helpers.js';
+} from './runtime-attempt-state-machine.js';
 
 it('returns the checked-in state-machine preamble', () => {
   expect(createStateMachinePreamble()).toEqual(

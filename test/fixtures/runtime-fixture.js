@@ -2,16 +2,11 @@ import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
-import patram_config from '../.patram.json' with { type: 'json' };
-import pravaha_config from '../pravaha.json' with { type: 'json' };
-import { execGitFile } from './shared/git/exec-git-file.js';
+import patram_config from '../../.patram.json' with { type: 'json' };
+import pravaha_config from '../../pravaha.json' with { type: 'json' };
+import { execGitFile } from '../../lib/shared/git/exec-git-file.js';
 
-export {
-  createFixtureDocument,
-  createFixtureRepo,
-  createFixtureRepoFromFiles,
-  initializeGitRepository,
-};
+export { createFixtureDocument, createFixtureRepo, createFixtureRepoFromFiles };
 
 /**
  * @returns {Promise<string>}

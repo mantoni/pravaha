@@ -2,11 +2,11 @@ import { mkdir, symlink, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { URL, fileURLToPath } from 'node:url';
 
-import { CONTRACT_PATH, FLOW_PATH } from './reconcile.fixture-test-helpers.js';
+import { CONTRACT_PATH, FLOW_PATH } from './reconcile-fixture.js';
 import {
   createFixtureDocument,
   createFixtureRepoFromFiles,
-} from './runtime-fixture-test-helpers.js';
+} from './runtime-fixture.js';
 
 export {
   REPO_DIRECTORY,
@@ -17,7 +17,7 @@ export {
 };
 
 const REPO_DIRECTORY = dirname(
-  fileURLToPath(new URL('../package.json', import.meta.url)),
+  fileURLToPath(new URL('../../package.json', import.meta.url)),
 );
 
 /**

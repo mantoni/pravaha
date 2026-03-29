@@ -63,6 +63,15 @@ const MOVED_TESTS = [
   'test/split-module-coverage.test.js',
   'test/vitest-tags-config.test.js',
 ];
+/** @type {string[]} */
+const REMOVED_TEST_SUPPORT_FILES = [
+  'lib/cli/command.test-helpers.js',
+  'lib/plugin.fixture-test-helpers.js',
+  'lib/reconcile.fixture-test-helpers.js',
+  'lib/runtime-attempt.state-machine-test-helpers.js',
+  'lib/runtime-fixture-test-helpers.js',
+  'lib/runtime-test-helpers.js',
+];
 
 it('keeps repo-level tests out of lib', async () => {
   const lib_entries = await readdir(new URL('./lib/', import.meta.url));
@@ -96,6 +105,16 @@ it('removes root compatibility facades for migrated modules', async () => {
 
 it('removes the legacy root test buckets after colocating migrated coverage', async () => {
   for (const file_path of MOVED_TESTS) {
+    await expect(
+      readFile(join(repo_directory, file_path), 'utf8'),
+    ).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  }
+});
+
+it('keeps test support out of the publishable lib tree', async () => {
+  for (const file_path of REMOVED_TEST_SUPPORT_FILES) {
     await expect(
       readFile(join(repo_directory, file_path), 'utf8'),
     ).rejects.toMatchObject({

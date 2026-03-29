@@ -1,7 +1,7 @@
 import {
   createFixtureDocument,
   createFixtureRepoFromFiles,
-} from './runtime-fixture-test-helpers.js';
+} from './runtime-fixture.js';
 
 const CONTRACT_PATH = 'docs/contracts/runtime/single-task-flow-reconciler.md';
 const FLOW_PATH = 'docs/flows/runtime/single-task-flow-reconciler.yaml';

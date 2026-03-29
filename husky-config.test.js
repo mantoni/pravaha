@@ -10,15 +10,19 @@ it('installs husky and wires pre-commit to the package checks', async () => {
   });
   expect(package_json.devDependencies).toMatchObject({
     husky: expect.any(String),
+    knip: expect.any(String),
     'lint-staged': expect.any(String),
   });
   expect(package_json.scripts).toMatchObject({
+    'check:knip': 'knip',
+    'check:knip:production': 'knip --production --include exports',
     'check:patram': 'patram check && node ./bin/pravaha.js validate',
     'check:staged': 'lint-staged',
     prepare: 'husky',
   });
   const all_script = package_json.scripts.all;
 
+  expect(all_script).toContain('npm run check:knip');
   expect(all_script).toContain('npm run check:types');
   expect(all_script).toContain('npm run check:patram');
   expect(all_script).toContain('npm run test:coverage');

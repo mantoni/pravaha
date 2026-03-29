@@ -8,8 +8,8 @@ import { expect, it } from 'vitest';
 import {
   createSuccessRunResult,
   installFakeCodexExecutable,
-} from './runtime-test-helpers.js';
-import { runProcess } from './core-plugins/subprocess.js';
+} from './runtime.js';
+import { runProcess } from '../../lib/core-plugins/subprocess.js';
 
 it('returns a stable success run result fixture', () => {
   expect(createSuccessRunResult()).toEqual({

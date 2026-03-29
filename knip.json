@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/knip/schema.json",
+  "project": [
+    "*.js!",
+    "bin/**/*.js!",
+    "lib/**/*.js!",
+    "lib/**/*.ts!",
+    "scripts/**/*.js",
+    "test/**/*.js"
+  ],
+  "ignoreIssues": {
+    "lib/core-plugins/types.ts": ["types"],
+    "lib/shared/types/patram-types.ts": ["types"],
+    "**/*.types.ts": ["types"],
+    "**/*.d.ts": ["unresolved"]
+  }
+}

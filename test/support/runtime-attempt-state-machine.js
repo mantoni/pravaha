@@ -1,4 +1,4 @@
-import { createReconcilerFixtureRepo } from './reconcile.fixture-test-helpers.js';
+import { createReconcilerFixtureRepo } from '../fixtures/reconcile-fixture.js';
 
 export { createStateMachineFixtureRepo, createStateMachinePreamble };
 
