@@ -7,7 +7,9 @@ workspace:
   type: git.workspace
   source:
     kind: repo
-    id: app
+    ids:
+      - abbott
+      - castello
   materialize:
     kind: worktree
     mode: pooled
@@ -36,7 +38,7 @@ jobs:
       prompt: |
         Implement the task described in ${{ task.path }}.
         Set Status to `done` on completion.
-      reasoning: medium
+      reasoning: high
     next: approval
 
   approval:
