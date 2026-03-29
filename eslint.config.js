@@ -1,7 +1,11 @@
+/** @import { Linter } from 'eslint'; */
+
 import js from '@eslint/js';
 import globals from 'globals';
 import jsdoc from 'eslint-plugin-jsdoc';
+import tseslint from 'typescript-eslint';
 
+/** @type {Linter.RulesRecord} */
 const COMMON_JS_RULES = {
   complexity: ['error', { max: 10 }],
   'max-depth': ['warn', { max: 3 }],
@@ -34,14 +38,36 @@ const COMMON_JS_RULES = {
   ],
 };
 
+/** @type {Linter.RulesRecord} */
 const JSDOC_RULES = {
   'jsdoc/check-param-names': 'error',
   'jsdoc/check-tag-names': ['error', { definedTags: ['patram'] }],
   'jsdoc/check-types': 'error',
   'jsdoc/prefer-import-tag': 'error',
+  'jsdoc/require-jsdoc': 'off',
   'jsdoc/require-param': 'warn',
   'jsdoc/require-param-name': 'warn',
   'jsdoc/require-param-type': 'warn',
+};
+
+/** @type {Linter.RulesRecord} */
+const COMMON_TYPESCRIPT_ESLINT_RULES = {
+  '@typescript-eslint/naming-convention': [
+    'error',
+    {
+      selector: 'variable',
+      types: ['function'],
+      format: ['camelCase'],
+    },
+    {
+      selector: 'function',
+      format: ['camelCase'],
+    },
+    {
+      selector: 'variable',
+      format: ['snake_case', 'UPPER_CASE'],
+    },
+  ],
 };
 
 const TEST_GLOBALS = {
@@ -50,15 +76,21 @@ const TEST_GLOBALS = {
   ...globals.vitest,
 };
 
-export default [
+export default tseslint.config(
   {
     ignores: ['**/coverage/**', '**/node_modules/**'],
   },
   js.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
   {
-    files: ['**/*.js'],
+    files: ['**/*.js', '**/*.ts'],
     languageOptions: {
       ecmaVersion: 'latest',
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
       sourceType: 'module',
     },
     plugins: {
@@ -67,6 +99,7 @@ export default [
     rules: {
       ...COMMON_JS_RULES,
       ...JSDOC_RULES,
+      ...COMMON_TYPESCRIPT_ESLINT_RULES,
     },
   },
   {
@@ -106,4 +139,4 @@ export default [
       ],
     },
   },
-];
+);
