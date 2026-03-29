@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: preserve-head-of-queue-order-during-sync
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/git-owned-single-target-merge-queue.md
 Depends on:
   - docs/tasks/git-owned-single-target-merge-queue/add-queue-sync-pull-and-publish-commands.md
