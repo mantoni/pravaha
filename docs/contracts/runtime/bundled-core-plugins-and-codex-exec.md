@@ -38,8 +38,10 @@ Depends on:
   and `reasoning`.
 - Runtime and package changes that remove the `@openai/codex-sdk` dependency.
 - Bundled `core/run`, `core/run-codex`, `core/approval`, `core/git-status`,
-  `core/git-merge`, `core/git-squash`, `core/git-rebase`, and
-  `core/flow-dispatch` plugins implemented as actual modules.
+  generic `core/git-merge`, `core/git-squash`, `core/git-rebase`,
+  publish-oriented `core/worktree-merge`, `core/worktree-squash`,
+  `core/worktree-rebase`, `core/worktree-handoff`, and `core/flow-dispatch`
+  plugins implemented as actual modules.
 
 ## Side Effects
 
@@ -54,6 +56,10 @@ Depends on:
 - `core/*` remains the public checked-in namespace for bundled step plugins.
 - Bundled core plugins use the same public plugin contract as local and npm
   plugins.
+- `core/git-*` remains generic local Git porcelain over the current checkout.
+- `core/worktree-*` publishes the current worktree `HEAD` into explicit repo
+  branches without mutating the worktree during merge, squash, or rebase
+  publication.
 - Pravaha does not expose a general process-launch helper on plugin `context`.
 - Bundled plugins may launch OS subprocesses directly as ordinary plugin
   implementation detail.
@@ -74,6 +80,8 @@ Depends on:
   keeping subprocess policy plugin-owned.
 - `core/run-codex` becomes a thin argv passthrough wrapper rather than a typed
   bundled Codex integration.
+- `core/worktree-*` mutates the checked-out worktree during failed publish
+  attempts instead of keeping it as read-only publish input.
 
 ## Review Gate
 

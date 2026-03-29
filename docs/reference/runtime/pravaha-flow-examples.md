@@ -213,6 +213,46 @@ jobs:
     end: success
 ```
 
+## Publish Worktree Output
+
+```yaml
+kind: flow
+id: publish-worktree-output
+status: active
+scope: contract
+
+workspace:
+  type: git.workspace
+  source:
+    kind: repo
+    id: app
+  materialize:
+    kind: worktree
+    mode: ephemeral
+    ref: main
+
+on:
+  task:
+    where: $class == task and tracked_in == @document and status == ready
+
+jobs:
+  handoff:
+    uses: core/worktree-handoff
+    with:
+      branch: review/ready/${{ task.id }}
+    next: publish
+
+  publish:
+    uses: core/worktree-squash
+    with:
+      target: main
+      message: Publish reviewed work for ${{ task.path }}
+    next: done
+
+  done:
+    end: success
+```
+
 ## Flow Shape Summary
 
 ```json

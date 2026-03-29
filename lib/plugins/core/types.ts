@@ -57,6 +57,24 @@ export interface GitSquashWith {
   message?: string;
 }
 
+export interface WorktreeHandoffWith {
+  branch?: string;
+}
+
+export interface WorktreeMergeWith {
+  message?: string;
+  target: string;
+}
+
+export interface WorktreeRebaseWith {
+  target: string;
+}
+
+export interface WorktreeSquashWith {
+  message?: string;
+  target: string;
+}
+
 export interface RunCodexWith {
   prompt: string;
   reasoning?: 'low' | 'medium' | 'high';
