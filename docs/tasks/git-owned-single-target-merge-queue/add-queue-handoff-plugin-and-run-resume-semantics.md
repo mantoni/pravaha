@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: add-queue-handoff-plugin-and-run-resume-semantics
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/git-owned-single-target-merge-queue.md
 Depends on:
   - docs/tasks/git-owned-single-target-merge-queue/add-git-owned-queue-storage-and-hook-installation.md

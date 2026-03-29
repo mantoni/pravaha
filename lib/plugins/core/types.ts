@@ -17,14 +17,25 @@ export interface DispatchFlowOptions {
   wait?: boolean;
 }
 
+export interface QueueWaitState {
+  branch_head: string;
+  branch_ref: string;
+  outcome: 'failure' | 'success' | null;
+  ready_ref: string;
+  state: 'failed' | 'succeeded' | 'waiting';
+}
+
 export interface CorePluginContext<TWith> {
   console: PluginConsole;
   dispatchFlow: (
     options: DispatchFlowOptions,
   ) => Promise<Record<string, unknown>>;
   document?: BindingTarget;
+  failRun: (error_message: string) => Promise<never>;
+  queueWait?: QueueWaitState;
   repo_directory: string;
   requestApproval: () => Promise<void>;
+  requestQueueWait: (queue_wait: QueueWaitState) => Promise<void>;
   run_id: string;
   task: BindingTarget;
   with: TWith;
@@ -59,6 +70,10 @@ export interface GitSquashWith {
 
 export interface WorktreeHandoffWith {
   branch?: string;
+}
+
+export interface QueueHandoffWith {
+  branch: string;
 }
 
 export interface WorktreeMergeWith {
