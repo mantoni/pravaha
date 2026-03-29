@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: implement-minimal-plugin-context-and-approval-ingress
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/minimal-plugin-context-and-approval-ingress.md
 Implements: docs/contracts/runtime/minimal-plugin-context-and-approval-ingress.md
 Decided by:

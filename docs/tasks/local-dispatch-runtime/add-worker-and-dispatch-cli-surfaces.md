@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: add-worker-and-dispatch-cli-surfaces
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/local-dispatch-runtime.md
 Implements: docs/contracts/runtime/local-dispatch-runtime.md
 Decided by:

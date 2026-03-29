@@ -15,5 +15,8 @@
   },
   "plugins": {
     "dir": "plugins"
+  },
+  "flows": {
+    "default_matches": ["docs/flows/implement-task.yaml"]
   }
 }

@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: add-flow-trigger-surface
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/local-dispatch-runtime.md
 Implements: docs/contracts/runtime/local-dispatch-runtime.md
 Decided by:

@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: adapt-runtime-state-and-migration
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/local-dispatch-runtime.md
 Depends on:
   - docs/tasks/local-dispatch-runtime/dispatch-triggered-flow-instances.md

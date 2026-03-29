@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: add-local-dispatch-protocol-and-leader-election
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/local-dispatch-runtime.md
 Depends on:
   - docs/tasks/local-dispatch-runtime/add-worker-and-dispatch-cli-surfaces.md

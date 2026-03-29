@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: keep-active-signals-run-scoped-and-terminal-snapshot-minimal
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/runtime-node-lifecycle.md
 Implements: docs/contracts/runtime/runtime-node-lifecycle.md
 Decided by:

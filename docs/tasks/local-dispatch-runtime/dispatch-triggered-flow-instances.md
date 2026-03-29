@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: dispatch-triggered-flow-instances
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/local-dispatch-runtime.md
 Depends on:
   - docs/tasks/local-dispatch-runtime/add-flow-trigger-surface.md
