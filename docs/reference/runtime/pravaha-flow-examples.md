@@ -14,21 +14,26 @@ in runtime surface.
 
 ```json
 {
-  "roles": {
-    "flow_document_class": "flow",
-    "root_work_item_class": "contract",
-    "leaseable_unit_class": "task",
-    "dependency_relation": "depends_on",
-    "root_flow_relation": "root_flow",
-    "status_field": "status"
+  "semantic_roles": {
+    "contract": ["contract"],
+    "decision": ["decision"],
+    "flow": ["flow"],
+    "task": ["task"]
   },
-  "states": {
-    "ready": ["ready"],
+  "semantic_states": {
     "active": ["active"],
-    "review": ["review"],
     "blocked": ["blocked"],
-    "done": ["done"],
-    "dropped": ["dropped"]
+    "proposed": ["proposed"],
+    "ready": ["ready"],
+    "review": ["review"],
+    "terminal": ["accepted", "done", "dropped", "superseded"]
+  },
+  "plugins": {
+    "dir": "plugins"
+  },
+  "flows": {
+    "default_matches": ["docs/flows/runtime/*.yaml"],
+    "root_flow_label": "Implementation flow"
   }
 }
 ```

@@ -35,7 +35,7 @@ jobs:
     with:
       prompt: |
         Implement the task described in ${{ task.path }}.
-        Read that file first and follow its instructions exactly.
+        Set Status to `done` on completion.
       reasoning: medium
     next: approval
 

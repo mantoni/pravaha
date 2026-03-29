@@ -18,10 +18,23 @@ async function createFixtureRepo() {
 /**
  * @param {string} temp_prefix
  * @param {Record<string, string>} fixture_files
+ * @param {{
+ *   pravaha_config_override?: Record<string, unknown>,
+ * }} [options]
  * @returns {Promise<string>}
  */
-async function createFixtureRepoFromFiles(temp_prefix, fixture_files) {
+async function createFixtureRepoFromFiles(
+  temp_prefix,
+  fixture_files,
+  options = {},
+) {
   const temp_directory = await mkdtemp(join(tmpdir(), temp_prefix));
+  const effective_pravaha_config = options.pravaha_config_override
+    ? {
+        ...pravaha_config,
+        ...options.pravaha_config_override,
+      }
+    : pravaha_config;
 
   await writeFile(
     join(temp_directory, '.patram.json'),
@@ -29,7 +42,7 @@ async function createFixtureRepoFromFiles(temp_prefix, fixture_files) {
   );
   await writeFile(
     join(temp_directory, 'pravaha.json'),
-    `${JSON.stringify(pravaha_config, null, 2)}\n`,
+    `${JSON.stringify(effective_pravaha_config, null, 2)}\n`,
   );
 
   for (const [relative_path, source_text] of Object.entries(fixture_files)) {

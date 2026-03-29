@@ -7,28 +7,33 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 # Validation Examples
 
-This document captures example validation cases for `.pravaha.json` and state-
+This document captures example validation cases for `pravaha.json` and state-
 machine flow documents.
 
 ## Valid Config Example
 
 ```json
 {
-  "roles": {
-    "flow_document_class": "flow",
-    "root_work_item_class": "contract",
-    "leaseable_unit_class": "task",
-    "dependency_relation": "depends_on",
-    "root_flow_relation": "root_flow",
-    "status_field": "status"
+  "semantic_roles": {
+    "contract": ["contract"],
+    "decision": ["decision"],
+    "flow": ["flow"],
+    "task": ["task"]
   },
-  "states": {
-    "ready": ["ready"],
+  "semantic_states": {
     "active": ["active"],
-    "review": ["review"],
     "blocked": ["blocked"],
-    "done": ["done"],
-    "dropped": ["dropped"]
+    "proposed": ["proposed"],
+    "ready": ["ready"],
+    "review": ["review"],
+    "terminal": ["accepted", "done", "dropped", "superseded"]
+  },
+  "plugins": {
+    "dir": "plugins"
+  },
+  "flows": {
+    "default_matches": ["docs/flows/**/*.yaml"],
+    "root_flow_label": "Implementation flow"
   }
 }
 ```
@@ -39,11 +44,10 @@ Invalid because a required semantic role is missing:
 
 ```json
 {
-  "roles": {
-    "flow_document_class": "flow",
-    "root_work_item_class": "contract"
+  "semantic_roles": {
+    "contract": ["contract"]
   },
-  "states": {
+  "semantic_states": {
     "ready": ["ready"]
   }
 }
@@ -53,17 +57,38 @@ Invalid because a required semantic state is missing:
 
 ```json
 {
-  "roles": {
-    "flow_document_class": "flow",
-    "root_work_item_class": "contract",
-    "leaseable_unit_class": "task",
-    "dependency_relation": "depends_on",
-    "root_flow_relation": "root_flow",
-    "status_field": "status"
+  "semantic_roles": {
+    "contract": ["contract"],
+    "decision": ["decision"],
+    "flow": ["flow"],
+    "task": ["task"]
   },
-  "states": {
-    "ready": ["ready"],
+  "semantic_states": {
     "active": ["active"]
+  }
+}
+```
+
+Invalid because `flows.root_flow_label` is empty:
+
+```json
+{
+  "semantic_roles": {
+    "contract": ["contract"],
+    "decision": ["decision"],
+    "flow": ["flow"],
+    "task": ["task"]
+  },
+  "semantic_states": {
+    "active": ["active"],
+    "blocked": ["blocked"],
+    "proposed": ["proposed"],
+    "ready": ["ready"],
+    "review": ["review"],
+    "terminal": ["accepted", "done", "dropped", "superseded"]
+  },
+  "flows": {
+    "root_flow_label": ""
   }
 }
 ```

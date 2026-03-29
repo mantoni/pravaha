@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: implement-default-flow-matching-and-configurable-flow-label
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/default-flow-matching-and-configurable-flow-label.md
 Implements: docs/contracts/runtime/default-flow-matching-and-configurable-flow-label.md
 Decided by:
