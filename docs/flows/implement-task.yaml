@@ -45,6 +45,12 @@ jobs:
       title: Approve task implementation for ${{ task.path }}
       message: Approve the completed Codex work for this task.
       options: [approve]
+    next: handoff
+
+  handoff:
+    uses: core/worktree-handoff
+    with:
+      branch: review/ready/${{ task.id }}
     next: done
 
   done:
