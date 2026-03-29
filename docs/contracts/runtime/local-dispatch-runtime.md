@@ -7,6 +7,7 @@ Decided by:
   - docs/decisions/runtime/dispatcher-owned-local-worker-pool.md
   - docs/decisions/runtime/automatic-follower-failover.md
   - docs/decisions/runtime/current-truth-run-snapshot-persistence.md
+  - docs/decisions/runtime/flow-instance-rerun-suppression-and-explicit-dispatch.md
 Depends on:
   - docs/contracts/runtime/ordered-worktree-step-execution.md
   - docs/contracts/runtime/runtime-node-lifecycle.md
@@ -37,6 +38,8 @@ Depends on:
 - One `pravaha worker` command that joins the local worker pool and can become
   dispatcher.
 - One `pravaha dispatch` command that sends a best-effort wake-up notification.
+- One `pravaha dispatch --flow <flow_instance_id>` override that reruns exactly
+  one flow instance when the operator asks explicitly.
 - Removal of the legacy single-run `pravaha reconcile` and `pravaha resume`
   command surfaces.
 - Flow validation and interpretation for one root-level durable trigger binding
@@ -68,6 +71,8 @@ Depends on:
   system is idle.
 - The dispatcher never creates more than one live run snapshot for the same
   task.
+- Default dispatcher rescans do not rerun a still-matching flow instance that
+  already has a terminal runtime record.
 - A worker may supervise at most one active assignment at a time in the first
   slice.
 - Dispatcher loss does not require operators to restart surviving followers
@@ -77,6 +82,8 @@ Depends on:
 
 - Dispatcher takeover fails to rediscover pending flow instances, durable waits,
   or completed job checkpoints after a crash.
+- Dispatcher restart silently reruns a completed matching flow instance because
+  it ignored the terminal runtime record.
 - Surviving followers exit instead of re-entering leader election after
   dispatcher loss.
 - Two workers create competing live run snapshots for the same task.
@@ -94,9 +101,14 @@ Depends on:
   clearly.
 - `pravaha dispatch` wakes the dispatcher without requiring the caller to know
   which worker is leader.
+- `pravaha dispatch --flow <flow_instance_id>` reruns only the named flow
+  instance and bypasses the completed-instance suppression guard intentionally.
 - Pravaha help and public docs expose `worker`, `dispatch`, and `approve`
   without the removed `reconcile` or `resume` commands.
 - Dispatcher takeover rescans and preserves durable pending work after a crash.
+- Default dispatch warns and ignores still-matching flow instances that already
+  have a terminal runtime record.
+- A worker warns when a flow instance still matches after its terminal outcome.
 - A connected follower can take over leadership after dispatcher shutdown
   without requiring a manual worker restart.
 - The runtime keeps one live run snapshot per task and avoids duplicate durable

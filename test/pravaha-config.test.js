@@ -21,5 +21,8 @@ it('defines semantic role and state mappings for Pravaha flows', () => {
     plugins: {
       dir: 'plugins',
     },
+    flows: {
+      default_matches: ['docs/flows/implement-task.yaml'],
+    },
   });
 });
