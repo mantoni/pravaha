@@ -1,7 +1,7 @@
 ---
 Kind: contract
 Id: rename-plugin-local-directory-key
-Status: active
+Status: done
 Decided by:
   - docs/decisions/runtime/pluggable-step-plugins-and-signal-contracts.md
 Root flow: docs/flows/implement-task.yaml

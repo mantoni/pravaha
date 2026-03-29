@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: rename-local-directory-to-dir
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/rename-plugin-local-directory-key.md
 Implements: docs/contracts/runtime/rename-plugin-local-directory-key.md
 Decided by:
