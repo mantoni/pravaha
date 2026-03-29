@@ -11,9 +11,6 @@ it('keeps full-repo knip analysis aware of the test tree', () => {
     ]),
     ignoreIssues: {
       'lib/plugins/core/types.ts': ['types'],
-      'lib/runtime/dispatch/dispatcher.js': ['exports'],
-      'lib/runtime/dispatch/protocol.js': ['exports'],
-      'lib/runtime/dispatch/session.js': ['exports'],
       'lib/shared/types/patram-types.ts': ['types'],
     },
   });
