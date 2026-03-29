@@ -48,10 +48,32 @@ async function installFakeCodexExecutable(repo_directory) {
  */
 function createFakeCodexSource() {
   return [
+    ...createFakeCodexPrelude(),
+    ...createFakeCodexMain(),
+    ...createFakeCodexReadPromptSource(),
+    ...createFakeCodexJsonEventSource(),
+    '',
+  ].join('\n');
+}
+
+/**
+ * @returns {string[]}
+ */
+function createFakeCodexPrelude() {
+  return [
     '#!/usr/bin/env node',
     "import { writeFile } from 'node:fs/promises';",
     '',
+  ];
+}
+
+/**
+ * @returns {string[]}
+ */
+function createFakeCodexMain() {
+  return [
     'const args = process.argv.slice(2);',
+    "const json_mode = args.includes('--json');",
     "const output_flag_index = args.indexOf('--output-last-message');",
     'const output_path =',
     '  output_flag_index === -1 ? null : args[output_flag_index + 1] ?? null;',
@@ -63,7 +85,9 @@ function createFakeCodexSource() {
     '  process.exit(1);',
     '}',
     '',
-    'if (process.env.PRAVAHA_TEST_CODEX_STDOUT) {',
+    'if (json_mode && process.env.PRAVAHA_TEST_CODEX_JSON_EVENTS) {',
+    '  process.stdout.write(renderJsonEvents(process.env.PRAVAHA_TEST_CODEX_JSON_EVENTS));',
+    '} else if (process.env.PRAVAHA_TEST_CODEX_STDOUT) {',
     '  process.stdout.write(process.env.PRAVAHA_TEST_CODEX_STDOUT);',
     '}',
     'if (process.env.PRAVAHA_TEST_CODEX_STDERR) {',
@@ -80,6 +104,14 @@ function createFakeCodexSource() {
     '',
     'process.exit(0);',
     '',
+  ];
+}
+
+/**
+ * @returns {string[]}
+ */
+function createFakeCodexReadPromptSource() {
+  return [
     '/**',
     ' * @param {NodeJS.ReadStream | null} stdin',
     ' * @returns {Promise<string>}',
@@ -102,5 +134,26 @@ function createFakeCodexSource() {
     '  });',
     '}',
     '',
-  ].join('\n');
+  ];
+}
+
+/**
+ * @returns {string[]}
+ */
+function createFakeCodexJsonEventSource() {
+  return [
+    '/**',
+    ' * @param {string} json_text',
+    ' * @returns {string}',
+    ' */',
+    'function renderJsonEvents(json_text) {',
+    '  const events = JSON.parse(json_text);',
+    '',
+    '  if (!Array.isArray(events)) {',
+    "    throw new TypeError('Expected json events array.');",
+    '  }',
+    '',
+    "  return events.map((event) => JSON.stringify(event)).join('\\n') + '\\n';",
+    '}',
+  ];
 }
