@@ -9,7 +9,7 @@ import {
   createSuccessRunResult,
   installFakeCodexExecutable,
 } from './runtime.js';
-import { runProcess } from '../../lib/core-plugins/subprocess.js';
+import { runProcess } from '../../lib/plugins/core/subprocess.js';
 
 it('returns a stable success run result fixture', () => {
   expect(createSuccessRunResult()).toEqual({

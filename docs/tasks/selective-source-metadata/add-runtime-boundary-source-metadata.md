@@ -20,5 +20,5 @@ Decided by: docs/decisions/workflow/selective-source-metadata.md
 
 - `lib/runtime/dispatch/protocol.js`
 - `lib/approve.js`
-- `lib/runtime-records.js`
-- `lib/runtime-attempt-records.js`
+- `lib/runtime/records/runtime-records.js`
+- `lib/runtime/attempts/runtime-attempt-records.js`

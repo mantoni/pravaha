@@ -9,8 +9,8 @@ Tracked in: docs/plans/repo/v0.1/remove-compatibility-facades-and-colocate-tests
 
 - Delete compatibility-only modules once their canonical implementation path is
   stable.
-- Treat `lib/flow/query.js` and `lib/plugin-contract.js` as the canonical
-  implementation files for the last remaining facade exports.
+- Treat `lib/flow/query.js` and `lib/plugins/plugin-contract.js` as the
+  canonical implementation files for the last remaining facade exports.
 - Update all internal callers and tests to import canonical implementation
   modules directly instead of routing through compatibility shims.
 - Move module tests beside the implementation they exercise so the source tree

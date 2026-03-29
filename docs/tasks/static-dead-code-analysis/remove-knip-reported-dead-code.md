@@ -19,9 +19,9 @@ Decided by: docs/decisions/workflow/static-dead-code-analysis.md
 
 - `lib/runtime/dispatch/assignments.js`
 - `lib/runtime/dispatch/dispatcher.js`
-- `lib/plugin-contract.js`
+- `lib/plugins/plugin-contract.js`
 - `lib/runtime-record-model.js`
 - `lib/runtime-fixture-test-helpers.js`
-- `lib/core-plugins/types.ts`
+- `lib/plugins/core/types.ts`
 - `lib/shared/types/patram-types.ts`
 - `lib/shared/types/validation.types.ts`

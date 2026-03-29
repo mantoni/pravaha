@@ -31,21 +31,22 @@ Depends on:
     "contract": "docs/contracts/runtime/local-dispatch-runtime.md",
     "modules": [
       "lib/runtime/dispatch/context.js",
+      "lib/runtime/dispatch/graph.js",
       "lib/runtime/dispatch/dispatcher.js",
       "lib/runtime/dispatch/protocol.js",
       "lib/runtime/dispatch/session.js",
-      "lib/runtime-records.js",
-      "lib/runtime-record-model.js"
+      "lib/runtime/records/runtime-records.js",
+      "lib/runtime/records/runtime-record-model.js"
     ]
   },
   "attempt_engine": {
     "contract": "docs/contracts/runtime/job-state-machine-execution.md",
     "modules": [
       "lib/runtime/attempts/state-machine.js",
-      "lib/runtime-attempt-records.js",
-      "lib/runtime-attempt-support.js",
-      "lib/runtime-worker.js",
-      "lib/state-machine-runtime.js"
+      "lib/runtime/attempts/runtime-attempt-records.js",
+      "lib/runtime/attempts/runtime-attempt-support.js",
+      "lib/runtime/attempts/state-machine-runtime.js",
+      "lib/runtime/workspaces/runtime-files.js"
     ]
   },
   "flow_policy": {
@@ -59,19 +60,20 @@ Depends on:
   "repo_validation": {
     "modules": [
       "lib/repo/validate-repo.js",
-      "lib/repo/semantics/create-semantic-model.js",
-      "lib/repo/semantics/reconcile-semantics.js"
+      "lib/repo/semantics/create-semantic-model.js"
     ]
   },
   "plugin_runtime": {
     "modules": [
-      "lib/plugin-contract.js",
-      "lib/plugin-loader.js",
-      "lib/core-step-plugins.js"
+      "lib/plugins/plugin-contract.js",
+      "lib/plugins/plugin-loader.js",
+      "lib/plugins/core-step-plugins.js",
+      "lib/plugins/core/"
     ]
   },
   "shared_low_level": {
     "modules": [
+      "lib/shared/graph/resolve-graph-api.js",
       "lib/shared/git/exec-git-file.js",
       "lib/shared/diagnostics/validation-helpers.js",
       "lib/shared/types/patram-types.ts",
@@ -108,12 +110,13 @@ graph TD
   A["docs/contracts/runtime/local-dispatch-runtime.md"] --> B["lib/runtime/dispatch/session.js"]
   A --> C["lib/runtime/dispatch/protocol.js"]
   D["docs/contracts/runtime/job-state-machine-execution.md"] --> E["lib/runtime/attempts/state-machine.js"]
-  D --> F["lib/runtime-attempt-records.js"]
+  D --> F["lib/runtime/attempts/runtime-attempt-records.js"]
   G["docs/reference/runtime/pravaha-runtime-architecture.md"] --> H["lib/flow/reconcile-flow.js"]
   G --> I["lib/repo/validate-repo.js"]
   J["shared helpers"] --> K["lib/shared/git/exec-git-file.js"]
   J --> L["lib/shared/diagnostics/validation-helpers.js"]
   J --> M["lib/shared/types/"]
+  J --> N["lib/shared/graph/resolve-graph-api.js"]
 ```
 
 ## Notes

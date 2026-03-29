@@ -44,16 +44,16 @@ it('exposes runtime contract implementation touch-points through reverse referen
 
   expect(readIncomingPaths(local_dispatch_refs, 'implements')).toEqual(
     expect.arrayContaining([
-      'lib/runtime-attempt-records.js',
-      'lib/runtime-records.js',
+      'lib/runtime/attempts/runtime-attempt-records.js',
+      'lib/runtime/records/runtime-records.js',
       'lib/runtime/dispatch/protocol.js',
     ]),
   );
   expect(readIncomingPaths(approval_refs, 'implements')).toEqual(
     expect.arrayContaining([
       'lib/approve.js',
-      'lib/runtime-attempt-records.js',
-      'lib/runtime-records.js',
+      'lib/runtime/attempts/runtime-attempt-records.js',
+      'lib/runtime/records/runtime-records.js',
     ]),
   );
 });
