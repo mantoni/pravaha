@@ -5,6 +5,7 @@ Status: proposed
 Decided by:
   - docs/decisions/runtime/flow-trigger-entrypoints-and-instance-binding.md
   - docs/decisions/runtime/dispatcher-owned-local-worker-pool.md
+  - docs/decisions/runtime/flattened-dispatcher-socket-path.md
   - docs/decisions/runtime/automatic-follower-failover.md
   - docs/decisions/runtime/current-truth-run-snapshot-persistence.md
   - docs/decisions/runtime/flow-instance-rerun-suppression-and-explicit-dispatch.md
@@ -58,7 +59,8 @@ Depends on:
 
 - Long-running worker processes own local terminal output until the operator
   stops them.
-- A machine-local IPC endpoint exists while the dispatcher is alive.
+- A machine-local IPC endpoint exists at `.pravaha/dispatcher.sock` while the
+  dispatcher is alive on Unix platforms.
 - Dispatcher memory carries transient worker registration and in-flight
   assignment state between rescans.
 

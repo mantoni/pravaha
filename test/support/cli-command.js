@@ -55,7 +55,7 @@ function createDispatchResult() {
   return {
     dispatcher_available: false,
     dispatcher_id: null,
-    endpoint: '/repo/.pravaha/dispatch/leader.sock',
+    endpoint: '/repo/.pravaha/dispatcher.sock',
     notification_delivered: false,
     outcome: 'success',
   };
@@ -83,7 +83,7 @@ function createStatusResult() {
     connected_worker_count: 0,
     dispatcher_available: false,
     dispatcher_id: null,
-    endpoint: '/repo/.pravaha/dispatch/leader.sock',
+    endpoint: '/repo/.pravaha/dispatcher.sock',
     flows_by_status: {
       failed: [],
       pending: [],
@@ -118,7 +118,7 @@ function createSuccessfulValidationResult() {
 function createStoppedWorkerResult() {
   return {
     dispatcher_id: 'worker-explicit',
-    endpoint: '/repo/.pravaha/dispatch/leader.sock',
+    endpoint: '/repo/.pravaha/dispatcher.sock',
     outcome: 'stopped',
     role: 'dispatcher',
     worker_id: 'worker-explicit',
