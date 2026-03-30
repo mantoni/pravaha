@@ -157,11 +157,6 @@ function createPlanFixtures() {
  */
 function createRuntimeFlowSource() {
   return [
-    'kind: flow',
-    'id: single-task-flow-reconciler',
-    'status: active',
-    'scope: contract',
-    '',
     'workspace:',
     '  type: git.workspace',
     '  source:',

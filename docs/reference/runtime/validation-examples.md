@@ -48,11 +48,6 @@ Invalid because `plugins.dir` must be a non-empty string when present:
 ## Valid Flow Example
 
 ```yaml
-kind: flow
-id: simple-task-flow
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:
@@ -97,11 +92,6 @@ jobs:
 Invalid because root trigger selection is required for every flow:
 
 ```yaml
-kind: flow
-id: invalid-missing-trigger
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:
@@ -125,11 +115,6 @@ Invalid because plugin-shaped mutation fields such as `update` are not part of
 the flow engine surface:
 
 ```yaml
-kind: flow
-id: invalid-generic-update
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:
@@ -162,11 +147,6 @@ Invalid because `flow.on.patram` must constrain exactly one non-runtime Patram
 class:
 
 ```yaml
-kind: flow
-id: invalid-ambiguous-trigger
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:
@@ -192,11 +172,6 @@ jobs:
 Invalid because worktree policy moved to the flow-level `workspace` block:
 
 ```yaml
-kind: flow
-id: invalid-job-workspace
-status: active
-scope: contract
-
 on:
   patram:
     $class == task and tracked_in == contract:invalid-job-workspace and status
@@ -218,11 +193,6 @@ Invalid because repo-backed workspaces currently accept only `ephemeral` and
 `pooled` worktree modes:
 
 ```yaml
-kind: flow
-id: invalid-workspace-mode
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:
@@ -251,11 +221,6 @@ Invalid because repo-backed pooled workspaces must declare exactly one of
 `source.id` or `source.ids`:
 
 ```yaml
-kind: flow
-id: invalid-workspace-source-mix
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:

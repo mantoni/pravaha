@@ -296,13 +296,6 @@ function createDecisionFixtures() {
  */
 function createFlowFixtures() {
   return {
-    'docs/flows/release-flow-root.yaml': [
-      'kind: flow',
-      'id: release-flow-root',
-      'status: active',
-      'scope: contract',
-      'jobs: {}',
-      '',
-    ].join('\n'),
+    'docs/flows/release-flow-root.yaml': ['jobs: {}', ''].join('\n'),
   };
 }

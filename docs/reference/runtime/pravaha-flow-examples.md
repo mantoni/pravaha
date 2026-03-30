@@ -26,11 +26,6 @@ in runtime surface.
 ## Implement Then Review
 
 ```yaml
-kind: flow
-id: task-reviewed-then-merge
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:
@@ -98,11 +93,6 @@ jobs:
 ## Implement Then Handoff
 
 ```yaml
-kind: flow
-id: integration-handoff
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:
@@ -172,11 +162,6 @@ jobs:
 ## Land A Reviewed Branch
 
 ```yaml
-kind: flow
-id: reviewed-branch-landed
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:
@@ -207,11 +192,6 @@ jobs:
 ## Publish Worktree Output
 
 ```yaml
-kind: flow
-id: publish-worktree-output
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:
@@ -249,15 +229,7 @@ jobs:
 
 ```json
 {
-  "top_level_keys": [
-    "kind",
-    "id",
-    "status",
-    "scope",
-    "workspace",
-    "on",
-    "jobs"
-  ],
+  "top_level_keys": ["workspace", "on", "jobs"],
   "job_keys": ["uses", "with", "limits", "next", "end"],
   "runtime_bindings": ["result", "jobs.<name>.outputs", "task", "git"],
   "invariants": [

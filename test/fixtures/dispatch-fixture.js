@@ -140,11 +140,6 @@ function createTaskFixtureDocument(task_id, contract_path) {
  */
 function createPooledDispatchFlowDocumentText(flow_id, ref) {
   return [
-    'kind: flow',
-    `id: ${flow_id}`,
-    'status: proposed',
-    'scope: contract',
-    '',
     'workspace:',
     '  type: git.workspace',
     '  source:',

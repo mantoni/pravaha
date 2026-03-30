@@ -35,11 +35,6 @@ graph LR
 ## Example Flow
 
 ```yaml
-kind: flow
-id: walkthrough
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:

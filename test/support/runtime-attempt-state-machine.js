@@ -23,11 +23,6 @@ async function createStateMachineFixtureRepo(options = {}) {
  */
 function createStateMachinePreamble() {
   return [
-    'kind: flow',
-    'id: single-task-flow-reconciler',
-    'status: proposed',
-    'scope: contract',
-    '',
     'workspace:',
     '  type: git.workspace',
     '  source:',

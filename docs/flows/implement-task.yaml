@@ -1,8 +1,3 @@
-kind: flow
-id: implement-task
-status: active
-scope: contract
-
 workspace:
   type: git.workspace
   source:

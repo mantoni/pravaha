@@ -11,11 +11,7 @@ import {
 
 it('returns the checked-in state-machine preamble', () => {
   expect(createStateMachinePreamble()).toEqual(
-    expect.arrayContaining([
-      'kind: flow',
-      'id: single-task-flow-reconciler',
-      'jobs:',
-    ]),
+    expect.arrayContaining(['jobs:']),
   );
 });
 
@@ -28,7 +24,6 @@ it('creates the default state-machine fixture repo when no yaml lines are provid
       'utf8',
     );
 
-    expect(flow_document_text).toContain('id: single-task-flow-reconciler');
     expect(flow_document_text).toContain('next: done');
   } finally {
     await rm(repo_directory, { force: true, recursive: true });

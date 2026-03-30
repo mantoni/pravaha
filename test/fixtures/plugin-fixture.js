@@ -59,14 +59,7 @@ function createPluginRuntimeFixtureFiles(extra_fixture_files = {}) {
         ['Status', 'active'],
       ],
     }),
-    [FLOW_PATH]: [
-      'kind: flow',
-      'id: single-task-flow-reconciler',
-      'status: active',
-      'scope: contract',
-      'jobs: {}',
-      '',
-    ].join('\n'),
+    [FLOW_PATH]: ['jobs: {}', ''].join('\n'),
     'docs/decisions/runtime/trigger-driven-codex-runtime.md':
       createFixtureDocument({
         body: '# Trigger-Driven Codex Runtime\n',
