@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: add-handler-replay-and-wait-reentry
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/javascript-flow-module-runtime.md
 Depends on:
   - docs/tasks/javascript-flow-module-runtime/add-flow-context-and-imported-built-ins.md
