@@ -7,8 +7,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 # Pravaha Flow Examples
 
-This document captures illustrative state-machine flow examples for the checked-
-in runtime surface.
+This document captures illustrative JavaScript flow module examples for the
+checked-in runtime surface.
 
 ## Example Repo Config
 
@@ -36,194 +36,148 @@ in runtime surface.
     "dir": "plugins"
   },
   "flows": {
-    "default_matches": ["docs/flows/runtime/*.yaml"]
+    "default_matches": ["docs/flows/runtime/*.js"]
   }
 }
 ```
 
 ## Implement Then Review
 
-```yaml
-workspace:
-  id: app
+```js
+import { approve, defineFlow, runCodex } from 'pravaha';
 
-on:
-  patram:
-    $class == task and tracked_in == contract:task-reviewed-then-merge and
-    status == ready
+export default defineFlow({
+  on: {
+    patram:
+      '$class == task and tracked_in == contract:task-reviewed-then-merge and status == ready',
+  },
 
-jobs:
-  implement:
-    uses: core/run-codex
-    with:
-      prompt: Implement the task in ${{ task.path }}.
-      reasoning: medium
-    next: review
+  workspace: {
+    id: 'app',
+  },
 
-  review:
-    uses: core/approval
-    with:
-      title: Review ${{ task.path }}
-      message: Approve or request another revision.
-      options: [approve, revise]
-    next:
-      - if: ${{ result.verdict == "approve" }}
-        goto: maybe_commit
-      - goto: revise
+  async main(ctx) {
+    await runCodex(ctx, {
+      prompt: `Implement the task in ${ctx.task.path}.`,
+      reasoning: 'medium',
+    });
+    await approve(ctx, {
+      title: `Review ${ctx.task.path}`,
+      message: 'Approve or request another revision.',
+      data: {
+        revision_prompt: `Address the latest review feedback for ${ctx.task.path}.`,
+      },
+    });
+  },
 
-  revise:
-    uses: core/run-codex
-    with:
-      prompt: |
-        Address the latest review feedback for ${{ task.path }}.
-
-        ${{ jobs.review.outputs.comment }}
-      reasoning: medium
-    limits:
-      max-visits: 2
-    next: review
-
-  maybe_commit:
-    uses: core/git-status
-    next:
-      - if: ${{ result.dirty }}
-        goto: commit
-      - goto: done
-
-  commit:
-    uses: core/run-codex
-    with:
-      prompt: Commit the current changes for ${{ task.path }}.
-      reasoning: medium
-    next: done
-
-  done:
-    end: success
+  async onApprove(ctx, data) {
+    await runCodex(ctx, {
+      prompt: data.revision_prompt,
+      reasoning: 'medium',
+    });
+  },
+});
 ```
 
 ## Implement Then Handoff
 
-```yaml
-workspace:
-  id: app
+```js
+import { defineFlow, run, runCodex, worktreeHandoff } from 'pravaha';
 
-on:
-  patram:
-    $class == task and tracked_in == contract:integration-handoff and status ==
-    ready
+export default defineFlow({
+  on: {
+    patram:
+      '$class == task and tracked_in == contract:integration-handoff and status == ready',
+  },
 
-jobs:
-  implement:
-    uses: core/run-codex
-    with:
-      prompt: Implement the task in ${{ task.path }}.
-      reasoning: medium
-    next: test
+  workspace: {
+    id: 'app',
+  },
 
-  test:
-    uses: core/run
-    with:
-      command: npm test
-      capture: [stdout, stderr]
-    next:
-      - if: ${{ result.exit_code == 0 }}
-        goto: handoff
-      - goto: fix
-
-  fix:
-    uses: core/run-codex
-    with:
-      prompt: |
-        The tests failed for ${{ task.path }}.
-
-        stdout:
-        ${{ jobs.test.outputs.stdout }}
-
-        stderr:
-        ${{ jobs.test.outputs.stderr }}
-      reasoning: medium
-    limits:
-      max-visits: 3
-    next: test
-
-  handoff:
-    uses: core/flow-dispatch
-    with:
-      flow: integration
-      wait: false
-      inputs:
-        task_path: ${{ task.path }}
-        ref: ${{ git.head }}
-    next: done
-
-  done:
-    end: success
+  async main(ctx) {
+    await runCodex(ctx, {
+      prompt: `Implement the task in ${ctx.task.path}.`,
+      reasoning: 'medium',
+    });
+    await run(ctx, {
+      capture: ['stdout', 'stderr'],
+      command: 'npm test',
+    });
+    await worktreeHandoff(ctx, {
+      branch: `review/ready/${ctx.task.id.replaceAll(':', '-')}`,
+    });
+  },
+});
 ```
 
 ## Land A Reviewed Branch
 
-```yaml
-workspace:
-  id: app
+```js
+import { defineFlow, run } from 'pravaha';
 
-on:
-  patram:
-    $class == task and tracked_in == contract:reviewed-branch-landed and status
-    == ready
+export default defineFlow({
+  on: {
+    patram:
+      '$class == task and tracked_in == contract:reviewed-branch-landed and status == ready',
+  },
 
-jobs:
-  merge_branch:
-    uses: core/git-merge
-    with:
-      head: review/ready/${{ task.id.replaceAll(':', '-') }}
-      message: Merge reviewed work for ${{ task.path }}
-    next: done
+  workspace: {
+    id: 'app',
+  },
 
-  done:
-    end: success
+  async main(ctx) {
+    await run(ctx, {
+      command: `git merge --no-ff --message "Merge reviewed work for ${ctx.task.path}" review/ready/${ctx.task.id.replaceAll(':', '-')}`,
+    });
+  },
+});
 ```
 
 ## Publish Worktree Output
 
-```yaml
-workspace:
-  id: app
+```js
+import { defineFlow, worktreeHandoff } from 'pravaha';
 
-on:
-  patram:
-    $class == task and tracked_in == contract:publish-worktree-output and status
-    == ready
+export default defineFlow({
+  on: {
+    patram:
+      '$class == task and tracked_in == contract:publish-worktree-output and status == ready',
+  },
 
-jobs:
-  handoff:
-    uses: core/worktree-handoff
-    with:
-      branch: review/ready/${{ task.id.replaceAll(':', '-') }}
-    next: publish
+  workspace: {
+    id: 'app',
+  },
 
-  publish:
-    uses: core/worktree-squash
-    with:
-      target: main
-      message: Publish reviewed work for ${{ task.path }}
-    next: done
-
-  done:
-    end: success
+  async main(ctx) {
+    await worktreeHandoff(ctx, {
+      branch: `review/ready/${ctx.task.id.replaceAll(':', '-')}`,
+    });
+  },
+});
 ```
 
 ## Flow Shape Summary
 
 ```json
 {
-  "top_level_keys": ["workspace", "on", "jobs"],
-  "job_keys": ["uses", "with", "limits", "next", "end"],
-  "runtime_bindings": ["result", "jobs.<name>.outputs", "task", "git"],
+  "top_level_keys": ["on", "workspace", "main", "onApprove", "onError"],
+  "runtime_bindings": [
+    "document",
+    "task",
+    "ctx.state",
+    "ctx.run_id",
+    "ctx.worktree_path"
+  ],
+  "built_ins": [
+    "run(ctx, with)",
+    "runCodex(ctx, with)",
+    "approve(ctx, with)",
+    "worktreeHandoff(ctx, with)"
+  ],
   "invariants": [
-    "The first declared job is the entrypoint.",
-    "Each visit chooses exactly one next job or terminates with end.",
-    "If no next branch matches, the flow fails implicitly.",
-    "jobs.<name>.outputs resolves to the latest completed visit."
+    "One checked-in flow module defines the trigger, workspace, and handlers for a contract.",
+    "Durable state survives replay only after await ctx.setState(...).",
+    "Named re-entry handlers receive wait payload data from the stored run snapshot."
   ]
 }
 ```

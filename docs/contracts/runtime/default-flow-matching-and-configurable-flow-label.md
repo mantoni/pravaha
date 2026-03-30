@@ -9,7 +9,7 @@ Depends on:
   - docs/contracts/runtime/pravaha-flow-foundation.md
   - docs/reference/runtime/pravaha-runtime-architecture.md
   - docs/reference/runtime/trigger-catalog.md
-Root flow: docs/flows/implement-task.yaml
+Root flow: docs/flows/implement-task.js
 ---
 
 # Default Flow Matching And Configurable Flow Label

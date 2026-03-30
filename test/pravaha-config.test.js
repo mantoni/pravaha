@@ -18,7 +18,7 @@ it('defines the Pravaha flow and plugin config', () => {
       },
     },
     flows: {
-      default_matches: ['docs/flows/implement-task.yaml'],
+      default_matches: ['docs/flows/implement-task.js'],
     },
   });
 });

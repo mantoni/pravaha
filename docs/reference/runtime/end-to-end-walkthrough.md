@@ -8,7 +8,7 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 # End-To-End Walkthrough
 
 This document captures the intended execution model from contract to integration
-for the state-machine flow surface.
+for the JavaScript flow module surface.
 
 ## Scenario
 
@@ -23,75 +23,55 @@ for the state-machine flow surface.
 graph LR
   A["Configured flow"] --> B["Ready task"]
   B --> C["Dispatch trigger"]
-  C --> D["Create durable job instance"]
+  C --> D["Create durable run snapshot"]
   D --> E["Materialize flow workspace"]
-  E --> F["Run first declared job"]
-  F --> G["Persist result and latest job outputs"]
-  G --> H["Evaluate next"]
-  H --> I["Advance to one successor job"]
-  I --> J["Reach terminal end"]
+  E --> F["Run main(ctx)"]
+  F --> G["Persist explicit state or wait"]
+  G --> H["Replay current handler after interruption"]
+  H --> I["Re-enter through named wait handler when approved"]
+  I --> J["Reach terminal outcome"]
 ```
 
 ## Example Flow
 
-```yaml
-workspace:
-  id: app
+```js
+import { approve, defineFlow, run, runCodex } from 'pravaha';
 
-on:
-  patram:
-    $class == task and tracked_in == contract:walkthrough and status == ready
+export default defineFlow({
+  on: {
+    patram:
+      '$class == task and tracked_in == contract:walkthrough and status == ready',
+  },
 
-jobs:
-  implement:
-    uses: core/run-codex
-    with:
-      prompt: Implement the task in ${{ task.path }}.
-      reasoning: medium
-    next: test
+  workspace: {
+    id: 'app',
+  },
 
-  test:
-    uses: core/run
-    with:
-      command: npm test
-      capture: [stdout, stderr]
-    next:
-      - if: ${{ result.exit_code == 0 }}
-        goto: review
-      - goto: fix
+  async main(ctx) {
+    await runCodex(ctx, {
+      prompt: `Implement the task in ${ctx.task.path}.`,
+      reasoning: 'medium',
+    });
+    await run(ctx, {
+      capture: ['stdout', 'stderr'],
+      command: 'npm test',
+    });
+    await ctx.setState({
+      phase: 'awaiting-review',
+    });
+    await approve(ctx, {
+      title: `Review ${ctx.task.path}`,
+      message: 'Approve or reject this task.',
+      data: {
+        approved_at_phase: 'awaiting-review',
+      },
+    });
+  },
 
-  fix:
-    uses: core/run-codex
-    with:
-      prompt: |
-        The test run failed for ${{ task.path }}.
-
-        stdout:
-        ${{ jobs.test.outputs.stdout }}
-
-        stderr:
-        ${{ jobs.test.outputs.stderr }}
-      reasoning: medium
-    limits:
-      max-visits: 3
-    next: test
-
-  review:
-    uses: core/approval
-    with:
-      title: Review ${{ task.path }}
-      message: Approve or reject this task.
-      options: [approve, reject]
-    next:
-      - if: ${{ result.verdict == "approve" }}
-        goto: done
-      - goto: rejected
-
-  done:
-    end: success
-
-  rejected:
-    end: rejected
+  async onApprove(ctx, data) {
+    ctx.console.log(`Approved during ${data.approved_at_phase}.`);
+  },
+});
 ```
 
 ## State Split
@@ -102,12 +82,12 @@ jobs:
     "contract status",
     "task status",
     "workspace namespace",
-    "job graph"
+    "flow module metadata and handlers"
   ],
   "machine_local": [
-    "instance cursor",
-    "latest job outputs",
-    "visit counts",
+    "current handler name",
+    "durable flow state",
+    "pending wait payload",
     "resolved workspace directory"
   ]
 }
@@ -115,8 +95,9 @@ jobs:
 
 ## Notes
 
-- The first declared job is the entrypoint for each matched task instance.
-- The runtime evaluates `next` against the current visit through `result`.
-- Prior node data remains available through `jobs.<name>.outputs`.
-- Waiting for people or systems is expressed through plugins such as
-  `core/approval` rather than engine-level `await`.
+- `main(ctx)` is the entrypoint for each matched task instance.
+- Replay restarts the current handler from the top with the latest durable
+  `ctx.state`.
+- Waiting for people or systems is expressed through imported built-ins such as
+  `approve(ctx, with)`.
+- Resume after approval enters a named handler such as `onApprove(ctx, data)`.

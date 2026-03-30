@@ -4,7 +4,7 @@ Id: rename-plugin-local-directory-key
 Status: done
 Decided by:
   - docs/decisions/runtime/pluggable-step-plugins-and-signal-contracts.md
-Root flow: docs/flows/implement-task.yaml
+Root flow: docs/flows/implement-task.js
 ---
 
 # Rename Plugin Local Directory Key

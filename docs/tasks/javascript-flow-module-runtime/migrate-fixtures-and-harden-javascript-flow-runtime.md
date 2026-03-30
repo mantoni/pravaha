@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: migrate-fixtures-and-harden-javascript-flow-runtime
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/javascript-flow-module-runtime.md
 Depends on:
   - docs/tasks/javascript-flow-module-runtime/add-javascript-flow-module-loading-and-validation.md

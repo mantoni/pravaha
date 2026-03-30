@@ -15,13 +15,13 @@ Pravaha decisions.
 - Patram is the control plane for shared, portable workflow state.
 - The Pravaha runtime is the data plane for local execution, supervision, and
   transient operational state.
-- Flow documents are the policy plane that define how work moves through the
+- Flow modules are the policy plane that define how work moves through the
   system.
 
 ```mermaid
 graph TD
   A["Checked-in Patram graph<br/>contracts, tasks, decisions, flows"] --> B["Reconciler"]
-  B --> C["Flow engine<br/>typed declarative YAML"]
+  B --> C["Flow runtime<br/>checked-in JavaScript modules"]
   B --> D["Lease manager"]
   D --> E["Worktree pool<br/>named or ephemeral"]
   E --> F["Worker supervisor<br/>Codex run-to-completion workers"]
@@ -42,13 +42,13 @@ graph TD
     "contracts",
     "tasks",
     "decisions",
-    "flow references",
+    "flow module paths",
     "review and merge intent"
   ],
   "machine_local_runtime_truth": [
     "current durable run snapshot",
-    "prior job outputs",
-    "job visit counts",
+    "current handler name",
+    "durable flow state",
     "pending waits",
     "terminal outcomes at the current checkpoint"
   ]
@@ -75,11 +75,10 @@ graph LR
 
 - Contracts own exactly one root flow.
 - The flow root is bound as `document`.
-- A job `select` binds the selected durable document under its Patram class
-  name, such as `task` or `ticket`.
-- `jobs.<name>.select` only fans out over durable workflow documents.
-- Flow branch conditions may query durable workflow documents plus the current
-  run snapshot.
+- `main(ctx)` is the required entrypoint for a new flow instance.
+- Named re-entry handlers such as `onApprove(ctx, data)` resume durable waits.
+- Durable flow state changes survive replay only through
+  `await ctx.setState(...)`.
 - Leasing is tied to the configured semantic `ready` state.
 - One leased task or equivalent leaseable document occupies one worktree at a
   time.

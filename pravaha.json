@@ -13,6 +13,6 @@
     }
   },
   "flows": {
-    "default_matches": ["docs/flows/implement-task.yaml"]
+    "default_matches": ["docs/flows/implement-task.js"]
   }
 }
