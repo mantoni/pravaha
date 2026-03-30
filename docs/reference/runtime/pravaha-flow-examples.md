@@ -14,6 +14,11 @@ in runtime surface.
 
 ```json
 {
+  "workspaces": {
+    "app": {
+      "paths": [".pravaha/worktrees/abbott", ".pravaha/worktrees/castello"]
+    }
+  },
   "plugins": {
     "dir": "plugins"
   },
@@ -28,9 +33,9 @@ in runtime surface.
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    id: app
   materialize:
     kind: worktree
     mode: ephemeral
@@ -95,12 +100,9 @@ jobs:
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    ids:
-      - app
-      - app-1
-      - app-2
   materialize:
     kind: worktree
     mode: pooled
@@ -164,9 +166,9 @@ jobs:
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    id: app
   materialize:
     kind: worktree
     mode: ephemeral
@@ -194,9 +196,9 @@ jobs:
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    id: app
   materialize:
     kind: worktree
     mode: ephemeral

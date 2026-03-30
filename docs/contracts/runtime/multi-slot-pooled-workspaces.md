@@ -1,7 +1,7 @@
 ---
 Kind: contract
 Id: multi-slot-pooled-workspaces
-Status: active
+Status: done
 Decided by:
   - docs/decisions/runtime/multi-slot-pooled-workspaces.md
 Depends on:

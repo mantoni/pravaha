@@ -59,9 +59,9 @@ graph LR
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    id: app
   materialize:
     kind: worktree
     mode: ephemeral
@@ -71,12 +71,9 @@ workspace:
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    ids:
-      - app
-      - app-1
-      - app-2
   materialize:
     kind: worktree
     mode: pooled
@@ -84,8 +81,7 @@ workspace:
 ```
 
 - Declare workspace policy once at flow scope.
-- Use `source.id` for one reusable slot or `source.ids` for multiple pooled
-  slots in declaration order.
+- Use `workspace.id` to select one shared directory pool from `pravaha.json`.
 - Repo-backed checked-in worktrees currently allow only `ephemeral` and `pooled`
   modes.
 - Resume reuses the recorded resolved assignment instead of selecting again.

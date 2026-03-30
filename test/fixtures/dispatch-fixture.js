@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import {
   createFixtureDocument,
   createFixtureRepoFromFiles,
@@ -15,6 +16,8 @@ const INDEPENDENT_FLOW_PATH = 'docs/flows/runtime/independent-flow.yaml';
 export {
   APPROVAL_CONTRACT_PATH,
   APPROVAL_FLOW_PATH,
+  CONFLICTING_CONTRACT_PATH,
+  CONFLICTING_FLOW_PATH,
   createReusableWorktreeFixtureRepo,
   INDEPENDENT_CONTRACT_PATH,
   INDEPENDENT_FLOW_PATH,
@@ -39,14 +42,17 @@ async function createReusableWorktreeFixtureRepo() {
         createDecisionFixtureDocument('trigger-driven-codex-runtime'),
       [APPROVAL_FLOW_PATH]: createPooledDispatchFlowDocumentText(
         'approval-flow',
+        'app',
         'main',
       ),
       [CONFLICTING_FLOW_PATH]: createPooledDispatchFlowDocumentText(
         'conflicting-flow',
+        'app',
         'main',
       ),
       [INDEPENDENT_FLOW_PATH]: createPooledDispatchFlowDocumentText(
         'independent-flow',
+        'review',
         'review',
       ),
       'docs/tasks/runtime/approval-task.md': createTaskFixtureDocument(
@@ -72,6 +78,14 @@ async function createReusableWorktreeFixtureRepo() {
     },
     {
       pravaha_config_override: {
+        workspaces: {
+          app: {
+            paths: ['.pravaha/worktrees/abbott', '.pravaha/worktrees/castello'],
+          },
+          review: {
+            paths: ['.pravaha/worktrees/review'],
+          },
+        },
         flows: {
           default_matches: [
             APPROVAL_FLOW_PATH,
@@ -135,16 +149,17 @@ function createTaskFixtureDocument(task_id, contract_path) {
 
 /**
  * @param {string} flow_id
+ * @param {string} workspace_id
  * @param {string} ref
  * @returns {string}
  */
-function createPooledDispatchFlowDocumentText(flow_id, ref) {
+function createPooledDispatchFlowDocumentText(flow_id, workspace_id, ref) {
   return [
     'workspace:',
     '  type: git.workspace',
+    `  id: ${workspace_id}`,
     '  source:',
     '    kind: repo',
-    '    id: app',
     '  materialize:',
     '    kind: worktree',
     '    mode: pooled',

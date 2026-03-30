@@ -7,6 +7,11 @@ it('defines the Pravaha flow and plugin config', () => {
     plugins: {
       dir: 'plugins',
     },
+    workspaces: {
+      app: {
+        paths: ['.pravaha/worktrees/abbott', '.pravaha/worktrees/castello'],
+      },
+    },
     flows: {
       default_matches: ['docs/flows/implement-task.yaml'],
     },

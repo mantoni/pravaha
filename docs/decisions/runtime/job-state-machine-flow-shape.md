@@ -46,8 +46,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
   the instance as terminal failure.
 - Move workspace policy to one flow-level `workspace` block that applies to the
   entire durable chain rather than to individual jobs.
-- Require `workspace.source` and `workspace.materialize` to declare the checked-
-  in workspace contract explicitly.
+- Require `workspace.id`, `workspace.source`, and `workspace.materialize` to
+  declare the checked-in workspace contract explicitly.
 - Support these first workspace shapes:
   - `source.kind: repo` plus `materialize.kind: worktree` plus
     `materialize.mode: ephemeral` creates a new worktree for the instance.

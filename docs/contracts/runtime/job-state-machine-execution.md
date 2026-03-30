@@ -23,9 +23,9 @@ Depends on:
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    id: app
   materialize:
     kind: worktree
     mode: ephemeral

@@ -14,6 +14,11 @@ machine flow documents.
 
 ```json
 {
+  "workspaces": {
+    "app": {
+      "paths": [".pravaha/worktrees/app"]
+    }
+  },
   "plugins": {
     "dir": "plugins"
   },
@@ -50,9 +55,9 @@ Invalid because `plugins.dir` must be a non-empty string when present:
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    id: app
   materialize:
     kind: worktree
     mode: ephemeral
@@ -94,9 +99,9 @@ Invalid because root trigger selection is required for every flow:
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    id: app
   materialize:
     kind: worktree
     mode: ephemeral
@@ -117,9 +122,9 @@ the flow engine surface:
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    id: app
   materialize:
     kind: worktree
     mode: ephemeral
@@ -149,9 +154,9 @@ class:
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    id: app
   materialize:
     kind: worktree
     mode: ephemeral
@@ -195,9 +200,9 @@ Invalid because repo-backed workspaces currently accept only `ephemeral` and
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    id: app
   materialize:
     kind: worktree
     mode: shared
@@ -217,18 +222,17 @@ jobs:
     end: success
 ```
 
-Invalid because repo-backed pooled workspaces must declare exactly one of
-`source.id` or `source.ids`:
+Invalid because flow-authored workspace location ids moved to top-level
+`workspace.id` plus global `pravaha.json` config:
 
 ```yaml
 workspace:
   type: git.workspace
+  id: app
   source:
     kind: repo
-    id: app
     ids:
       - app
-      - app-1
   materialize:
     kind: worktree
     mode: pooled

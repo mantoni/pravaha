@@ -189,9 +189,9 @@ function createFlowDocumentText() {
   return [
     'workspace:',
     '  type: git.workspace',
+    '  id: app',
     '  source:',
     '    kind: repo',
-    '    id: app',
     '  materialize:',
     '    kind: worktree',
     '    mode: ephemeral',
