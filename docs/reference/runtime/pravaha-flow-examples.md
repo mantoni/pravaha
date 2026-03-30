@@ -16,7 +16,20 @@ in runtime surface.
 {
   "workspaces": {
     "app": {
-      "paths": [".pravaha/worktrees/abbott", ".pravaha/worktrees/castello"]
+      "mode": "pooled",
+      "paths": [".pravaha/worktrees/abbott", ".pravaha/worktrees/castello"],
+      "ref": "main",
+      "source": {
+        "kind": "repo"
+      }
+    },
+    "validation": {
+      "mode": "ephemeral",
+      "base_path": ".pravaha/worktrees/validation",
+      "ref": "main",
+      "source": {
+        "kind": "repo"
+      }
     }
   },
   "plugins": {
@@ -32,14 +45,7 @@ in runtime surface.
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: ephemeral
-    ref: main
 
 on:
   patram:
@@ -99,14 +105,7 @@ jobs:
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: pooled
-    ref: main
 
 on:
   patram:
@@ -165,14 +164,7 @@ jobs:
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: ephemeral
-    ref: main
 
 on:
   patram:
@@ -195,14 +187,7 @@ jobs:
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: ephemeral
-    ref: main
 
 on:
   patram:

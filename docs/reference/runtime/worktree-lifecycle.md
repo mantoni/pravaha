@@ -12,8 +12,9 @@ This document captures the working model for reusable Pravaha worktrees.
 ## Core Rules
 
 - One leaseable document occupies one worktree at a time.
-- Checked-in flow policy declares workspace materialization at flow scope.
-- Worktrees may be ephemeral for one run or pooled for reuse across runs.
+- Checked-in flows declare only `workspace.id`.
+- Global `workspaces.<id>` owns workspace lifecycle, placement, and checkout.
+- Worktrees may be pooled for reuse across runs or ephemeral per flow instance.
 - Reuse requires explicit prepare and cleanup work.
 
 ## Lifecycle
@@ -49,40 +50,58 @@ graph LR
 
 ## Reuse Scenarios
 
-- Ephemeral worktree: Created for one run and discarded afterward.
-- Pooled worktree: Assigned dynamically from a bounded local pool.
-- Checkout shapes for `remote` and `bare` sources are separate workspace
-  materializations and are not part of the repo-backed worktree slice.
+- Pooled workspace: Assigned from one configured fixed path set and left on disk
+  after cleanup.
+- Ephemeral workspace: Derived under one configured `base_path` from the
+  `flow_instance_id` and deleted after cleanup.
+- Resume always reuses the recorded concrete directory instead of selecting a
+  fresh one.
 
-## Checked-In Policy
+## Checked-In Flow
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
+```
+
+## Global Workspace Policy
+
+```json
+{
+  "workspaces": {
+    "app": {
+      "mode": "pooled",
+      "paths": [".pravaha/worktrees/abbott", ".pravaha/worktrees/castello"],
+      "ref": "main",
+      "source": {
+        "kind": "repo"
+      }
+    },
+    "validation": {
+      "mode": "ephemeral",
+      "base_path": ".pravaha/worktrees/validation",
+      "ref": "main",
+      "source": {
+        "kind": "repo"
+      }
+    }
+  }
+}
+```
+
+```yaml
+workspaces:
+  validation:
     mode: ephemeral
+    base_path: .pravaha/worktrees/validation
     ref: main
+    source:
+      kind: repo
 ```
 
-```yaml
-workspace:
-  type: git.workspace
-  id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: pooled
-    ref: main
-```
-
-- Declare workspace policy once at flow scope.
-- Use `workspace.id` to select one shared directory pool from `pravaha.json`.
-- Repo-backed checked-in worktrees currently allow only `ephemeral` and `pooled`
+- Declare workspace identity in the flow and policy in `pravaha.json`.
+- Use `workspace.id` to select one shared namespace from `pravaha.json`.
+- Repo-backed global workspaces currently allow only `ephemeral` and `pooled`
   modes.
 - Resume reuses the recorded resolved assignment instead of selecting again.
 

@@ -14,77 +14,77 @@ Depends on:
 
 ## Intent
 
-- Move sharable workspace location pools into global config while keeping
-  flow-authored workspace semantics explicit.
+- Make global workspace config own lifecycle, placement, and checkout semantics
+  while flows request only one workspace namespace by id.
 
 ## Inputs
 
 - The accepted global workspace directory pools decision.
-- Existing state-machine flows that currently declare workspace ids or pooled
-  workspace source ids in flow documents.
-- Dispatch runtime logic that already treats worktree or checkout directories as
-  exclusive resources per unresolved run.
+- Existing state-machine flows that currently declare flow-local workspace
+  semantics.
+- Dispatch runtime logic that already tracks occupied concrete directories per
+  unresolved run.
 
 ## Outputs
 
 - `pravaha.json` validation that accepts a top-level `workspaces` object keyed
   by workspace id.
-- Workspace config validation that accepts one non-empty ordered unique `paths`
-  array per workspace id.
-- Flow validation that accepts `workspace.id` and rejects flow-local
-  `workspace.source.id` and `workspace.source.ids`.
-- Flow interpretation that preserves flow-authored `source` and `materialize`
-  semantics while carrying one referenced workspace id.
-- Dispatch behavior that resolves the referenced workspace id to one ordered
-  pool of configured directory paths and chooses the first unoccupied path.
-- Startup warnings for flows that share one workspace id but disagree on
-  semantics.
-- Assignment behavior that refuses execution for flows whose shared workspace id
-  is semantically conflicted.
+- Workspace config validation that accepts one tagged workspace definition per
+  id:
+  - `mode: pooled` plus one ordered unique non-empty `paths` array
+  - `mode: ephemeral` plus one non-empty `base_path`
+  - explicit repo-backed checkout semantics such as source kind and ref
+- Flow validation that accepts only `workspace.id`.
+- Flow interpretation that resolves one referenced global workspace id instead
+  of preserving flow-local `source` or `materialize` fields.
+- Dispatch behavior that resolves the referenced workspace id to one concrete
+  runtime allocation according to the workspace mode.
 - Runtime records that persist one concrete selected directory for unresolved
   and final runs.
 - Resume behavior that reuses the recorded directory exactly.
 
 ## Side Effects
 
-- Operators manage shared workspace capacity by editing global config rather
-  than by editing each flow.
-- A single conflicting workspace id may disable execution for multiple flows
-  that reference it.
-- Flow portability now depends on the target repo config defining the requested
+- Operators manage workspace lifecycle and capacity centrally in config rather
+  than by editing individual flows.
+- Flow portability depends on the target repo config defining the requested
   workspace id.
+- Changing one workspace id now changes runtime behavior for every flow that
+  references it.
 
 ## Invariants
 
-- Flow-authored `workspace` blocks describe what the runtime materializes, not
-  where it lives.
-- Global config owns the allowed concrete directories for a workspace id.
-- Every flow that references the same workspace id declares identical workspace
-  semantics.
-- Startup warns for semantic conflicts but does not abort the runtime.
-- Execution warns again and refuses any flow whose workspace id is in semantic
-  conflict.
-- Dispatch selects at most one concrete directory per flow instance.
+- Flow-authored `workspace` blocks contain only `id`.
+- Global config owns the lifecycle mode, placement policy, and checkout
+  semantics for a workspace id.
+- Every referenced workspace id must exist in `pravaha.json`.
+- `pooled` uses only configured fixed paths and never auto-deletes them.
+- `ephemeral` derives one concrete directory under `base_path` from the
+  `flow_instance_id` and deletes only that known directory during cleanup.
 - Resume never re-selects a directory for an unresolved run.
 
 ## Validation Rules
 
-- Accept top-level `workspaces.<id>.paths` as an array of unique non-empty
-  strings.
-- Reject missing, empty, or duplicate path entries.
+- Accept top-level `workspaces.<id>.mode` as either `pooled` or `ephemeral`.
+- Accept `workspaces.<id>.paths` only for `pooled` workspaces.
+- Accept `workspaces.<id>.base_path` only for `ephemeral` workspaces.
+- Reject missing, empty, or duplicate pooled path entries.
+- Reject empty ephemeral base paths.
+- Reject workspace definitions that mix `paths` and `base_path`.
+- Reject workspace definitions that omit required repo-backed checkout fields.
 - Accept flow-level `workspace.id` as one non-empty string.
-- Reject flow-level `workspace.source.id` and `workspace.source.ids`.
+- Reject any additional flow-level workspace fields.
 - Reject flows that reference a workspace id that is not defined in config.
-- Report semantic conflicts across flows that reference the same workspace id.
 
 ## Runtime Rules
 
-- Resolve each flow workspace id to the configured ordered directory pool.
+- Resolve each flow workspace id to the configured global workspace definition.
 - Normalize relative configured paths against the repo directory before
   occupancy checks and materialization.
-- Exclude already occupied directories during assignment selection.
-- Reserve the selected directory during assignment materialization so one
-  dispatch pass does not double-book it.
+- For `pooled`, exclude already occupied configured paths during assignment
+  selection and choose the first free slot.
+- For `ephemeral`, derive the concrete directory from `base_path` and the
+  `flow_instance_id` rather than from a fixed configured slot.
 - Materialize the concrete selected directory before the first job visit.
 - Persist the selected directory into runtime state for unresolved and final
   outcomes.
@@ -93,23 +93,23 @@ Depends on:
 
 ## Failure Modes
 
-- Flows silently diverge on workspace semantics while sharing one workspace id.
-- Dispatch executes a flow even though its workspace id is semantically
-  conflicted.
-- Config declares ambiguous or duplicate workspace directory pools.
+- Flows continue to declare legacy flow-local workspace semantics after the
+  schema break.
+- Config declares an invalid workspace mode or mixes pooled and ephemeral
+  placement fields.
+- Dispatch reuses a pooled slot that is already occupied.
+- Ephemeral allocation incorrectly reuses one shared fixed slot.
 - Resume switches to a different configured directory after interruption.
-- Dispatch double-books one configured directory in the same pass.
 
 ## Review Gate
 
-- Valid repos load global workspace path pools from `pravaha.json`.
-- Valid flows load with `workspace.id` plus explicit `source` and `materialize`
-  semantics.
-- Invalid flows that still use flow-local `workspace.source.id` or
-  `workspace.source.ids` fail clearly.
-- Semantic conflicts across flows sharing one workspace id warn during load and
-  prevent execution.
-- Dispatch skips occupied earlier paths and chooses a later free configured
-  directory.
+- Valid repos load pooled and ephemeral global workspace definitions from
+  `pravaha.json`.
+- Valid flows load with `workspace.id` only.
+- Invalid flows that still use flow-local workspace semantics fail clearly.
+- Dispatch skips occupied earlier pooled paths and chooses a later free
+  configured directory.
+- Ephemeral allocation derives the concrete path from `base_path` and the flow
+  instance id.
 - Resume reuses the recorded directory exactly.
 - `npm run all` passes.

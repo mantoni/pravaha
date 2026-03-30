@@ -46,17 +46,13 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
   the instance as terminal failure.
 - Move workspace policy to one flow-level `workspace` block that applies to the
   entire durable chain rather than to individual jobs.
-- Require `workspace.id`, `workspace.source`, and `workspace.materialize` to
-  declare the checked-in workspace contract explicitly.
-- Support these first workspace shapes:
-  - `source.kind: repo` plus `materialize.kind: worktree` plus
-    `materialize.mode: ephemeral` creates a new worktree for the instance.
-  - `source.kind: repo` plus `materialize.kind: worktree` plus
-    `materialize.mode: pooled` reuses a durable pooled worktree.
-  - `source.kind: remote` plus `materialize.kind: checkout` creates a checkout
-    from a remote source.
-  - `source.kind: bare` plus `materialize.kind: checkout` creates a checkout
-    from a local bare repository.
+- Require checked-in flows to declare only `workspace.id`.
+- Make global `pravaha.json` own the workspace lifecycle mode, placement, and
+  repo-backed checkout semantics for each referenced workspace id.
+- Support these first global workspace modes:
+  - `mode: ephemeral` creates one worktree under a configured `base_path` for
+    each flow instance.
+  - `mode: pooled` reuses one durable configured path from a bounded local pool.
 - Keep one flow instance bound to one resolved workspace materialization at a
   time so loops such as `fix -> test -> fix` naturally reuse the same working
   copy.

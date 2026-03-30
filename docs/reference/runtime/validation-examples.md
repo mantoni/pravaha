@@ -16,7 +16,12 @@ machine flow documents.
 {
   "workspaces": {
     "app": {
-      "paths": [".pravaha/worktrees/app"]
+      "mode": "pooled",
+      "paths": [".pravaha/worktrees/app"],
+      "ref": "main",
+      "source": {
+        "kind": "repo"
+      }
     }
   },
   "plugins": {
@@ -50,18 +55,44 @@ Invalid because `plugins.dir` must be a non-empty string when present:
 }
 ```
 
+Invalid because every workspace must declare `mode` explicitly:
+
+```json
+{
+  "workspaces": {
+    "app": {
+      "paths": [".pravaha/worktrees/app"],
+      "ref": "main",
+      "source": {
+        "kind": "repo"
+      }
+    }
+  }
+}
+```
+
+Invalid because ephemeral workspaces use `base_path`, not fixed `paths`:
+
+```json
+{
+  "workspaces": {
+    "validation": {
+      "mode": "ephemeral",
+      "paths": [".pravaha/worktrees/validation"],
+      "ref": "main",
+      "source": {
+        "kind": "repo"
+      }
+    }
+  }
+}
+```
+
 ## Valid Flow Example
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: ephemeral
-    ref: main
 
 on:
   patram:
@@ -98,14 +129,7 @@ Invalid because root trigger selection is required for every flow:
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: ephemeral
-    ref: main
 
 jobs:
   implement:
@@ -121,14 +145,9 @@ the flow engine surface:
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
   materialize:
-    kind: worktree
     mode: ephemeral
-    ref: main
 
 on:
   patram:
@@ -153,14 +172,7 @@ class:
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: ephemeral
-    ref: main
 
 on:
   patram: $class in [task, contract]
@@ -194,23 +206,16 @@ jobs:
     end: success
 ```
 
-Invalid because repo-backed workspaces currently accept only `ephemeral` and
-`pooled` worktree modes:
+Invalid because flow workspace declarations now accept only `id`:
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: shared
-    ref: main
+  type: git.workspace
 
 on:
   patram:
-    $class == task and tracked_in == contract:invalid-workspace-mode and status
+    $class == task and tracked_in == contract:invalid-workspace-shape and status
     == ready
 
 jobs:
@@ -227,16 +232,10 @@ Invalid because flow-authored workspace location ids moved to top-level
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
   source:
-    kind: repo
     ids:
       - app
-  materialize:
-    kind: worktree
-    mode: pooled
-    ref: main
 
 on:
   patram:

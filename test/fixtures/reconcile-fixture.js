@@ -37,6 +37,24 @@ async function createReconcilerFixtureRepo(options = {}) {
       flows: {
         default_matches: [FLOW_PATH],
       },
+      workspaces: {
+        app: {
+          base_path: '.pravaha/worktrees/app',
+          mode: 'ephemeral',
+          ref: 'main',
+          source: {
+            kind: 'repo',
+          },
+        },
+        'queue-validation': {
+          base_path: '.pravaha/worktrees/queue-validation',
+          mode: 'ephemeral',
+          ref: 'refs/pravaha/queue-validation/current',
+          source: {
+            kind: 'repo',
+          },
+        },
+      },
     },
   });
 }
@@ -188,14 +206,7 @@ function createTaskDocument(task_document) {
 function createFlowDocumentText() {
   return [
     'workspace:',
-    '  type: git.workspace',
     '  id: app',
-    '  source:',
-    '    kind: repo',
-    '  materialize:',
-    '    kind: worktree',
-    '    mode: ephemeral',
-    '    ref: main',
     '',
     'on:',
     '  patram: $class == task and tracked_in == contract:single-task-flow-reconciler and status == ready',

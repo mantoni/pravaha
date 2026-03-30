@@ -1,12 +1,5 @@
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: pooled
-    ref: main
 
 on:
   patram: $class == task and status == ready

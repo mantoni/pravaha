@@ -22,18 +22,10 @@ Depends on:
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: ephemeral
-    ref: main
 
 on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
+  patram: $class == task and tracked_in == @document and status == ready
 
 jobs:
   implement:
@@ -87,8 +79,8 @@ jobs:
 - Runtime support that enforces node-local visit limits such as
   `limits.max-visits`.
 - Runtime support that resolves one flow-level workspace contract for the whole
-  durable chain and reuses that materialization across loops in the same flow
-  instance.
+  durable chain through one referenced global workspace id and reuses that
+  concrete directory across loops in the same flow instance.
 - Runtime support that checkpoints current durable execution truth after each
   completed job visit and at every persistent wait or terminal outcome.
 - Clear validation and runtime failures when a flow relies on removed
@@ -124,6 +116,9 @@ jobs:
   hidden engine control path.
 - `limits.max-visits` counts visits per named job within one flow instance.
 - Workspace policy is flow-scoped rather than job-scoped.
+- Flow workspace declarations contain only `workspace.id`.
+- Global `pravaha.json` owns lifecycle mode, placement, and checkout semantics
+  for each workspace id.
 - One flow instance owns at most one resolved workspace materialization at a
   time.
 - Interruption may lose in-flight worker execution, but the durable run snapshot
@@ -143,13 +138,12 @@ jobs:
 - Reject terminal jobs that combine `end` with `uses`, `with`, `limits`, or
   `next`.
 - Reject flows that mix this surface with removed step-surface fields.
-- Reject workspace shapes outside the accepted checked-in `source` and
-  `materialize` combinations for this slice.
+- Reject flow workspace shapes that declare fields beyond `workspace.id`.
 
 ## Runtime Rules
 
 - Resolve the flow-level workspace once for the new flow instance before the
-  first job visit executes.
+  first job visit executes by looking up the referenced global workspace id.
 - Enter the first declared job for the new flow instance.
 - Execute the job's one declared plugin with parsed `with` inputs inside the
   resolved workspace context when a workspace exists.

@@ -24,14 +24,7 @@ async function createStateMachineFixtureRepo(options = {}) {
 function createStateMachinePreamble() {
   return [
     'workspace:',
-    '  type: git.workspace',
     '  id: app',
-    '  source:',
-    '    kind: repo',
-    '  materialize:',
-    '    kind: worktree',
-    '    mode: ephemeral',
-    '    ref: main',
     '',
     'on:',
     '  patram: $class == task and tracked_in == contract:single-task-flow-reconciler and status == ready',

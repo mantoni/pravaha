@@ -36,14 +36,7 @@ graph LR
 
 ```yaml
 workspace:
-  type: git.workspace
   id: app
-  source:
-    kind: repo
-  materialize:
-    kind: worktree
-    mode: ephemeral
-    ref: main
 
 on:
   patram:
@@ -108,14 +101,14 @@ jobs:
   "checked_in": [
     "contract status",
     "task status",
-    "workspace policy",
+    "workspace namespace",
     "job graph"
   ],
   "machine_local": [
     "instance cursor",
     "latest job outputs",
     "visit counts",
-    "worktree materialization state"
+    "resolved workspace directory"
   ]
 }
 ```

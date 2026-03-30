@@ -43,16 +43,13 @@ async function createReusableWorktreeFixtureRepo() {
       [APPROVAL_FLOW_PATH]: createPooledDispatchFlowDocumentText(
         'approval-flow',
         'app',
-        'main',
       ),
       [CONFLICTING_FLOW_PATH]: createPooledDispatchFlowDocumentText(
         'conflicting-flow',
         'app',
-        'main',
       ),
       [INDEPENDENT_FLOW_PATH]: createPooledDispatchFlowDocumentText(
         'independent-flow',
-        'review',
         'review',
       ),
       'docs/tasks/runtime/approval-task.md': createTaskFixtureDocument(
@@ -80,10 +77,20 @@ async function createReusableWorktreeFixtureRepo() {
       pravaha_config_override: {
         workspaces: {
           app: {
+            mode: 'pooled',
             paths: ['.pravaha/worktrees/abbott', '.pravaha/worktrees/castello'],
+            ref: 'main',
+            source: {
+              kind: 'repo',
+            },
           },
           review: {
+            mode: 'pooled',
             paths: ['.pravaha/worktrees/review'],
+            ref: 'review',
+            source: {
+              kind: 'repo',
+            },
           },
         },
         flows: {
@@ -150,20 +157,12 @@ function createTaskFixtureDocument(task_id, contract_path) {
 /**
  * @param {string} flow_id
  * @param {string} workspace_id
- * @param {string} ref
  * @returns {string}
  */
-function createPooledDispatchFlowDocumentText(flow_id, workspace_id, ref) {
+function createPooledDispatchFlowDocumentText(flow_id, workspace_id) {
   return [
     'workspace:',
-    '  type: git.workspace',
     `  id: ${workspace_id}`,
-    '  source:',
-    '    kind: repo',
-    '  materialize:',
-    '    kind: worktree',
-    '    mode: pooled',
-    `    ref: ${ref}`,
     '',
     'on:',
     `  patram: $class == task and tracked_in == contract:${flow_id.replace(/-flow$/u, '-contract')} and status == ready`,

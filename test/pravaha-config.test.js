@@ -9,7 +9,12 @@ it('defines the Pravaha flow and plugin config', () => {
     },
     workspaces: {
       app: {
+        mode: 'pooled',
         paths: ['.pravaha/worktrees/abbott', '.pravaha/worktrees/castello'],
+        ref: 'main',
+        source: {
+          kind: 'repo',
+        },
       },
     },
     flows: {
