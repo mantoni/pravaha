@@ -12,16 +12,16 @@ for the state-machine flow surface.
 
 ## Scenario
 
-- A contract references one root flow.
+- One configured flow glob matches the checked-in flow.
 - The contract has one or more tasks.
-- A task becomes semantically `ready`.
+- A task becomes Patram `ready`.
 - Pravaha receives a dispatcher wake-up or worker startup rescan.
 
 ## Walkthrough
 
 ```mermaid
 graph LR
-  A["Contract with root flow"] --> B["Ready task"]
+  A["Configured flow"] --> B["Ready task"]
   B --> C["Dispatch trigger"]
   C --> D["Create durable job instance"]
   D --> E["Materialize flow workspace"]
@@ -51,8 +51,8 @@ workspace:
     ref: main
 
 on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
+  patram:
+    $class == task and tracked_in == contract:walkthrough and status == ready
 
 jobs:
   implement:

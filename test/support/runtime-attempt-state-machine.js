@@ -39,8 +39,7 @@ function createStateMachinePreamble() {
     '    ref: main',
     '',
     'on:',
-    '  task:',
-    '    where: $class == task and tracked_in == @document and status == ready',
+    '  patram: $class == task and tracked_in == contract:single-task-flow-reconciler and status == ready',
     '',
     'jobs:',
   ];

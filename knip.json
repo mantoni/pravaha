@@ -9,9 +9,12 @@
     "test/**/*.js"
   ],
   "ignoreIssues": {
+    "lib/config/load-pravaha-config.js": ["exports"],
     "lib/plugins/core/types.ts": ["types"],
+    "lib/runtime/dispatch/graph.js": ["exports"],
     "lib/shared/types/patram-types.ts": ["types"],
     "**/*.types.ts": ["types"],
     "**/*.d.ts": ["unresolved"]
-  }
+  },
+  "tags": ["-@internal"]
 }

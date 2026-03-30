@@ -53,14 +53,14 @@ Depends on:
     "modules": [
       "lib/flow/reconcile-flow.js",
       "lib/flow/load-flow-definition.js",
-      "lib/flow-query.js",
+      "lib/flow/query.js",
       "lib/flow/validate-flow-document.js"
     ]
   },
   "repo_validation": {
     "modules": [
       "lib/repo/validate-repo.js",
-      "lib/repo/semantics/create-semantic-model.js"
+      "lib/repo/semantics/create-patram-model.js"
     ]
   },
   "plugin_runtime": {

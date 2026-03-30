@@ -211,7 +211,6 @@ function createContractFixtures() {
         ['Id', 'release-flow'],
         ['Status', 'active'],
         ['Decided by', 'docs/decisions/query-logic.md'],
-        ['Root flow', 'docs/flows/release-flow-root.yaml'],
       ],
     }),
     'docs/contracts/reviewed-contract.md': createFixtureDocument({

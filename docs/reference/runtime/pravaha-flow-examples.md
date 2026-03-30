@@ -14,26 +14,11 @@ in runtime surface.
 
 ```json
 {
-  "semantic_roles": {
-    "contract": ["contract"],
-    "decision": ["decision"],
-    "flow": ["flow"],
-    "task": ["task"]
-  },
-  "semantic_states": {
-    "active": ["active"],
-    "blocked": ["blocked"],
-    "proposed": ["proposed"],
-    "ready": ["ready"],
-    "review": ["review"],
-    "terminal": ["accepted", "done", "dropped", "superseded"]
-  },
   "plugins": {
     "dir": "plugins"
   },
   "flows": {
-    "default_matches": ["docs/flows/runtime/*.yaml"],
-    "root_flow_label": "Implementation flow"
+    "default_matches": ["docs/flows/runtime/*.yaml"]
   }
 }
 ```
@@ -57,8 +42,9 @@ workspace:
     ref: main
 
 on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
+  patram:
+    $class == task and tracked_in == contract:task-reviewed-then-merge and
+    status == ready
 
 jobs:
   implement:
@@ -131,8 +117,9 @@ workspace:
     ref: main
 
 on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
+  patram:
+    $class == task and tracked_in == contract:integration-handoff and status ==
+    ready
 
 jobs:
   implement:
@@ -201,8 +188,9 @@ workspace:
     ref: main
 
 on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
+  patram:
+    $class == task and tracked_in == contract:reviewed-branch-landed and status
+    == ready
 
 jobs:
   merge_branch:
@@ -235,8 +223,9 @@ workspace:
     ref: main
 
 on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
+  patram:
+    $class == task and tracked_in == contract:publish-worktree-output and status
+    == ready
 
 jobs:
   handoff:

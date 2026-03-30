@@ -57,7 +57,6 @@ function createPluginRuntimeFixtureFiles(extra_fixture_files = {}) {
         ['Kind', 'contract'],
         ['Id', 'single-task-flow-reconciler'],
         ['Status', 'active'],
-        ['Root flow', FLOW_PATH],
       ],
     }),
     [FLOW_PATH]: [

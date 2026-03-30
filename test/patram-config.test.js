@@ -82,10 +82,6 @@ function createExpectedFields() {
       multiple: true,
       path_class: 'workflow_docs',
     },
-    root_flow: {
-      type: 'path',
-      path_class: 'flows',
-    },
   };
 }
 
@@ -154,10 +150,6 @@ function createExpectedRelations() {
     implements: {
       from: workflow_classes,
       to: workflow_classes,
-    },
-    root_flow: {
-      from: ['contract'],
-      to: ['flow'],
     },
   };
 }
@@ -236,7 +228,6 @@ function createExpectedRelationMappings(mapping_prefix) {
     [`${mapping_prefix}.decided_by`]: createRelationMapping('decided_by'),
     [`${mapping_prefix}.depends_on`]: createRelationMapping('depends_on'),
     [`${mapping_prefix}.implements`]: createRelationMapping('implements'),
-    [`${mapping_prefix}.root_flow`]: createRelationMapping('root_flow', 'flow'),
   };
 }
 
@@ -278,7 +269,6 @@ function createExpectedClassDefinitionEntries() {
       ['status', 'required'],
       ['decided_by', 'optional'],
       ['depends_on', 'optional'],
-      ['root_flow', 'optional'],
     ]),
     createExpectedClassEntryDefinition('decision', 'Decision', 'decisions', [
       ['status', 'required'],

@@ -86,7 +86,6 @@ function createContractFixtures() {
             'Decided by',
             'docs/decisions/runtime/trigger-driven-codex-runtime.md',
           ],
-          ['Root flow', 'docs/flows/runtime/single-task-flow-reconciler.yaml'],
         ],
       }),
   };
@@ -174,8 +173,7 @@ function createRuntimeFlowSource() {
     '    ref: main',
     '',
     'on:',
-    '  task:',
-    '    where: $class == task and tracked_in == @document and status == ready',
+    '  patram: $class == task and tracked_in == contract:single-task-flow-reconciler and status == ready',
     '',
     ...createRuntimeJobLines(),
     '',

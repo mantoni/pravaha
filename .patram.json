@@ -24,9 +24,6 @@
           },
           "depends_on": {
             "presence": "optional"
-          },
-          "root_flow": {
-            "presence": "optional"
           }
         },
         "unknown_fields": "ignore"
@@ -156,10 +153,6 @@
       "type": "path",
       "multiple": true,
       "path_class": "workflow_docs"
-    },
-    "root_flow": {
-      "type": "path",
-      "path_class": "flows"
     }
   },
   "path_classes": {
@@ -310,10 +303,6 @@
         "plan",
         "reference"
       ]
-    },
-    "root_flow": {
-      "from": ["contract"],
-      "to": ["flow"]
     }
   },
   "mappings": {
@@ -364,13 +353,6 @@
         "target_class": "document"
       }
     },
-    "markdown.directive.root_flow": {
-      "emit": {
-        "relation": "root_flow",
-        "target": "path",
-        "target_class": "flow"
-      }
-    },
     "jsdoc.directive.tracked_in": {
       "emit": {
         "relation": "tracked_in",
@@ -397,13 +379,6 @@
         "relation": "implements",
         "target": "path",
         "target_class": "document"
-      }
-    },
-    "jsdoc.directive.root_flow": {
-      "emit": {
-        "relation": "root_flow",
-        "target": "path",
-        "target_class": "flow"
       }
     }
   }

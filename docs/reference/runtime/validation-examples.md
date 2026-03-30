@@ -14,81 +14,33 @@ machine flow documents.
 
 ```json
 {
-  "semantic_roles": {
-    "contract": ["contract"],
-    "decision": ["decision"],
-    "flow": ["flow"],
-    "task": ["task"]
-  },
-  "semantic_states": {
-    "active": ["active"],
-    "blocked": ["blocked"],
-    "proposed": ["proposed"],
-    "ready": ["ready"],
-    "review": ["review"],
-    "terminal": ["accepted", "done", "dropped", "superseded"]
-  },
   "plugins": {
     "dir": "plugins"
   },
   "flows": {
-    "default_matches": ["docs/flows/**/*.yaml"],
-    "root_flow_label": "Implementation flow"
+    "default_matches": ["docs/flows/**/*.yaml"]
   }
 }
 ```
 
 ## Invalid Config Examples
 
-Invalid because a required semantic role is missing:
+Invalid because `flows.default_matches` must contain only non-empty strings:
 
 ```json
 {
-  "semantic_roles": {
-    "contract": ["contract"]
-  },
-  "semantic_states": {
-    "ready": ["ready"]
-  }
-}
-```
-
-Invalid because a required semantic state is missing:
-
-```json
-{
-  "semantic_roles": {
-    "contract": ["contract"],
-    "decision": ["decision"],
-    "flow": ["flow"],
-    "task": ["task"]
-  },
-  "semantic_states": {
-    "active": ["active"]
-  }
-}
-```
-
-Invalid because `flows.root_flow_label` is empty:
-
-```json
-{
-  "semantic_roles": {
-    "contract": ["contract"],
-    "decision": ["decision"],
-    "flow": ["flow"],
-    "task": ["task"]
-  },
-  "semantic_states": {
-    "active": ["active"],
-    "blocked": ["blocked"],
-    "proposed": ["proposed"],
-    "ready": ["ready"],
-    "review": ["review"],
-    "terminal": ["accepted", "done", "dropped", "superseded"]
-  },
   "flows": {
-    "root_flow_label": ""
+    "default_matches": ["docs/flows/**/*.yaml", ""]
+  }
+}
+```
+
+Invalid because `plugins.dir` must be a non-empty string when present:
+
+```json
+{
+  "plugins": {
+    "dir": "  "
   }
 }
 ```
@@ -112,8 +64,9 @@ workspace:
     ref: main
 
 on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
+  patram:
+    $class == task and tracked_in == contract:simple-task-flow and status ==
+    ready
 
 jobs:
   implement:
@@ -188,8 +141,9 @@ workspace:
     ref: main
 
 on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
+  patram:
+    $class == task and tracked_in == contract:invalid-generic-update and status
+    == ready
 
 jobs:
   implement:
@@ -204,7 +158,8 @@ jobs:
     end: success
 ```
 
-Invalid because `on.<binding>.where` does not resolve to one durable class:
+Invalid because `flow.on.patram` must constrain exactly one non-runtime Patram
+class:
 
 ```yaml
 kind: flow
@@ -223,8 +178,7 @@ workspace:
     ref: main
 
 on:
-  item:
-    where: $class in [task, contract]
+  patram: $class in [task, contract]
 
 jobs:
   implement:
@@ -244,8 +198,9 @@ status: active
 scope: contract
 
 on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
+  patram:
+    $class == task and tracked_in == contract:invalid-job-workspace and status
+    == ready
 
 jobs:
   implement:
@@ -279,8 +234,9 @@ workspace:
     ref: main
 
 on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
+  patram:
+    $class == task and tracked_in == contract:invalid-workspace-mode and status
+    == ready
 
 jobs:
   implement:
@@ -314,8 +270,9 @@ workspace:
     ref: main
 
 on:
-  task:
-    where: $class == task and tracked_in == @document and status == ready
+  patram:
+    $class == task and tracked_in == contract:invalid-workspace-source-mix and
+    status == ready
 
 jobs:
   implement:

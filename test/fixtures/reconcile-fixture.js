@@ -32,7 +32,13 @@ export {
 async function createReconcilerFixtureRepo(options = {}) {
   const fixture_files = createFixtureFiles(options);
 
-  return createFixtureRepoFromFiles('pravaha-reconcile-', fixture_files);
+  return createFixtureRepoFromFiles('pravaha-reconcile-', fixture_files, {
+    pravaha_config_override: {
+      flows: {
+        default_matches: [FLOW_PATH],
+      },
+    },
+  });
 }
 
 /**
@@ -90,7 +96,6 @@ function createContractDocument(status, decision_paths) {
     ['Kind', 'contract'],
     ['Id', 'single-task-flow-reconciler'],
     ['Status', status],
-    ['Root flow', FLOW_PATH],
   ];
   const [decision_path] = decision_paths;
 
@@ -198,8 +203,7 @@ function createFlowDocumentText() {
     '    ref: main',
     '',
     'on:',
-    '  task:',
-    '    where: $class == task and tracked_in == @document and status == ready',
+    '  patram: $class == task and tracked_in == contract:single-task-flow-reconciler and status == ready',
     '',
     'jobs:',
     '  implement:',

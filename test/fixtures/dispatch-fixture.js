@@ -24,62 +24,71 @@ export {
  * @returns {Promise<string>}
  */
 async function createReusableWorktreeFixtureRepo() {
-  return createFixtureRepoFromFiles('pravaha-pooled-worktree-', {
-    'docs/contracts/runtime/approval-contract.md': createContractFixture(
-      'approval-contract',
-      APPROVAL_FLOW_PATH,
-    ),
-    'docs/contracts/runtime/conflicting-contract.md': createContractFixture(
-      'conflicting-contract',
-      CONFLICTING_FLOW_PATH,
-    ),
-    'docs/contracts/runtime/independent-contract.md': createContractFixture(
-      'independent-contract',
-      INDEPENDENT_FLOW_PATH,
-    ),
-    'docs/decisions/runtime/trigger-driven-codex-runtime.md':
-      createDecisionFixtureDocument('trigger-driven-codex-runtime'),
-    [APPROVAL_FLOW_PATH]: createPooledDispatchFlowDocumentText(
-      'approval-flow',
-      'main',
-    ),
-    [CONFLICTING_FLOW_PATH]: createPooledDispatchFlowDocumentText(
-      'conflicting-flow',
-      'main',
-    ),
-    [INDEPENDENT_FLOW_PATH]: createPooledDispatchFlowDocumentText(
-      'independent-flow',
-      'review',
-    ),
-    'docs/tasks/runtime/approval-task.md': createTaskFixtureDocument(
-      'approval-task',
-      APPROVAL_CONTRACT_PATH,
-    ),
-    'docs/tasks/runtime/conflicting-task.md': createTaskFixtureDocument(
-      'conflicting-task',
-      CONFLICTING_CONTRACT_PATH,
-    ),
-    'docs/tasks/runtime/independent-task.md': createTaskFixtureDocument(
-      'independent-task',
-      INDEPENDENT_CONTRACT_PATH,
-    ),
-    'docs/plans/repo/v0.1/pravaha-flow-runtime.md': createFixtureDocument({
-      body: '# Runtime Plan\n',
-      metadata: [
-        ['Kind', 'plan'],
-        ['Id', 'pravaha-flow-runtime'],
-        ['Status', 'active'],
-      ],
-    }),
-  });
+  return createFixtureRepoFromFiles(
+    'pravaha-pooled-worktree-',
+    {
+      'docs/contracts/runtime/approval-contract.md':
+        createContractFixture('approval-contract'),
+      'docs/contracts/runtime/conflicting-contract.md': createContractFixture(
+        'conflicting-contract',
+      ),
+      'docs/contracts/runtime/independent-contract.md': createContractFixture(
+        'independent-contract',
+      ),
+      'docs/decisions/runtime/trigger-driven-codex-runtime.md':
+        createDecisionFixtureDocument('trigger-driven-codex-runtime'),
+      [APPROVAL_FLOW_PATH]: createPooledDispatchFlowDocumentText(
+        'approval-flow',
+        'main',
+      ),
+      [CONFLICTING_FLOW_PATH]: createPooledDispatchFlowDocumentText(
+        'conflicting-flow',
+        'main',
+      ),
+      [INDEPENDENT_FLOW_PATH]: createPooledDispatchFlowDocumentText(
+        'independent-flow',
+        'review',
+      ),
+      'docs/tasks/runtime/approval-task.md': createTaskFixtureDocument(
+        'approval-task',
+        APPROVAL_CONTRACT_PATH,
+      ),
+      'docs/tasks/runtime/conflicting-task.md': createTaskFixtureDocument(
+        'conflicting-task',
+        CONFLICTING_CONTRACT_PATH,
+      ),
+      'docs/tasks/runtime/independent-task.md': createTaskFixtureDocument(
+        'independent-task',
+        INDEPENDENT_CONTRACT_PATH,
+      ),
+      'docs/plans/repo/v0.1/pravaha-flow-runtime.md': createFixtureDocument({
+        body: '# Runtime Plan\n',
+        metadata: [
+          ['Kind', 'plan'],
+          ['Id', 'pravaha-flow-runtime'],
+          ['Status', 'active'],
+        ],
+      }),
+    },
+    {
+      pravaha_config_override: {
+        flows: {
+          default_matches: [
+            APPROVAL_FLOW_PATH,
+            CONFLICTING_FLOW_PATH,
+            INDEPENDENT_FLOW_PATH,
+          ],
+        },
+      },
+    },
+  );
 }
 
 /**
  * @param {string} contract_id
- * @param {string} flow_path
  * @returns {string}
  */
-function createContractFixture(contract_id, flow_path) {
+function createContractFixture(contract_id) {
   return createFixtureDocument({
     body: `# ${contract_id}\n`,
     metadata: [
@@ -87,7 +96,6 @@ function createContractFixture(contract_id, flow_path) {
       ['Id', contract_id],
       ['Status', 'proposed'],
       ['Decided by', 'docs/decisions/runtime/trigger-driven-codex-runtime.md'],
-      ['Root flow', flow_path],
     ],
   });
 }
@@ -148,8 +156,7 @@ function createPooledDispatchFlowDocumentText(flow_id, ref) {
     `    ref: ${ref}`,
     '',
     'on:',
-    '  task:',
-    '    where: $class == task and tracked_in == @document and status == ready',
+    `  patram: $class == task and tracked_in == contract:${flow_id.replace(/-flow$/u, '-contract')} and status == ready`,
     '',
     'jobs:',
     '  implement:',

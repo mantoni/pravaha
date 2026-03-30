@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: hard-cut-raw-patram-trigger-migration
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/local-dispatch-runtime.md
 Implements: docs/contracts/runtime/local-dispatch-runtime.md
 Decided by:
