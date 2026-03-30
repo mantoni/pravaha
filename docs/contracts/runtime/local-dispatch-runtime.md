@@ -8,6 +8,7 @@ Decided by:
   - docs/decisions/runtime/automatic-follower-failover.md
   - docs/decisions/runtime/current-truth-run-snapshot-persistence.md
   - docs/decisions/runtime/flow-instance-rerun-suppression-and-explicit-dispatch.md
+  - docs/decisions/runtime/short-flow-instance-ids-and-opportunistic-terminal-cleanup.md
   - docs/decisions/runtime/unresolved-run-worktree-exclusivity.md
 Depends on:
   - docs/contracts/runtime/ordered-worktree-step-execution.md
@@ -118,6 +119,9 @@ Depends on:
   without requiring a manual worker restart.
 - The runtime keeps one live run snapshot per task and avoids duplicate durable
   ownership of the same flow instance.
+- Terminal runtime records older than the cleanup grace period are removed only
+  after the exact matching scheduler identity disappears from authoritative
+  state.
 - Dispatcher scheduling reconstructs reusable worktree occupancy from unresolved
   run snapshots and does not assign conflicting work onto an occupied worktree.
 - `npm run all` passes.
