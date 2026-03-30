@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: add-javascript-flow-module-loading-and-validation
-Status: ready
+Status: done
 Tracked in: docs/contracts/runtime/javascript-flow-module-runtime.md
 Implements: docs/contracts/runtime/javascript-flow-module-runtime.md
 Decided by:

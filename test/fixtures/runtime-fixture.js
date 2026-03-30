@@ -1,12 +1,22 @@
-import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { URL, fileURLToPath } from 'node:url';
 
 import patram_config from '../../.patram.json' with { type: 'json' };
 import pravaha_config from '../../pravaha.json' with { type: 'json' };
 import { execGitFile } from '../../lib/shared/git/exec-git-file.js';
 
-export { createFixtureDocument, createFixtureRepo, createFixtureRepoFromFiles };
+export {
+  createFixtureDocument,
+  createFixtureRepo,
+  createFixtureRepoFromFiles,
+  linkPravahaPackage,
+};
+
+const REPO_DIRECTORY = dirname(
+  fileURLToPath(new URL('../../package.json', import.meta.url)),
+);
 
 /**
  * @returns {Promise<string>}
@@ -55,6 +65,17 @@ async function createFixtureRepoFromFiles(
   await initializeGitRepository(temp_directory);
 
   return temp_directory;
+}
+
+/**
+ * @param {string} temp_directory
+ * @returns {Promise<void>}
+ */
+async function linkPravahaPackage(temp_directory) {
+  await linkDirectory(
+    REPO_DIRECTORY,
+    join(temp_directory, 'node_modules', 'pravaha'),
+  );
 }
 
 /**
@@ -247,4 +268,14 @@ async function initializeGitRepository(repo_directory) {
     cwd: repo_directory,
     encoding: 'utf8',
   });
+}
+
+/**
+ * @param {string} target_directory
+ * @param {string} link_path
+ * @returns {Promise<void>}
+ */
+async function linkDirectory(target_directory, link_path) {
+  await mkdir(dirname(link_path), { recursive: true });
+  await symlink(target_directory, link_path, 'dir');
 }
