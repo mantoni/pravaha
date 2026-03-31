@@ -28,7 +28,7 @@ machine flow documents.
     "dir": "plugins"
   },
   "flows": {
-    "default_matches": ["docs/flows/**/*.yaml"]
+    "default_matches": ["docs/flows/**/*.js"]
   }
 }
 ```
@@ -40,7 +40,7 @@ Invalid because `flows.default_matches` must contain only non-empty strings:
 ```json
 {
   "flows": {
-    "default_matches": ["docs/flows/**/*.yaml", ""]
+    "default_matches": ["docs/flows/**/*.js", ""]
   }
 }
 ```

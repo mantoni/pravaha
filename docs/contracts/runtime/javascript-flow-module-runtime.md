@@ -116,8 +116,8 @@ Depends on:
 
 ## Failure Modes
 
-- Validation still requires YAML flow documents or accepts migrated flows that
-  mix JavaScript handlers with legacy graph fields.
+- Validation still accepts checked-in YAML flow documents instead of requiring
+  JavaScript modules.
 - Pravaha resumes after approval by continuing `main` on the next line instead
   of re-entering through `onApprove`.
 - Replay skips earlier built-in calls or memoizes old results even though the

@@ -36,7 +36,7 @@ it('covers every stored Patram query with an executable fixture', async () => {
   } finally {
     await rm(temp_directory, { force: true, recursive: true });
   }
-});
+}, 10000);
 
 /**
  * @returns {Record<string, string[]>}

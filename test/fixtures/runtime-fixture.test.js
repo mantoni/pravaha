@@ -31,7 +31,7 @@ it('writes pravaha config overrides into fixture repositories', async () => {
     {
       pravaha_config_override: {
         flows: {
-          default_matches: ['docs/flows/**/*.yaml'],
+          default_matches: ['docs/flows/**/*.js'],
         },
       },
     },

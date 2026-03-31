@@ -15,7 +15,7 @@ Decided by:
 ```json
 {
   "flows": {
-    "default_matches": ["docs/flows/**/*.yaml"],
+    "default_matches": ["docs/flows/**/*.js"],
     "root_flow_label": "Root flow"
   }
 }
