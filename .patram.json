@@ -68,18 +68,6 @@
         "unknown_fields": "ignore"
       }
     },
-    "flow": {
-      "label": "Flow",
-      "schema": {
-        "document_path_class": "flows",
-        "fields": {
-          "status": {
-            "presence": "required"
-          }
-        },
-        "unknown_fields": "ignore"
-      }
-    },
     "convention": {
       "label": "Convention",
       "schema": {
@@ -165,9 +153,6 @@
     "tasks": {
       "prefixes": ["docs/tasks/"]
     },
-    "flows": {
-      "prefixes": ["docs/flows/"]
-    },
     "conventions": {
       "prefixes": ["docs/conventions/"]
     },
@@ -181,7 +166,6 @@
       "prefixes": [
         "docs/contracts/",
         "docs/tasks/",
-        "docs/flows/",
         "docs/decisions/",
         "docs/conventions/",
         "docs/plans/",
@@ -222,7 +206,6 @@
         "contract",
         "decision",
         "task",
-        "flow",
         "convention",
         "plan",
         "reference"
@@ -232,7 +215,6 @@
         "contract",
         "decision",
         "task",
-        "flow",
         "convention",
         "plan",
         "reference"
@@ -244,7 +226,6 @@
         "contract",
         "decision",
         "task",
-        "flow",
         "convention",
         "plan",
         "reference"
@@ -254,7 +235,6 @@
         "contract",
         "decision",
         "task",
-        "flow",
         "convention",
         "plan",
         "reference"
@@ -266,7 +246,6 @@
         "contract",
         "decision",
         "task",
-        "flow",
         "convention",
         "plan",
         "reference"
@@ -276,7 +255,6 @@
         "contract",
         "decision",
         "task",
-        "flow",
         "convention",
         "plan",
         "reference"
@@ -288,7 +266,6 @@
         "contract",
         "decision",
         "task",
-        "flow",
         "convention",
         "plan",
         "reference"
@@ -298,7 +275,6 @@
         "contract",
         "decision",
         "task",
-        "flow",
         "convention",
         "plan",
         "reference"

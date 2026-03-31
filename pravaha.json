@@ -13,6 +13,6 @@
     }
   },
   "flows": {
-    "default_matches": ["docs/flows/implement-task.js"]
+    "default_matches": ["flows/implement-task.js"]
   }
 }

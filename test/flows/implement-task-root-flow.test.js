@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest';
 
-import implement_task_flow from '../../docs/flows/implement-task.js';
+import implement_task_flow from '../../flows/implement-task.js';
 import { approve, run, runCodex, worktreeHandoff } from '../../lib/flow.js';
 import { attachFlowRuntime } from '../../lib/flow/runtime.js';
 

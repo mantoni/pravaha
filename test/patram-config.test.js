@@ -96,9 +96,6 @@ function createExpectedPathClasses() {
     tasks: {
       prefixes: ['docs/tasks/'],
     },
-    flows: {
-      prefixes: ['docs/flows/'],
-    },
     conventions: {
       prefixes: ['docs/conventions/'],
     },
@@ -112,7 +109,6 @@ function createExpectedPathClasses() {
       prefixes: [
         'docs/contracts/',
         'docs/tasks/',
-        'docs/flows/',
         'docs/decisions/',
         'docs/conventions/',
         'docs/plans/',
@@ -128,7 +124,6 @@ function createExpectedRelations() {
     'contract',
     'decision',
     'task',
-    'flow',
     'convention',
     'plan',
     'reference',
@@ -280,9 +275,6 @@ function createExpectedClassDefinitionEntries() {
       ['decided_by', 'optional'],
       ['depends_on', 'optional'],
       ['implements', 'optional'],
-    ]),
-    createExpectedClassEntryDefinition('flow', 'Flow', 'flows', [
-      ['status', 'required'],
     ]),
     createExpectedClassEntryDefinition(
       'convention',
