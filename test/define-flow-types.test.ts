@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { expectTypeOf, it } from 'vitest';
 
 import { defineFlow, run, type TaskFlowContext } from 'pravaha/flow';
@@ -6,6 +7,8 @@ it('infers common flow entry point types from the public defineFlow api', () => 
   const flow_definition = defineFlow({
     on: {
       patram: '$class == task and status == ready',
+      file: 'docs/tasks/**/*.md',
+      prompt: false,
     },
 
     workspace: 'app',
@@ -33,9 +36,9 @@ it('infers common flow entry point types from the public defineFlow api', () => 
       return undefined;
     },
   });
-  expectTypeOf(flow_definition.on).toEqualTypeOf<{
-    patram: string;
-  }>();
+  expectTypeOf(flow_definition.on.patram).toEqualTypeOf<string | undefined>();
+  expectTypeOf(flow_definition.on.file).toEqualTypeOf<string | undefined>();
+  expectTypeOf(flow_definition.on.prompt).toEqualTypeOf<boolean | undefined>();
   expectTypeOf(flow_definition.workspace).toEqualTypeOf<string>();
 });
 
@@ -60,6 +63,32 @@ it('rejects unsupported defineFlow properties in the public api', () => {
       patram: '$class == task and status == ready',
       // @ts-expect-error flow.on should reject unknown properties.
       extra: true,
+    },
+
+    workspace: 'app',
+
+    main() {
+      return undefined;
+    },
+  });
+
+  defineFlow({
+    on: {
+      // @ts-expect-error flow.on.file must be a string.
+      file: 123,
+    },
+
+    workspace: 'app',
+
+    main() {
+      return undefined;
+    },
+  });
+
+  defineFlow({
+    on: {
+      // @ts-expect-error flow.on.prompt must be a boolean.
+      prompt: 'yes',
     },
 
     workspace: 'app',
