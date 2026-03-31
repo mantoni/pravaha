@@ -1,14 +1,5 @@
 import { approve, defineFlow, run, runCodex, worktreeHandoff } from 'pravaha';
 
-/**
- * @typedef {Record<string, unknown> & {
- *   task: {
- *     id: string,
- *     path: string,
- *   },
- * }} ImplementTaskFlowContext
- */
-
 export default defineFlow({
   on: {
     patram: '$class == task and status == ready',
@@ -18,10 +9,6 @@ export default defineFlow({
     id: 'app',
   },
 
-  /**
-   * @param {ImplementTaskFlowContext} ctx
-   * @returns {Promise<void>}
-   */
   async main(ctx) {
     await run(ctx, {
       command: `
@@ -32,24 +19,20 @@ export default defineFlow({
     });
     await runCodex(ctx, {
       prompt: `
-        Implement the task described in ${ctx.task.path}.
+        Implement the task described in ${ctx.doc.path}.
         Set Status to \`done\` on completion.
       `,
       reasoning: 'high',
     });
     await approve(ctx, {
       message: 'Approve the completed Codex work for this task.',
-      title: `Approve task implementation for ${ctx.task.path}`,
+      title: `Approve task implementation for ${ctx.doc.path}`,
     });
   },
 
-  /**
-   * @param {ImplementTaskFlowContext} ctx
-   * @returns {Promise<void>}
-   */
   async onApprove(ctx) {
     await worktreeHandoff(ctx, {
-      branch: `review/ready/${ctx.task.id.replaceAll(':', '-')}`,
+      branch: `review/ready/${ctx.doc.id.replaceAll(':', '-')}`,
     });
   },
 });

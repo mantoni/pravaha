@@ -30,14 +30,13 @@ export interface CorePluginContext<TWith> {
   dispatchFlow: (
     options: DispatchFlowOptions,
   ) => Promise<Record<string, unknown>>;
-  document?: BindingTarget;
+  doc: BindingTarget;
   failRun: (error_message: string) => Promise<never>;
   queueWait?: QueueWaitState;
   repo_directory: string;
   requestApproval: () => Promise<void>;
   requestQueueWait: (queue_wait: QueueWaitState) => Promise<void>;
   run_id: string;
-  task: BindingTarget;
   with: TWith;
   worktree_path: string;
 }

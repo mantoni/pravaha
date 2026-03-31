@@ -70,7 +70,7 @@ function createFlowContext() {
   };
   const ctx = attachFlowRuntime(
     {
-      task: {
+      doc: {
         id: 'task:demo',
         path: 'docs/tasks/runtime/demo.md',
       },

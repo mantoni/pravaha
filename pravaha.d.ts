@@ -33,7 +33,7 @@ export type TaskFlowState = Record<string, unknown>;
 
 export type TaskFlowContext<
   TState extends TaskFlowState = TaskFlowState,
-  TBindings extends object = object,
+  TBindings extends object = { doc: FlowBindingTarget },
 > = TBindings & {
   bindings: Record<string, FlowBindingTarget | undefined>;
   console: FlowConsole;

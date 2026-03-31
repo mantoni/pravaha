@@ -215,7 +215,7 @@ function createFlowDocumentText() {
     '  implement:',
     '    uses: core/run-codex',
     '    with:',
-    '      prompt: Implement ${{ task.path }}.',
+    '      prompt: Implement ${{ doc.path }}.',
     '      reasoning: medium',
     '    next:',
     '      - if: ${{ result.outcome == "success" }}',

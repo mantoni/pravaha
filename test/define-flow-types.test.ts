@@ -6,6 +6,7 @@ it('infers common flow entry point types from the public defineFlow api', () => 
   const flow_definition = defineFlow({
     main(ctx) {
       expectTypeOf(ctx).toMatchTypeOf<TaskFlowContext>();
+      expectTypeOf(ctx.doc).toEqualTypeOf<TaskFlowContext['doc']>();
       expectTypeOf(ctx.state).toEqualTypeOf<Record<string, unknown>>();
       expectTypeOf(ctx.run_id).toEqualTypeOf<string>();
       expectTypeOf(ctx.setState).toEqualTypeOf<

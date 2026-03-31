@@ -12,8 +12,7 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 - Expose `repo_directory` and `worktree_path` as concrete runtime paths
   available to the current run.
 - Expose parsed plugin `with` input.
-- Expose current bound workflow documents through `document` and `task` when
-  those bindings exist for the run.
+- Expose the current bound workflow document as `doc`.
 - Expose `await context.dispatchFlow({...})` for runtime-native downstream flow
   dispatch.
 - Expose a console helper for operator-facing output.

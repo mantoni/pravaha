@@ -103,7 +103,7 @@ jobs:
   implement:
     uses: core/run-codex
     with:
-      prompt: Implement the task in ${{ task.path }}.
+      prompt: Implement the task in ${{ doc.path }}.
       reasoning: medium
     next: test
 

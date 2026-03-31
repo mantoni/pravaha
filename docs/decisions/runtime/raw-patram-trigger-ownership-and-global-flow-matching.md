@@ -22,9 +22,10 @@ Tracked in: docs/plans/repo/v0.1/local-dispatch-runtime.md
   additional repo-level dispatch gate outside the flow query itself.
 - Treat the selected trigger document as the durable owner of the run and derive
   flow-instance identity from the flow path and owner document id.
-- Expose the owner document in flow expressions and plugin context only under
-  its Patram class name, such as `task` or `decision`.
-- Remove the `document` binding and remove the task-shaped runtime contract.
+- Expose the owner document in flow expressions and flow or plugin context only
+  as `doc`.
+- Remove the class-named trigger binding and remove the task-shaped runtime
+  contract.
 - Keep this trigger model document-only in this slice and do not add a generic
   runtime `subject` abstraction.
 - Treat multiple flow files that match the same owner document as a
@@ -52,9 +53,9 @@ Tracked in: docs/plans/repo/v0.1/local-dispatch-runtime.md
 - Using the selected document as the owner of the run preserves a durable unit
   for identity, resume, and rerun suppression after `root_flow` and contract
   binding are removed.
-- Exposing only the class-named owner document keeps the runtime API honest:
-  flows triggered by `decision` should operate on `decision`, not through a
-  baked-in `task` or `document` abstraction.
+- Exposing one stable owner binding keeps the runtime API predictable across
+  different Patram classes without forcing JavaScript flows or plugins to
+  recover a dynamic property name from the trigger query.
 - Preserving static validation and ambiguity failures keeps flow errors visible
   before or during dispatch instead of turning them into silent empty-match
   behavior.

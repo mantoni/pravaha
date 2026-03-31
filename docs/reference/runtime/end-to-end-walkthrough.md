@@ -49,7 +49,7 @@ export default defineFlow({
 
   async main(ctx) {
     await runCodex(ctx, {
-      prompt: `Implement the task in ${ctx.task.path}.`,
+      prompt: `Implement the task in ${ctx.doc.path}.`,
       reasoning: 'medium',
     });
     await run(ctx, {
@@ -60,7 +60,7 @@ export default defineFlow({
       phase: 'awaiting-review',
     });
     await approve(ctx, {
-      title: `Review ${ctx.task.path}`,
+      title: `Review ${ctx.doc.path}`,
       message: 'Approve or reject this task.',
       data: {
         approved_at_phase: 'awaiting-review',

@@ -34,8 +34,8 @@ Depends on:
 ## Outputs
 
 - A curated stable plugin `context` contract limited to `run_id`,
-  `repo_directory`, `worktree_path`, parsed `with`, bound `document` and `task`
-  metadata when available, `dispatchFlow({...})`, and a console helper.
+  `repo_directory`, `worktree_path`, parsed `with`, bound `doc` metadata,
+  `dispatchFlow({...})`, and a console helper.
 - One built-in pending interaction primitive on plugin `context`:
   `await context.requestApproval()`.
 - One built-in CLI ingress path: `pravaha approve --token <run_id>`.

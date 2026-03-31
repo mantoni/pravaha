@@ -58,14 +58,14 @@ export default defineFlow({
 
   async main(ctx) {
     await runCodex(ctx, {
-      prompt: `Implement the task in ${ctx.task.path}.`,
+      prompt: `Implement the task in ${ctx.doc.path}.`,
       reasoning: 'medium',
     });
     await approve(ctx, {
-      title: `Review ${ctx.task.path}`,
+      title: `Review ${ctx.doc.path}`,
       message: 'Approve or request another revision.',
       data: {
-        revision_prompt: `Address the latest review feedback for ${ctx.task.path}.`,
+        revision_prompt: `Address the latest review feedback for ${ctx.doc.path}.`,
       },
     });
   },
@@ -96,7 +96,7 @@ export default defineFlow({
 
   async main(ctx) {
     await runCodex(ctx, {
-      prompt: `Implement the task in ${ctx.task.path}.`,
+      prompt: `Implement the task in ${ctx.doc.path}.`,
       reasoning: 'medium',
     });
     await run(ctx, {
@@ -104,7 +104,7 @@ export default defineFlow({
       command: 'npm test',
     });
     await worktreeHandoff(ctx, {
-      branch: `review/ready/${ctx.task.id.replaceAll(':', '-')}`,
+      branch: `review/ready/${ctx.doc.id.replaceAll(':', '-')}`,
     });
   },
 });
@@ -127,7 +127,7 @@ export default defineFlow({
 
   async main(ctx) {
     await run(ctx, {
-      command: `git merge --no-ff --message "Merge reviewed work for ${ctx.task.path}" review/ready/${ctx.task.id.replaceAll(':', '-')}`,
+      command: `git merge --no-ff --message "Merge reviewed work for ${ctx.doc.path}" review/ready/${ctx.doc.id.replaceAll(':', '-')}`,
     });
   },
 });
@@ -150,7 +150,7 @@ export default defineFlow({
 
   async main(ctx) {
     await worktreeHandoff(ctx, {
-      branch: `review/ready/${ctx.task.id.replaceAll(':', '-')}`,
+      branch: `review/ready/${ctx.doc.id.replaceAll(':', '-')}`,
     });
   },
 });

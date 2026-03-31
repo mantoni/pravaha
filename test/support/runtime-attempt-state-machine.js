@@ -42,7 +42,7 @@ function createDefaultStateMachineYamlLines() {
     '  implement:',
     '    uses: core/run-codex',
     '    with:',
-    '      prompt: Implement ${{ task.path }}.',
+    '      prompt: Implement ${{ doc.path }}.',
     '      reasoning: medium',
     '    next: done',
     '  done:',

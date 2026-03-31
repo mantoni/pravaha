@@ -31,7 +31,7 @@ jobs:
   implement:
     uses: core/run-codex
     with:
-      prompt: Implement ${{ task.path }}.
+      prompt: Implement ${{ doc.path }}.
       reasoning: medium
     next: test
 
