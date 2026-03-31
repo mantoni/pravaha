@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "types": ["node"]
+  },
+  "include": ["lib/**/*.js", "lib/**/*.ts"],
+  "exclude": [
+    "**/*.d.ts",
+    "**/*.test.js",
+    "**/*.test-helpers.js",
+    "**/*.test-support.js",
+    "**/test-*.js"
+  ]
+}

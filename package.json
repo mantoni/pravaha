@@ -4,27 +4,29 @@
   "version": "0.0.1",
   "type": "module",
   "main": "./lib/pravaha.js",
-  "types": "./pravaha.d.ts",
+  "types": "./lib/pravaha.d.ts",
   "exports": {
     ".": {
-      "types": "./pravaha.d.ts",
+      "types": "./lib/pravaha.d.ts",
       "default": "./lib/pravaha.js"
     },
     "./flow": {
-      "types": "./flow.d.ts",
+      "types": "./lib/flow.d.ts",
       "default": "./lib/flow.js"
     },
     "./bin/pravaha.js": "./bin/pravaha.js"
   },
   "files": [
     "bin/pravaha.js",
+    "lib/**/*.d.ts",
     "lib/**/*.js",
-    "lib/**/*.ts",
-    "flow.d.ts",
-    "pravaha.d.ts",
+    "!bin/**/*.test.d.ts",
+    "!bin/**/*.test-helpers.d.ts",
     "!test/**",
     "!bin/**/*.test.js",
     "!bin/**/*.test-helpers.js",
+    "!lib/**/*.test.d.ts",
+    "!lib/**/*.test-helpers.d.ts",
     "!lib/**/*.test.js",
     "!lib/**/*.test-helpers.js"
   ],
@@ -50,7 +52,9 @@
     "check:patram": "patram check && node ./bin/pravaha.js validate",
     "check:staged": "lint-staged",
     "check:types": "tsc",
+    "postpack": "node scripts/clean-package-api-declarations.js",
     "postversion": "git push && git push --tags",
+    "prepack": "node scripts/build-package-api-declarations.js",
     "preversion": "npm run all",
     "prepare": "husky",
     "test": "vitest run",

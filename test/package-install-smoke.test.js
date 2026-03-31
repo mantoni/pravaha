@@ -2,14 +2,14 @@
 // @module-tag lint-staged-excluded
 
 import { execFile } from 'node:child_process';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 
-import { it } from 'vitest';
+import { expect, it } from 'vitest';
 
 const execFileAsync = promisify(execFile);
 const repo_directory = dirname(
@@ -25,9 +25,12 @@ it('installs and imports the packed npm package in a consumer project', async ()
 
     await createConsumerProject(consumer_directory);
     await installTarball(consumer_directory, tarball_path);
+    await assertTarballIncludesDeclarations(tarball_path);
     await importPackedLibrary(consumer_directory);
     await importPackedFlowLibrary(consumer_directory);
     await importPackedCli(consumer_directory);
+    await typecheckPackedLibrary(consumer_directory);
+    await assertGeneratedDeclarationsAreCleared();
   } finally {
     await rm(temp_directory, { force: true, recursive: true });
   }
@@ -44,15 +47,10 @@ async function packRepo(parent_directory) {
 
   const { stdout } = await runCommand(
     'npm',
-    [
-      'pack',
-      '--ignore-scripts',
-      '--json',
-      '--pack-destination',
-      parent_directory,
-    ],
+    ['pack', '--json', '--pack-destination', parent_directory],
     repo_directory,
     {
+      HUSKY: '0',
       npm_config_cache: npm_cache_directory,
     },
   );
@@ -68,18 +66,18 @@ async function packRepo(parent_directory) {
 async function createConsumerProject(consumer_directory) {
   await mkdir(consumer_directory, { recursive: true });
 
-  const package_json_path = join(consumer_directory, 'package.json');
-  const package_json_text = JSON.stringify(
-    {
-      name: 'pravaha-smoke-test-consumer',
-      private: true,
-      type: 'module',
-    },
-    null,
-    2,
+  await writeFile(
+    join(consumer_directory, 'package.json'),
+    createConsumerPackageJsonText(),
   );
-
-  await writeFile(package_json_path, `${package_json_text}\n`);
+  await writeFile(
+    join(consumer_directory, 'index.ts'),
+    createConsumerIndexText(),
+  );
+  await writeFile(
+    join(consumer_directory, 'tsconfig.json'),
+    createConsumerTsconfigText(),
+  );
 }
 
 /**
@@ -125,7 +123,22 @@ async function importPackedCli(consumer_directory) {
 async function importPackedLibrary(consumer_directory) {
   await runCommand(
     'node',
-    ['--input-type=module', '--eval', ["await import('pravaha');"].join('\n')],
+    [
+      '--input-type=module',
+      '--eval',
+      [
+        "const package_module = await import('pravaha');",
+        "if (typeof package_module.defineFlow !== 'function') {",
+        "  throw new Error('Expected defineFlow export.');",
+        '}',
+        "if (typeof package_module.definePlugin !== 'function') {",
+        "  throw new Error('Expected definePlugin export.');",
+        '}',
+        "if (typeof package_module.validateRepo !== 'function') {",
+        "  throw new Error('Expected validateRepo export.');",
+        '}',
+      ].join('\n'),
+    ],
     consumer_directory,
   );
 }
@@ -140,10 +153,65 @@ async function importPackedFlowLibrary(consumer_directory) {
     [
       '--input-type=module',
       '--eval',
-      ["await import('pravaha/flow');"].join('\n'),
+      [
+        "const flow_module = await import('pravaha/flow');",
+        "if (typeof flow_module.defineFlow !== 'function') {",
+        "  throw new Error('Expected defineFlow export.');",
+        '}',
+        "if (typeof flow_module.approve !== 'function') {",
+        "  throw new Error('Expected approve export.');",
+        '}',
+      ].join('\n'),
     ],
     consumer_directory,
   );
+}
+
+/**
+ * @param {string} tarball_path
+ * @returns {Promise<void>}
+ */
+async function assertTarballIncludesDeclarations(tarball_path) {
+  const { stdout } = await runCommand(
+    'tar',
+    ['-tf', tarball_path],
+    repo_directory,
+  );
+
+  expect(stdout).toContain('package/lib/pravaha.d.ts');
+  expect(stdout).toContain('package/lib/flow.d.ts');
+  expect(stdout).toContain('package/lib/flow/flow-contract.d.ts');
+  expect(stdout).toContain('package/lib/plugins/plugin-contract.d.ts');
+  expect(stdout).not.toContain('package/lib/pravaha.test.d.ts');
+  expect(stdout).not.toContain('package/lib/flow/flow-contract.test.d.ts');
+}
+
+/**
+ * @param {string} consumer_directory
+ * @returns {Promise<void>}
+ */
+async function typecheckPackedLibrary(consumer_directory) {
+  await runCommand(
+    'node',
+    [join(repo_directory, 'node_modules/typescript/bin/tsc'), '-p', '.'],
+    consumer_directory,
+  );
+}
+
+/**
+ * @returns {Promise<void>}
+ */
+async function assertGeneratedDeclarationsAreCleared() {
+  await expect(
+    access(join(repo_directory, 'lib/pravaha.d.ts')),
+  ).rejects.toThrow();
+  await expect(access(join(repo_directory, 'lib/flow.d.ts'))).rejects.toThrow();
+  await expect(
+    access(join(repo_directory, 'lib/flow/flow-contract.d.ts')),
+  ).rejects.toThrow();
+  await expect(
+    access(join(repo_directory, 'lib/plugins/plugin-contract.d.ts')),
+  ).rejects.toThrow();
 }
 
 /**
@@ -158,7 +226,22 @@ async function createTempDirectory() {
  * @returns {{ filename: string }}
  */
 function parsePackResult(pack_result_text) {
-  const parsed_value = /** @type {unknown} */ (JSON.parse(pack_result_text));
+  const json_start = pack_result_text.indexOf('[');
+
+  if (json_start < 0) {
+    throw new Error(`Expected npm pack JSON output.\n${pack_result_text}`);
+  }
+
+  const json_text = pack_result_text.slice(json_start).trim();
+  const json_end = json_text.lastIndexOf(']');
+
+  if (json_end < 0) {
+    throw new Error(`Expected npm pack JSON array.\n${pack_result_text}`);
+  }
+
+  const parsed_value = /** @type {unknown} */ (
+    JSON.parse(json_text.slice(0, json_end + 1))
+  );
 
   if (!Array.isArray(parsed_value) || parsed_value.length === 0) {
     throw new Error('Expected npm pack to return at least one result.');
@@ -183,6 +266,168 @@ function parsePackResult(pack_result_text) {
   }
 
   return /** @type {{ filename: string }} */ (pack_result);
+}
+
+/**
+ * @returns {string}
+ */
+function createConsumerPackageJsonText() {
+  return `${JSON.stringify(
+    {
+      name: 'pravaha-smoke-test-consumer',
+      private: true,
+      type: 'module',
+    },
+    null,
+    2,
+  )}\n`;
+}
+
+/**
+ * @returns {string}
+ */
+function createConsumerIndexText() {
+  return [
+    createConsumerPravahaImportText(),
+    '',
+    createConsumerFlowImportText(),
+    '',
+    createConsumerBindingText(),
+    '',
+    createConsumerFlowText(),
+    '',
+    createConsumerPluginText(),
+    '',
+    'void flow_module;',
+    'void plugin;',
+    'void queue_wait;',
+    'void dispatch_options;',
+  ].join('\n');
+}
+
+/**
+ * @returns {string}
+ */
+function createConsumerPravahaImportText() {
+  return [
+    'import {',
+    '  defineFlow,',
+    '  definePlugin,',
+    '  type DispatchFlowOptions,',
+    '  type FlowBindingTarget,',
+    '  type PluginContext,',
+    '  type QueueWaitState,',
+    '  type TaskFlowContext,',
+    "} from 'pravaha';",
+  ].join('\n');
+}
+
+/**
+ * @returns {string}
+ */
+function createConsumerFlowImportText() {
+  return [
+    'import {',
+    '  approve,',
+    '  defineFlow as defineFlowFromSubpath,',
+    '  type FlowDefinition,',
+    "} from 'pravaha/flow';",
+    '',
+    'const flow_module = approve;',
+    'void defineFlowFromSubpath;',
+  ].join('\n');
+}
+
+/**
+ * @returns {string}
+ */
+function createConsumerBindingText() {
+  return [
+    "const doc: FlowBindingTarget = { id: 'doc:contract', path: 'docs/contracts/example.md', status: 'active' };",
+    "const task: FlowBindingTarget = { id: 'task:example', path: 'docs/tasks/example.md', status: 'ready' };",
+    '',
+    'const queue_wait: QueueWaitState = {',
+    "  branch_head: 'abc123',",
+    "  branch_ref: 'refs/heads/example',",
+    '  outcome: null,',
+    "  ready_ref: 'refs/heads/ready/example',",
+    "  state: 'waiting',",
+    '};',
+    '',
+    "const dispatch_options: DispatchFlowOptions = { flow: 'implement-task', wait: true };",
+  ].join('\n');
+}
+
+/**
+ * @returns {string}
+ */
+function createConsumerFlowText() {
+  return [
+    'type ExampleFlowContext = TaskFlowContext<',
+    '  { approved: boolean },',
+    '  { doc: FlowBindingTarget; task: FlowBindingTarget }',
+    '>;',
+    '',
+    'const flow_definition: FlowDefinition<ExampleFlowContext, { approved: boolean }> = defineFlow({',
+    '  async main(context) {',
+    '    context.console.info(context.task.path);',
+    '    await context.setState({ approved: false });',
+    '  },',
+    '  async onApprove(context, data) {',
+    '    if (data.approved) {',
+    '      context.console.info(context.doc.id);',
+    '    }',
+    '  },',
+    '});',
+    '',
+    'const subpath_flow = defineFlowFromSubpath({',
+    '  async main(context) {',
+    '    context.console.info(context.task_id);',
+    '  },',
+    '});',
+    'void flow_definition;',
+    'void subpath_flow;',
+  ].join('\n');
+}
+
+/**
+ * @returns {string}
+ */
+function createConsumerPluginText() {
+  return [
+    'const plugin = definePlugin({',
+    '  async run(context: PluginContext<{ prompt: string }>) {',
+    '    const typed_context: PluginContext<{ prompt: string }> = context;',
+    '    typed_context.console.info(typed_context.with.prompt);',
+    '    return typed_context.with.prompt;',
+    '  },',
+    '});',
+  ].join('\n');
+}
+
+/**
+ * @returns {string}
+ */
+function createConsumerTsconfigText() {
+  return `${JSON.stringify(
+    {
+      compilerOptions: {
+        module: 'NodeNext',
+        moduleResolution: 'NodeNext',
+        noEmit: true,
+        strict: true,
+        target: 'ES2023',
+        typeRoots: [
+          './node_modules/@types',
+          join(repo_directory, 'node_modules/@types'),
+        ],
+        types: ['node'],
+      },
+      include: ['index.ts'],
+    },
+    null,
+    2,
+  )}\n`;
 }
 
 /**

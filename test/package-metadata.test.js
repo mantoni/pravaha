@@ -24,29 +24,35 @@ const EXPECTED_PACKAGE_METADATA = {
   exports: {
     '.': {
       default: './lib/pravaha.js',
-      types: './pravaha.d.ts',
+      types: './lib/pravaha.d.ts',
     },
     './flow': {
       default: './lib/flow.js',
-      types: './flow.d.ts',
+      types: './lib/flow.d.ts',
     },
     './bin/pravaha.js': './bin/pravaha.js',
   },
   files: [
     'bin/pravaha.js',
+    'lib/**/*.d.ts',
     'lib/**/*.js',
-    'lib/**/*.ts',
-    'flow.d.ts',
-    'pravaha.d.ts',
+    '!bin/**/*.test.d.ts',
+    '!bin/**/*.test-helpers.d.ts',
     '!test/**',
     '!bin/**/*.test.js',
     '!bin/**/*.test-helpers.js',
+    '!lib/**/*.test.d.ts',
+    '!lib/**/*.test-helpers.d.ts',
     '!lib/**/*.test.js',
     '!lib/**/*.test-helpers.js',
   ],
   homepage: 'https://github.com/mantoni/pravaha',
   license: 'MIT',
   main: './lib/pravaha.js',
+  scripts: {
+    postpack: 'node scripts/clean-package-api-declarations.js',
+    prepack: 'node scripts/build-package-api-declarations.js',
+  },
   dependencies: {
     patram: '^0.11.0',
   },
@@ -54,6 +60,7 @@ const EXPECTED_PACKAGE_METADATA = {
     type: 'git',
     url: 'git+https://github.com/mantoni/pravaha.git',
   },
+  types: './lib/pravaha.d.ts',
 };
 
 it('defines publish metadata for the npm package', async () => {
