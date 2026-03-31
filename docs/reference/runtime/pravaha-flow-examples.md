@@ -52,9 +52,7 @@ export default defineFlow({
       '$class == task and tracked_in == contract:task-reviewed-then-merge and status == ready',
   },
 
-  workspace: {
-    id: 'app',
-  },
+  workspace: 'app',
 
   async main(ctx) {
     await runCodex(ctx, {
@@ -90,9 +88,7 @@ export default defineFlow({
       '$class == task and tracked_in == contract:integration-handoff and status == ready',
   },
 
-  workspace: {
-    id: 'app',
-  },
+  workspace: 'app',
 
   async main(ctx) {
     await runCodex(ctx, {
@@ -121,9 +117,7 @@ export default defineFlow({
       '$class == task and tracked_in == contract:reviewed-branch-landed and status == ready',
   },
 
-  workspace: {
-    id: 'app',
-  },
+  workspace: 'app',
 
   async main(ctx) {
     await run(ctx, {
@@ -144,9 +138,7 @@ export default defineFlow({
       '$class == task and tracked_in == contract:publish-worktree-output and status == ready',
   },
 
-  workspace: {
-    id: 'app',
-  },
+  workspace: 'app',
 
   async main(ctx) {
     await worktreeHandoff(ctx, {

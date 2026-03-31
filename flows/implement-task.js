@@ -11,9 +11,7 @@ export default defineFlow({
     patram: '$class == task and status == ready',
   },
 
-  workspace: {
-    id: 'app',
-  },
+  workspace: 'app',
 
   async main(ctx) {
     await run(ctx, {

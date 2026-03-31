@@ -7,7 +7,7 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 # Global Workspace Directory Pools
 
-- Make `workspace.id` the only flow-authored workspace input. Flows request one
+- Make `workspace` the only flow-authored workspace input. Flows request one
   checked-in workspace namespace and do not declare lifecycle, checkout, or
   placement semantics locally.
 - Move the full workspace allocation contract into `pravaha.json` under one
@@ -44,7 +44,7 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 - Workspace lifecycle and checkout behavior are resource properties, not flow
   properties, so they should live with the workspace namespace rather than be
   split across config and flow documents.
-- A flow-only `workspace.id` keeps execution contracts simple and prevents
+- A flow-only `workspace` keeps execution contracts simple and prevents
   config-versus-flow drift.
 - `pooled` and `ephemeral` are fundamentally different allocation models and
   should be explicit in global config rather than inferred from flow-local

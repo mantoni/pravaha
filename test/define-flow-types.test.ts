@@ -8,9 +8,7 @@ it('infers common flow entry point types from the public defineFlow api', () => 
       patram: '$class == task and status == ready',
     },
 
-    workspace: {
-      id: 'app',
-    },
+    workspace: 'app',
 
     main(ctx) {
       expectTypeOf(ctx).toMatchTypeOf<TaskFlowContext>();
@@ -38,9 +36,7 @@ it('infers common flow entry point types from the public defineFlow api', () => 
   expectTypeOf(flow_definition.on).toEqualTypeOf<{
     patram: string;
   }>();
-  expectTypeOf(flow_definition.workspace).toEqualTypeOf<{
-    id: string;
-  }>();
+  expectTypeOf(flow_definition.workspace).toEqualTypeOf<string>();
 });
 
 it('rejects unsupported defineFlow properties in the public api', () => {
@@ -49,9 +45,7 @@ it('rejects unsupported defineFlow properties in the public api', () => {
       patram: '$class == task and status == ready',
     },
 
-    workspace: {
-      id: 'app',
-    },
+    workspace: 'app',
 
     main() {
       return undefined;
@@ -68,9 +62,7 @@ it('rejects unsupported defineFlow properties in the public api', () => {
       extra: true,
     },
 
-    workspace: {
-      id: 'app',
-    },
+    workspace: 'app',
 
     main() {
       return undefined;
@@ -83,9 +75,7 @@ it('rejects unsupported defineFlow properties in the public api', () => {
       patram: 123,
     },
 
-    workspace: {
-      id: 'app',
-    },
+    workspace: 'app',
 
     main() {
       return undefined;
@@ -97,10 +87,9 @@ it('rejects unsupported defineFlow properties in the public api', () => {
       patram: '$class == task and status == ready',
     },
 
+    // @ts-expect-error workspace should be a string.
     workspace: {
       id: 'app',
-      // @ts-expect-error workspace should reject unknown properties.
-      root: '.',
     },
 
     main() {

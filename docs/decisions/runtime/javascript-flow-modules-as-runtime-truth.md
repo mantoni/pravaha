@@ -62,9 +62,7 @@ export default defineFlow({
     patram: '$class == task and tracked_in == @document and status == ready',
   },
 
-  workspace: {
-    id: 'app',
-  },
+  workspace: 'app',
 
   async main(ctx) {
     await run(ctx, { command: 'npm ci' });

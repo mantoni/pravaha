@@ -43,9 +43,7 @@ export default defineFlow({
       '$class == task and tracked_in == contract:walkthrough and status == ready',
   },
 
-  workspace: {
-    id: 'app',
-  },
+  workspace: 'app',
 
   async main(ctx) {
     await runCodex(ctx, {

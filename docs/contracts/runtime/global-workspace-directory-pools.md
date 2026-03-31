@@ -20,7 +20,7 @@ Depends on:
 ## Inputs
 
 - The accepted global workspace directory pools decision.
-- Existing JavaScript flow modules that currently declare `workspace.id`.
+- Existing JavaScript flow modules that currently declare `workspace`.
 - Dispatch runtime logic that already tracks occupied concrete directories per
   unresolved run.
 
@@ -33,7 +33,7 @@ Depends on:
   - `mode: pooled` plus one ordered unique non-empty `paths` array
   - `mode: ephemeral` plus one non-empty `base_path`
   - explicit repo-backed checkout semantics such as source kind and ref
-- Flow validation that accepts only `workspace.id`.
+- Flow validation that accepts only `workspace`.
 - Flow interpretation that resolves one referenced global workspace id instead
   of preserving flow-local `source` or `materialize` fields.
 - Dispatch behavior that resolves the referenced workspace id to one concrete
@@ -53,7 +53,7 @@ Depends on:
 
 ## Invariants
 
-- Flow-authored `workspace` blocks contain only `id`.
+- Flow-authored `workspace` values are one workspace id string.
 - Global config owns the lifecycle mode, placement policy, and checkout
   semantics for a workspace id.
 - Every referenced workspace id must exist in `pravaha.json`.
@@ -71,8 +71,7 @@ Depends on:
 - Reject empty ephemeral base paths.
 - Reject workspace definitions that mix `paths` and `base_path`.
 - Reject workspace definitions that omit required repo-backed checkout fields.
-- Accept flow-level `workspace.id` as one non-empty string.
-- Reject any additional flow-level workspace fields.
+- Accept flow-level `workspace` as one non-empty string.
 - Reject flows that reference a workspace id that is not defined in config.
 
 ## Runtime Rules
@@ -104,7 +103,7 @@ Depends on:
 
 - Valid repos load pooled and ephemeral global workspace definitions from
   `pravaha.json`.
-- Valid flows load with `workspace.id` only.
+- Valid flows load with `workspace` only.
 - Invalid flows that still use flow-local workspace semantics fail clearly.
 - Dispatch skips occupied earlier pooled paths and chooses a later free
   configured directory.

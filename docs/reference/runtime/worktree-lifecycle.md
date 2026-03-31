@@ -12,7 +12,7 @@ This document captures the working model for reusable Pravaha worktrees.
 ## Core Rules
 
 - One leaseable document occupies one worktree at a time.
-- Checked-in flows declare only `workspace.id`.
+- Checked-in flows declare only `workspace`.
 - Global `workspaces.<id>` owns workspace lifecycle, placement, and checkout.
 - Worktrees may be pooled for reuse across runs or ephemeral per flow instance.
 - Reuse requires explicit prepare and cleanup work.
@@ -61,9 +61,7 @@ graph LR
 
 ```js
 export default defineFlow({
-  workspace: {
-    id: 'app',
-  },
+  workspace: 'app',
 });
 ```
 
@@ -93,7 +91,7 @@ export default defineFlow({
 ```
 
 - Declare workspace identity in the flow and policy in `pravaha.json`.
-- Use `workspace.id` to select one shared namespace from `pravaha.json`.
+- Use `workspace` to select one shared namespace from `pravaha.json`.
 - Repo-backed global workspaces currently allow only `ephemeral` and `pooled`
   modes.
 - Resume reuses the recorded resolved assignment instead of selecting again.
