@@ -1,59 +1,15 @@
+export type DiagnosticLike = import('patram').PatramDiagnostic;
+export type GraphNode = import('patram').PatramGraphNode;
+export type GraphEdge = import('patram').PatramGraphEdge;
+export type BuildGraphResult = import('patram').PatramBuildGraphResult;
+export type QueryGraphOptions = import('patram').PatramQueryGraphOptions;
+export type QueryResult = import('patram').PatramQueryResult;
+export type ProjectGraphResult = import('patram').PatramProjectGraphResult;
 export type RepoConfig = import('patram').PatramRepoConfig;
-
-export interface DiagnosticLike {
-  file_path?: string;
-  message: string;
-  path?: string;
-}
-
-export interface GraphNode {
-  $class?: string;
-  $id?: string;
-  $path?: string;
-  id: string;
-  status?: string;
-  [field: string]: unknown;
-}
-
-export interface GraphEdge {
-  from: string;
-  id?: string;
-  origin?: {
-    column: number;
-    line: number;
-    path: string;
-  };
-  relation: string;
-  to: string;
-}
-
-export interface BuildGraphResult {
-  document_node_ids?: Record<string, string>;
-  edges: GraphEdge[];
-  nodes: Record<string, GraphNode>;
-}
-
-export interface QueryGraphOptions {
-  bindings?: Record<string, string>;
-  limit?: number;
-  offset?: number;
-}
 
 export type RepoConfigLike =
   | RepoConfig
   | { relations?: Record<string, unknown> };
-
-export interface QueryResult {
-  diagnostics: DiagnosticLike[];
-  nodes: GraphNode[];
-  total_count?: number;
-}
-
-export interface ProjectGraphResult {
-  config: RepoConfigLike;
-  diagnostics: DiagnosticLike[];
-  graph: BuildGraphResult;
-}
 
 export interface GraphApi {
   load_project_graph: (repo_directory: string) => Promise<ProjectGraphResult>;

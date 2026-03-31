@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "globby": "^16.1.1",
-    "patram": "^0.8.0",
+    "patram": "^0.11.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {

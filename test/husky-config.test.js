@@ -6,7 +6,7 @@ import package_json from '../package.json' with { type: 'json' };
 
 it('installs husky and wires pre-commit to the package checks', async () => {
   expect(package_json.dependencies).toMatchObject({
-    patram: '^0.8.0',
+    patram: '^0.11.0',
   });
   expect(package_json.devDependencies).toMatchObject({
     husky: asMatcher(expect.any(String)),
