@@ -1,5 +1,5 @@
-// @module-tag smoke
 // @module-tag lint-staged-excluded
+// @module-tag smoke
 
 import { execFile } from 'node:child_process';
 import { access, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';

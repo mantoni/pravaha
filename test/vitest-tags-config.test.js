@@ -24,7 +24,7 @@ it('defines tag-aware Vitest timeout profiles and a higher slow-test threshold',
       }),
       expect.objectContaining({
         name: 'smoke',
-        timeout: 60_000,
+        timeout: 30_000,
       }),
     ]),
   );

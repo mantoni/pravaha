@@ -24,7 +24,7 @@ export default defineConfig({
       {
         description: 'Package and workflow smoke tests',
         name: SMOKE_TEST_TAG,
-        timeout: 60_000,
+        timeout: 30_000,
       },
     ],
     coverage: {
