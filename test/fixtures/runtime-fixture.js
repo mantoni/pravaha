@@ -4,10 +4,11 @@ import { dirname, join } from 'node:path';
 import { URL, fileURLToPath } from 'node:url';
 
 import patram_config from '../../.patram.json' with { type: 'json' };
-import pravaha_config from '../../pravaha.json' with { type: 'json' };
+import pravaha_config from '../../pravaha.config.js';
 import { execGitFile } from '../../lib/shared/git/exec-git-file.js';
 
 export {
+  createPravahaConfigSource,
   createFixtureDocument,
   createFixtureRepo,
   createFixtureRepoFromFiles,
@@ -17,6 +18,8 @@ export {
 const REPO_DIRECTORY = dirname(
   fileURLToPath(new URL('../../package.json', import.meta.url)),
 );
+const PRAVAHA_MODULE_URL = new URL('../../lib/pravaha.js', import.meta.url)
+  .href;
 
 /**
  * @returns {Promise<string>}
@@ -51,8 +54,8 @@ async function createFixtureRepoFromFiles(
     `${JSON.stringify(patram_config, null, 2)}\n`,
   );
   await writeFile(
-    join(temp_directory, 'pravaha.json'),
-    `${JSON.stringify(effective_pravaha_config, null, 2)}\n`,
+    join(temp_directory, 'pravaha.config.js'),
+    createPravahaConfigSource(effective_pravaha_config),
   );
 
   for (const [relative_path, source_text] of Object.entries(fixture_files)) {
@@ -76,6 +79,19 @@ async function linkPravahaPackage(temp_directory) {
     REPO_DIRECTORY,
     join(temp_directory, 'node_modules', 'pravaha'),
   );
+}
+
+/**
+ * @param {Record<string, unknown>} config
+ * @returns {string}
+ */
+function createPravahaConfigSource(config) {
+  return [
+    `import { defineConfig } from ${JSON.stringify(PRAVAHA_MODULE_URL)};`,
+    '',
+    `export default defineConfig(${JSON.stringify(config, null, 2)});`,
+    '',
+  ].join('\n');
 }
 
 /**

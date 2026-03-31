@@ -67,31 +67,33 @@ export default defineFlow({
 
 ## Global Workspace Policy
 
-```json
-{
-  "workspaces": {
-    "app": {
-      "mode": "pooled",
-      "paths": [".pravaha/worktrees/abbott", ".pravaha/worktrees/castello"],
-      "ref": "main",
-      "source": {
-        "kind": "repo"
-      }
+```js
+import { defineConfig } from 'pravaha';
+
+export default defineConfig({
+  workspaces: {
+    app: {
+      mode: 'pooled',
+      paths: ['.pravaha/worktrees/abbott', '.pravaha/worktrees/castello'],
+      ref: 'main',
+      source: {
+        kind: 'repo',
+      },
     },
-    "validation": {
-      "mode": "ephemeral",
-      "base_path": ".pravaha/worktrees/validation",
-      "ref": "main",
-      "source": {
-        "kind": "repo"
-      }
-    }
-  }
-}
+    validation: {
+      mode: 'ephemeral',
+      base_path: '.pravaha/worktrees/validation',
+      ref: 'main',
+      source: {
+        kind: 'repo',
+      },
+    },
+  },
+});
 ```
 
-- Declare workspace identity in the flow and policy in `pravaha.json`.
-- Use `workspace` to select one shared namespace from `pravaha.json`.
+- Declare workspace identity in the flow and policy in `pravaha.config.js`.
+- Use `workspace` to select one shared namespace from `pravaha.config.js`.
 - Repo-backed global workspaces currently allow only `ephemeral` and `pooled`
   modes.
 - Resume reuses the recorded resolved assignment instead of selecting again.

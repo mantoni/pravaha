@@ -128,6 +128,9 @@ async function importPackedLibrary(consumer_directory) {
       '--eval',
       [
         "const package_module = await import('pravaha');",
+        "if (typeof package_module.defineConfig !== 'function') {",
+        "  throw new Error('Expected defineConfig export.');",
+        '}',
         "if (typeof package_module.defineFlow !== 'function') {",
         "  throw new Error('Expected defineFlow export.');",
         '}',
@@ -294,6 +297,8 @@ function createConsumerIndexText() {
     '',
     createConsumerBindingText(),
     '',
+    createConsumerConfigText(),
+    '',
     createConsumerFlowText(),
     '',
     createConsumerPluginText(),
@@ -311,6 +316,7 @@ function createConsumerIndexText() {
 function createConsumerPravahaImportText() {
   return [
     'import {',
+    '  defineConfig,',
     '  defineFlow,',
     '  definePlugin,',
     '  type DispatchFlowOptions,',
@@ -355,6 +361,28 @@ function createConsumerBindingText() {
     '};',
     '',
     "const dispatch_options: DispatchFlowOptions = { flow: 'implement-task', wait: true };",
+  ].join('\n');
+}
+
+/**
+ * @returns {string}
+ */
+function createConsumerConfigText() {
+  return [
+    'const config = defineConfig({',
+    "  flows: ['flows/implement-task.js'],",
+    '  workspaces: {',
+    '    app: {',
+    "      mode: 'pooled',",
+    "      paths: ['.pravaha/worktrees/app'],",
+    "      ref: 'main',",
+    '      source: {',
+    "        kind: 'repo',",
+    '      },',
+    '    },',
+    '  },',
+    '});',
+    'void config;',
   ].join('\n');
 }
 

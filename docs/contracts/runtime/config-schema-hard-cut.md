@@ -17,6 +17,7 @@ Root flow: docs/flows/implement-task.js
 - Remove legacy config that no longer drives plugin behavior.
 - Flatten default flow matching config so the checked-in config declares the
   fallback match array directly.
+- Move checked-in config loading to one typed JavaScript module contract.
 
 ## Inputs
 
@@ -29,6 +30,10 @@ Root flow: docs/flows/implement-task.js
 - Pravaha config no longer accepts `plugins`.
 - Pravaha config accepts `flows` only as an array of glob references to
   JavaScript flow modules.
+- Pravaha loads checked-in repo config from `pravaha.config.js`.
+- `pravaha.config.js` default-exports `defineConfig({ ... })`.
+- The public `defineConfig(config)` API enforces strict config typing for
+  checked-in config authoring.
 - The normalized config surface no longer exposes plugin config.
 - Dispatcher and repo validation continue to expand fallback candidates from the
   normalized `flows` array.
@@ -37,6 +42,8 @@ Root flow: docs/flows/implement-task.js
 
 ## Invariants
 
+- Checked-in repo config lives only at `pravaha.config.js`.
+- Config modules default-export `defineConfig(...)`.
 - Explicit contract flow references remain authoritative.
 - Config order does not imply precedence across fallback candidates.
 - Bundled and imported callable plugin usage does not depend on repo-local
@@ -44,6 +51,9 @@ Root flow: docs/flows/implement-task.js
 
 ## Failure Modes
 
+- Pravaha continues to read `pravaha.json` or any other legacy config filename.
+- Pravaha accepts arbitrary default-exported objects and skips the
+  `defineConfig(...)` contract.
 - Pravaha silently accepts removed `plugins` config and hides stale checked-in
   settings.
 - Pravaha keeps accepting `flows.default_matches` and widens the breaking change
@@ -52,7 +62,9 @@ Root flow: docs/flows/implement-task.js
 
 ## Review Gate
 
-- Checked-in `pravaha.json` uses `flows` as a direct array and omits `plugins`.
+- Checked-in `pravaha.config.js` default-exports `defineConfig({ ... })`.
+- Config loading rejects missing config modules, invalid JavaScript modules, and
+  default exports that do not come from `defineConfig(...)`.
 - Config validation rejects `plugins` and non-array `flows`.
 - Default flow matching still schedules exactly one fallback match and still
   rejects ambiguous matches.

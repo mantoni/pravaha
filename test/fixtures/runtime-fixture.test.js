@@ -37,8 +37,8 @@ it('writes pravaha config overrides into fixture repositories', async () => {
 
   try {
     await expect(
-      readFile(join(temp_directory, 'pravaha.json'), 'utf8'),
-    ).resolves.toContain('"flows": [');
+      readFile(join(temp_directory, 'pravaha.config.js'), 'utf8'),
+    ).resolves.toContain('export default defineConfig({');
   } finally {
     await rm(temp_directory, { force: true, recursive: true });
   }

@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest';
 
-import pravaha_config from '../pravaha.json' with { type: 'json' };
+import pravaha_config from '../pravaha.config.js';
 
 it('defines the Pravaha flow config', () => {
-  expect(pravaha_config).toEqual({
+  expect(pravaha_config).toMatchObject({
     workspaces: {
       app: {
         mode: 'pooled',

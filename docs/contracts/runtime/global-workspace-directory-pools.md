@@ -26,8 +26,8 @@ Depends on:
 
 ## Outputs
 
-- `pravaha.json` validation that accepts a top-level `workspaces` object keyed
-  by workspace id.
+- `pravaha.config.js` validation that accepts a top-level `workspaces` object
+  keyed by workspace id.
 - Workspace config validation that accepts one tagged workspace definition per
   id:
   - `mode: pooled` plus one ordered unique non-empty `paths` array
@@ -56,7 +56,7 @@ Depends on:
 - Flow-authored `workspace` values are one workspace id string.
 - Global config owns the lifecycle mode, placement policy, and checkout
   semantics for a workspace id.
-- Every referenced workspace id must exist in `pravaha.json`.
+- Every referenced workspace id must exist in `pravaha.config.js`.
 - `pooled` uses only configured fixed paths and never auto-deletes them.
 - `ephemeral` derives one concrete directory under `base_path` from the
   `flow_instance_id` and deletes only that known directory during cleanup.
@@ -102,7 +102,7 @@ Depends on:
 ## Review Gate
 
 - Valid repos load pooled and ephemeral global workspace definitions from
-  `pravaha.json`.
+  `pravaha.config.js`.
 - Valid flows load with `workspace` only.
 - Invalid flows that still use flow-local workspace semantics fail clearly.
 - Dispatch skips occupied earlier pooled paths and chooses a later free

@@ -16,11 +16,15 @@ Depends on:
 - Remove config surface that no longer governs runtime behavior.
 - Flatten default flow matching config so checked-in config declares the match
   array directly.
+- Move checked-in config authoring to a typed JavaScript module.
 
 ## Scope
 
 - Remove legacy `plugins` support from Pravaha config and normalized config.
 - Replace `flows.default_matches` with `flows: string[]`.
+- Replace `pravaha.json` with `pravaha.config.js`.
+- Export `defineConfig(config)` from `pravaha` and require checked-in config to
+  default-export `defineConfig({ ... })`.
 - Keep the dispatcher and repo validation wired to the normalized flow match
   array.
 - Update checked-in config, fixtures, tests, and operator-facing examples to the
@@ -33,8 +37,11 @@ Depends on:
   defaulting it.
 - Pravaha accepts `flows` only as an array of non-empty `.js` or `.mjs`
   paths/globs.
+- Pravaha reads config only from `pravaha.config.js`.
+- The public config module contract requires
+  `export default defineConfig({ ... })`.
 - Default flow matching still resolves fallback candidates from the configured
   `flows` array.
 - Checked-in config and examples no longer use `plugins` or
-  `flows.default_matches`.
+  `flows.default_matches`, and no longer use `pravaha.json`.
 - `npm run all` passes.
