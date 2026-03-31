@@ -1,14 +1,14 @@
 ---
 Kind: decision
 Id: javascript-flow-modules-as-runtime-truth
-Status: proposed
+Status: accepted
 Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 ---
 
 # JavaScript Flow Modules As Runtime Truth
 
-- Replace YAML flow documents with JavaScript modules that export
-  `default defineFlow({...})` from the `pravaha` package.
+- JavaScript modules that export `default defineFlow({...})` from the `pravaha`
+  package are the only supported checked-in flow surface.
 - Keep trigger bindings and workspace declarations in the `defineFlow(...)`
   config as declarative metadata fields such as `on` and `workspace`.
 - Require each flow module to declare one `main` entrypoint. Allow optional

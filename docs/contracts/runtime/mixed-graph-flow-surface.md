@@ -11,7 +11,6 @@ Depends on:
   - docs/reference/runtime/pravaha-runtime-architecture.md
   - docs/reference/runtime/runtime-node-model.md
   - docs/reference/runtime/pravaha-flow-examples.md
-  - docs/reference/runtime/validation-examples.md
 ---
 
 # Mixed-Graph Flow Surface
@@ -24,7 +23,7 @@ Depends on:
 
 ## Inputs
 
-- The completed single-flight state-machine runtime slice.
+- The completed single-flight runtime slice for one checked-in flow module.
 - The completed runtime persistence slice for unresolved attempts.
 - One machine-local runtime store that exposes runtime records for the current
   in-flight run.

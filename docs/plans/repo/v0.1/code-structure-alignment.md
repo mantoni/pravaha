@@ -6,7 +6,7 @@ Depends on:
   - docs/conventions/repository/docs-structure.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
   - docs/contracts/runtime/local-dispatch-runtime.md
-  - docs/contracts/runtime/job-state-machine-execution.md
+  - docs/contracts/runtime/javascript-flow-module-runtime.md
   - docs/reference/runtime/pravaha-runtime-architecture.md
 ---
 
@@ -91,8 +91,8 @@ graph TD
   loading.
 - `runtime/dispatch/` owns leader election, worker registration, assignment
   planning, and wake-up handling.
-- `runtime/attempts/` owns state-machine execution, resume behavior, and plugin
-  visit orchestration.
+- `runtime/attempts/` owns JavaScript flow execution, replay, resume behavior,
+  and plugin orchestration.
 - `runtime/records/` owns runtime-record persistence and record projections.
 - `runtime/workers/` owns Codex worker supervision and worker-facing I/O.
 - `plugins/` owns plugin contracts, core plugins, and plugin resolution.
@@ -127,10 +127,9 @@ graph TD
     `local-dispatch-runtime`.
   - Keep one top-level runtime facade that wires those collaborators together.
 - Phase 3: Attempt engine split
-  - Extract attempt context setup, resume loading, job execution, branch
-    selection, plugin invocation, and final record writing from
-    `runtime-attempt`.
-  - Keep one narrow state-machine executor module as the public runtime entry.
+  - Extract attempt context setup, resume loading, flow handler execution,
+    built-in invocation, and final record writing from `runtime-attempt`.
+  - Keep one narrow JavaScript flow executor module as the public runtime entry.
 - Phase 4: Flow and validation split
   - Separate flow parsing, executable interpretation, plugin argument
     validation, and query validation into dedicated `flow/` modules.

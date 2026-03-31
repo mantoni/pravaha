@@ -9,7 +9,6 @@ Depends on:
   - docs/reference/runtime/trigger-catalog.md
   - docs/reference/runtime/worktree-lifecycle.md
   - docs/reference/runtime/runtime-node-model.md
-  - docs/reference/runtime/validation-examples.md
   - docs/reference/runtime/glossary.md
   - docs/reference/runtime/end-to-end-walkthrough.md
 ---

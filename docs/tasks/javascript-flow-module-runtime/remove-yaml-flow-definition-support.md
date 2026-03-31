@@ -1,7 +1,7 @@
 ---
 Kind: task
 Id: remove-yaml-flow-definition-support
-Status: active
+Status: done
 Tracked in: docs/contracts/runtime/javascript-flow-module-runtime.md
 Implements: docs/contracts/runtime/javascript-flow-module-runtime.md
 Decided by:
@@ -16,5 +16,7 @@ Decided by:
   to resolve to JavaScript modules that export `default defineFlow({...})`.
 - Update queue validation flow loading and adjacent repo validation helpers to
   use the JavaScript flow surface.
+- Remove the legacy YAML loader, state-machine executor, resume path, and
+  state-machine-specific runtime records from the checked-in runtime.
 - Remove public-facing YAML flow examples and compatibility expectations from
   tests and runtime diagnostics.

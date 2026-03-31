@@ -6,7 +6,7 @@ Decided by:
   - docs/decisions/runtime/global-workspace-directory-pools.md
 Depends on:
   - docs/contracts/runtime/multi-slot-pooled-workspaces.md
-  - docs/contracts/runtime/job-state-machine-execution.md
+  - docs/contracts/runtime/javascript-flow-module-runtime.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
 ---
 
@@ -20,8 +20,7 @@ Depends on:
 ## Inputs
 
 - The accepted global workspace directory pools decision.
-- Existing state-machine flows that currently declare flow-local workspace
-  semantics.
+- Existing JavaScript flow modules that currently declare `workspace.id`.
 - Dispatch runtime logic that already tracks occupied concrete directories per
   unresolved run.
 

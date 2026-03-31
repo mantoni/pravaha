@@ -48,7 +48,8 @@ Depends on:
 - Only semantic `ready` states are leaseable.
 - Pravaha runtime classes stay engine-owned under the protected `$...`
   namespace.
-- Flow documents use YAML as the approved machine-readable format.
+- Flow modules use JavaScript `defineFlow({...})` as the approved checked-in
+  execution format.
 
 ## Failure Modes
 

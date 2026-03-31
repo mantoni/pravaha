@@ -8,7 +8,7 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 # Run Snapshot Model
 
 This document captures the working model for durable local runtime state under
-the state-machine engine.
+the JavaScript flow runtime.
 
 ## Canonical Durable Shape
 
@@ -19,11 +19,10 @@ the state-machine engine.
     "task_path",
     "flow_path",
     "run_id",
-    "current_job_name",
-    "status",
-    "job_outputs",
-    "job_visit_counts",
-    "wait"
+    "current_handler_name",
+    "local_outcome",
+    "durable_state",
+    "wait_state"
   ]
 }
 ```
@@ -42,35 +41,39 @@ operational state and are not part of the durable contract.
   "run_snapshot": [
     "task_id",
     "task_path",
-    "flow_document",
-    "current_job_name",
-    "job_outputs",
-    "job_visit_counts",
-    "status",
-    "wait"
+    "flow_module",
+    "current_handler_name",
+    "durable_state",
+    "local_outcome",
+    "wait_state"
   ]
 }
 ```
 
 ## Query Model
 
-- Root-level `on.<binding>.where` still selects the durable document that owns
-  one run snapshot.
-- `next` expressions evaluate the current visit through `result`.
-- Historical node data is exposed through `jobs.<name>.outputs`.
-- Visit-count state remains durable because revisits and node-local limits are
-  part of correct current execution truth.
+- Root-level `defineFlow({ on: ... })` metadata still selects the durable
+  document that owns one run snapshot.
+- Replay resumes by restarting the recorded named handler from the top.
+- Durable user state is exposed through `ctx.state` and persists only after
+  `await ctx.setState(...)`.
+- Wait state records the named re-entry handler plus optional payload data.
 - Separate durable runtime-node classes are no longer required for waits or
   other flow-visible runtime state.
 
-## Example Branch
+## Example Wait
 
-```yaml
-next:
-  - if: ${{ result.exit_code == 0 }}
-    goto: done
-  - goto: failed
+```json
+{
+  "wait_state": {
+    "kind": "approval",
+    "handler_name": "onApprove",
+    "data": {
+      "approved_prompt": "Ship the validated change."
+    }
+  }
+}
 ```
 
-This expression branches on the current job visit while the engine persists the
-latest completed outputs for future jobs.
+This snapshot records the named re-entry target and the payload passed back into
+the flow when approval arrives.

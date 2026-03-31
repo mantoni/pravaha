@@ -135,7 +135,7 @@ function createDecisionFixtures() {
  */
 function createFlowFixtures() {
   return {
-    'docs/flows/runtime/single-task-flow-reconciler.yaml':
+    'docs/flows/runtime/single-task-flow-reconciler.js':
       createRuntimeFlowSource(),
   };
 }
@@ -178,57 +178,30 @@ function createPlanFixtures() {
  */
 function createRuntimeFlowSource() {
   return [
-    'workspace:',
-    '  id: app',
+    "import { defineFlow, run, runCodex } from 'pravaha';",
     '',
-    'on:',
-    '  patram: $class == task and tracked_in == contract:single-task-flow-reconciler and status == ready',
-    '',
-    ...createRuntimeJobLines(),
+    'export default defineFlow({',
+    '  on: {',
+    "    patram: '$class == task and tracked_in == contract:single-task-flow-reconciler and status == ready',",
+    '  },',
+    '  workspace: {',
+    "    id: 'app',",
+    '  },',
+    '  async main(ctx) {',
+    '    await run(ctx, {',
+    "      command: 'true',",
+    '    });',
+    '    await runCodex(ctx, {',
+    "      prompt: `Implement ${ctx.bindings.doc?.path ?? 'unknown'}.`,",
+    "      reasoning: 'medium',",
+    '    });',
+    '    await run(ctx, {',
+    '      command: "printf \'\'",',
+    '    });',
+    '  },',
+    '});',
     '',
   ].join('\n');
-}
-
-/**
- * @returns {string[]}
- */
-function createRuntimeJobLines() {
-  return [
-    'jobs:',
-    '  prepare_workspace:',
-    '    uses: core/run',
-    '    with:',
-    '      command: "true"',
-    '    next:',
-    '      - if: ${{ result.exit_code == 0 }}',
-    '        goto: implement_task',
-    '      - goto: failed',
-    '',
-    '  implement_task:',
-    '    uses: core/run-codex',
-    '    with:',
-    '      prompt: Implement ${{ doc.path }}.',
-    '      reasoning: medium',
-    '    next:',
-    '      - if: ${{ result.outcome == "success" }}',
-    '        goto: finalize_workspace',
-    '      - goto: failed',
-    '',
-    '  finalize_workspace:',
-    '    uses: core/run',
-    '    with:',
-    '      command: "printf \'\'"',
-    '    next:',
-    '      - if: ${{ result.exit_code == 0 }}',
-    '        goto: done',
-    '      - goto: failed',
-    '',
-    '  done:',
-    '    end: success',
-    '',
-    '  failed:',
-    '    end: failure',
-  ];
 }
 
 /**
@@ -277,5 +250,16 @@ async function initializeGitRepository(repo_directory) {
  */
 async function linkDirectory(target_directory, link_path) {
   await mkdir(dirname(link_path), { recursive: true });
-  await symlink(target_directory, link_path, 'dir');
+
+  try {
+    await symlink(target_directory, link_path, 'dir');
+  } catch (error) {
+    if (
+      !(error instanceof Error) ||
+      !('code' in error) ||
+      error.code !== 'EEXIST'
+    ) {
+      throw error;
+    }
+  }
 }

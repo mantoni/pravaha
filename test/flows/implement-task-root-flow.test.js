@@ -62,6 +62,9 @@ it('hands approved work off to the review branch', async () => {
 function createFlowContext() {
   const flow_runtime = {
     approve: vi.fn(() => Promise.reject(new Error('waiting'))),
+    queue_handoff: vi.fn(() =>
+      Promise.resolve({ ready_ref: 'refs/queue/ready/0001-task-demo' }),
+    ),
     run: vi.fn(() => Promise.resolve({ exit_code: 0 })),
     run_codex: vi.fn(() => Promise.resolve({ outcome: 'success' })),
     worktree_handoff: vi.fn(() =>

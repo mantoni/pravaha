@@ -6,7 +6,7 @@ Decided by:
   - docs/decisions/runtime/multi-slot-pooled-workspaces.md
 Depends on:
   - docs/contracts/runtime/job-level-worktree-policy.md
-  - docs/contracts/runtime/job-state-machine-execution.md
+  - docs/contracts/runtime/javascript-flow-module-runtime.md
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
   - docs/reference/runtime/worktree-lifecycle.md
 ---
@@ -23,7 +23,8 @@ Depends on:
 - The completed job-level worktree policy slice.
 - The accepted worktree lifecycle model for pooled worktrees.
 - The accepted multi-slot pooled workspaces decision.
-- State-machine flows that declare one flow-level repo-backed pooled workspace.
+- JavaScript flow modules that declare one flow-level repo-backed pooled
+  workspace.
 
 ## Outputs
 

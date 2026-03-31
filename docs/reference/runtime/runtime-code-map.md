@@ -6,7 +6,7 @@ Tracked in: docs/plans/repo/v0.1/code-structure-alignment.md
 Depends on:
   - docs/reference/runtime/pravaha-runtime-architecture.md
   - docs/contracts/runtime/local-dispatch-runtime.md
-  - docs/contracts/runtime/job-state-machine-execution.md
+  - docs/contracts/runtime/javascript-flow-module-runtime.md
 ---
 
 # Runtime Code Map
@@ -40,12 +40,12 @@ Depends on:
     ]
   },
   "attempt_engine": {
-    "contract": "docs/contracts/runtime/job-state-machine-execution.md",
+    "contract": "docs/contracts/runtime/javascript-flow-module-runtime.md",
     "modules": [
-      "lib/runtime/attempts/state-machine.js",
+      "lib/runtime/attempts/javascript-flow.js",
       "lib/runtime/attempts/runtime-attempt-records.js",
       "lib/runtime/attempts/runtime-attempt-support.js",
-      "lib/runtime/attempts/state-machine-runtime.js",
+      "lib/flow/built-ins.js",
       "lib/runtime/workspaces/runtime-files.js"
     ]
   },
@@ -109,7 +109,7 @@ lib/
 graph TD
   A["docs/contracts/runtime/local-dispatch-runtime.md"] --> B["lib/runtime/dispatch/session.js"]
   A --> C["lib/runtime/dispatch/protocol.js"]
-  D["docs/contracts/runtime/job-state-machine-execution.md"] --> E["lib/runtime/attempts/state-machine.js"]
+  D["docs/contracts/runtime/javascript-flow-module-runtime.md"] --> E["lib/runtime/attempts/javascript-flow.js"]
   D --> F["lib/runtime/attempts/runtime-attempt-records.js"]
   G["docs/reference/runtime/pravaha-runtime-architecture.md"] --> H["lib/flow/reconcile-flow.js"]
   G --> I["lib/repo/validate-repo.js"]

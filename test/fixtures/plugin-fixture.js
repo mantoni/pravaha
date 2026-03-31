@@ -2,16 +2,11 @@ import { mkdir, symlink, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { URL, fileURLToPath } from 'node:url';
 
-import { CONTRACT_PATH, FLOW_PATH } from './reconcile-fixture.js';
-import {
-  createFixtureDocument,
-  createFixtureRepoFromFiles,
-} from './runtime-fixture.js';
+import { createFixtureRepoFromFiles } from './runtime-fixture.js';
 
 export {
   REPO_DIRECTORY,
   createPluginFixtureRepo,
-  createPluginRuntimeFixtureFiles,
   createPluginModuleSource,
   createPluginPackageSource,
 };
@@ -43,52 +38,6 @@ async function createPluginFixtureRepo(options = {}) {
   await linkPluginTestDependencies(temp_directory);
 
   return temp_directory;
-}
-
-/**
- * @param {Record<string, string>} [extra_fixture_files]
- * @returns {Record<string, string>}
- */
-function createPluginRuntimeFixtureFiles(extra_fixture_files = {}) {
-  return {
-    [CONTRACT_PATH]: createFixtureDocument({
-      body: '# Single-Task Flow Reconciler\n',
-      metadata: [
-        ['Kind', 'contract'],
-        ['Id', 'single-task-flow-reconciler'],
-        ['Status', 'active'],
-      ],
-    }),
-    [FLOW_PATH]: ['jobs: {}', ''].join('\n'),
-    'docs/decisions/runtime/trigger-driven-codex-runtime.md':
-      createFixtureDocument({
-        body: '# Trigger-Driven Codex Runtime\n',
-        metadata: [
-          ['Kind', 'decision'],
-          ['Id', 'trigger-driven-codex-runtime'],
-          ['Status', 'accepted'],
-          ['Tracked in', 'docs/plans/repo/v0.1/pravaha-flow-runtime.md'],
-        ],
-      }),
-    'docs/plans/repo/v0.1/pravaha-flow-runtime.md': createFixtureDocument({
-      body: '# Runtime Plan\n',
-      metadata: [
-        ['Kind', 'plan'],
-        ['Id', 'pravaha-flow-runtime'],
-        ['Status', 'active'],
-      ],
-    }),
-    'docs/tasks/runtime/implement-runtime-slice.md': createFixtureDocument({
-      body: '# Implement Runtime Slice\n',
-      metadata: [
-        ['Kind', 'task'],
-        ['Id', 'implement-runtime-slice'],
-        ['Status', 'ready'],
-        ['Tracked in', CONTRACT_PATH],
-      ],
-    }),
-    ...extra_fixture_files,
-  };
 }
 
 /**

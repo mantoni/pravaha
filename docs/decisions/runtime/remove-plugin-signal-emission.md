@@ -20,8 +20,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 ## Rationale
 
-- The current state-machine runtime evaluates `next` from `result` and prior
-  `jobs.<name>.outputs`, not from a separate emitted-signal surface.
+- The checked-in flow runtime already exposes one durable result surface and
+  does not need a second emitted-signal channel.
 - Keeping both result values and plugin signals creates two competing output
   models for one job visit.
 - Removing `emit` and `emits` simplifies plugin authoring, plugin validation,

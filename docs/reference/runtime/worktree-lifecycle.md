@@ -59,9 +59,12 @@ graph LR
 
 ## Checked-In Flow
 
-```yaml
-workspace:
-  id: app
+```js
+export default defineFlow({
+  workspace: {
+    id: 'app',
+  },
+});
 ```
 
 ## Global Workspace Policy
@@ -87,16 +90,6 @@ workspace:
     }
   }
 }
-```
-
-```yaml
-workspaces:
-  validation:
-    mode: ephemeral
-    base_path: .pravaha/worktrees/validation
-    ref: main
-    source:
-      kind: repo
 ```
 
 - Declare workspace identity in the flow and policy in `pravaha.json`.

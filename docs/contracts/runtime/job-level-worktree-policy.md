@@ -13,7 +13,6 @@ Depends on:
   - docs/plans/repo/v0.1/pravaha-flow-runtime.md
   - docs/reference/runtime/worktree-lifecycle.md
   - docs/reference/runtime/pravaha-flow-examples.md
-  - docs/reference/runtime/validation-examples.md
 ---
 
 # Job-Level Worktree Policy

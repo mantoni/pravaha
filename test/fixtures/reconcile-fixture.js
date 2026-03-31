@@ -1,15 +1,15 @@
 import {
   createFixtureDocument,
   createFixtureRepoFromFiles,
+  linkPravahaPackage,
 } from './runtime-fixture.js';
 
 const CONTRACT_PATH = 'docs/contracts/runtime/single-task-flow-reconciler.md';
-const FLOW_PATH = 'docs/flows/runtime/single-task-flow-reconciler.yaml';
+const FLOW_PATH = 'docs/flows/runtime/single-task-flow-reconciler.js';
 
 export {
   CONTRACT_PATH,
   FLOW_PATH,
-  createDecisionFixture,
   createReconcilerFixtureRepo,
   createTaskFixture,
 };
@@ -18,7 +18,7 @@ export {
  * @param {{
  *   contract_status?: string,
  *   decision_documents?: Array<{ id: string, path: string, status: string }>,
- *   flow_document_text?: string,
+ *   flow_module_source?: string,
  *   task_documents?: Array<{
  *     decided_by?: string[],
  *     depends_on?: string[],
@@ -31,39 +31,46 @@ export {
  */
 async function createReconcilerFixtureRepo(options = {}) {
   const fixture_files = createFixtureFiles(options);
-
-  return createFixtureRepoFromFiles('pravaha-reconcile-', fixture_files, {
-    pravaha_config_override: {
-      flows: {
-        default_matches: [FLOW_PATH],
-      },
-      workspaces: {
-        app: {
-          base_path: '.pravaha/worktrees/app',
-          mode: 'ephemeral',
-          ref: 'main',
-          source: {
-            kind: 'repo',
-          },
+  const repo_directory = await createFixtureRepoFromFiles(
+    'pravaha-reconcile-',
+    fixture_files,
+    {
+      pravaha_config_override: {
+        flows: {
+          default_matches: [FLOW_PATH],
         },
-        'queue-validation': {
-          base_path: '.pravaha/worktrees/queue-validation',
-          mode: 'ephemeral',
-          ref: 'refs/pravaha/queue-validation/current',
-          source: {
-            kind: 'repo',
+        workspaces: {
+          app: {
+            base_path: '.pravaha/worktrees/app',
+            mode: 'ephemeral',
+            ref: 'main',
+            source: {
+              kind: 'repo',
+            },
+          },
+          'queue-validation': {
+            base_path: '.pravaha/worktrees/queue-validation',
+            mode: 'ephemeral',
+            ref: 'refs/pravaha/queue-validation/current',
+            source: {
+              kind: 'repo',
+            },
           },
         },
       },
     },
-  });
+  );
+
+  await linkPravahaPackage(repo_directory);
+
+  return repo_directory;
 }
 
 /**
  * @param {{
  *   contract_status?: string,
  *   decision_documents?: Array<{ id: string, path: string, status: string }>,
- *   flow_document_text?: string,
+ *   flow_module_source?: string,
  *   task_documents?: Array<{
  *     decided_by?: string[],
  *     depends_on?: string[],
@@ -81,8 +88,8 @@ function createFixtureFiles(options) {
   const task_documents = options.task_documents ?? [
     createTaskFixture('implement-runtime-slice', 'ready'),
   ];
-  const flow_document_text =
-    options.flow_document_text ?? createFlowDocumentText();
+  const flow_module_source =
+    options.flow_module_source ?? createFlowModuleSource();
 
   return {
     ...createDecisionFiles(decision_documents),
@@ -91,7 +98,7 @@ function createFixtureFiles(options) {
       options.contract_status ?? 'proposed',
       decision_documents.map((decision_document) => decision_document.path),
     ),
-    [FLOW_PATH]: flow_document_text,
+    [FLOW_PATH]: flow_module_source,
     'docs/plans/repo/v0.1/pravaha-flow-runtime.md': createFixtureDocument({
       body: '# Runtime Plan\n',
       metadata: [
@@ -203,30 +210,24 @@ function createTaskDocument(task_document) {
 /**
  * @returns {string}
  */
-function createFlowDocumentText() {
+function createFlowModuleSource() {
   return [
-    'workspace:',
-    '  id: app',
+    "import { defineFlow, runCodex } from 'pravaha';",
     '',
-    'on:',
-    '  patram: $class == task and tracked_in == contract:single-task-flow-reconciler and status == ready',
-    '',
-    'jobs:',
-    '  implement:',
-    '    uses: core/run-codex',
-    '    with:',
-    '      prompt: Implement ${{ doc.path }}.',
-    '      reasoning: medium',
-    '    next:',
-    '      - if: ${{ result.outcome == "success" }}',
-    '        goto: done',
-    '      - goto: failed',
-    '',
-    '  done:',
-    '    end: success',
-    '',
-    '  failed:',
-    '    end: failure',
+    'export default defineFlow({',
+    '  on: {',
+    "    patram: '$class == task and tracked_in == contract:single-task-flow-reconciler and status == ready',",
+    '  },',
+    '  workspace: {',
+    "    id: 'app',",
+    '  },',
+    '  async main(ctx) {',
+    '    await runCodex(ctx, {',
+    "      prompt: `Implement ${ctx.bindings.doc?.path ?? 'unknown'}.`,",
+    "      reasoning: 'medium',",
+    '    });',
+    '  },',
+    '});',
     '',
   ].join('\n');
 }

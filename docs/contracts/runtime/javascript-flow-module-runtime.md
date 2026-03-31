@@ -1,7 +1,7 @@
 ---
 Kind: contract
 Id: javascript-flow-module-runtime
-Status: proposed
+Status: active
 Decided by:
   - docs/decisions/runtime/javascript-flow-modules-as-runtime-truth.md
   - docs/decisions/runtime/current-truth-run-snapshot-persistence.md
@@ -17,12 +17,12 @@ Depends on:
 
 ## Intent
 
-- Replace YAML flow documents and engine-owned job graphs with JavaScript flow
-  modules whose exported handlers are the runtime truth for migrated flows.
+- Support only JavaScript flow modules whose exported handlers are the runtime
+  truth for checked-in Pravaha flows.
 
 ## Inputs
 
-- The proposed JavaScript flow module decision that makes `defineFlow({...})`
+- The accepted JavaScript flow module decision that makes `defineFlow({...})`
   the checked-in flow asset shape.
 - The canonical current-truth run snapshot and wait persistence model.
 - The local dispatch runtime that still owns trigger matching, instance
@@ -70,7 +70,7 @@ Depends on:
   through runtime calls inside handlers.
 - Workspace policy remains declared through flow metadata and continues to bind
   one resolved workspace to one flow instance at a time.
-- Migrated flows do not declare YAML `jobs`, `steps`, `uses`, `next`, or other
+- Checked-in flows do not declare YAML `jobs`, `steps`, `uses`, `next`, or other
   engine-owned graph control fields.
 - Pravaha loads the flow module directly to discover metadata and handlers. It
   does not require purely static metadata extraction for migrated flows.
@@ -116,7 +116,7 @@ Depends on:
 
 ## Failure Modes
 
-- Validation still accepts checked-in YAML flow documents instead of requiring
+- Validation accepts checked-in YAML flow documents instead of requiring
   JavaScript modules.
 - Pravaha resumes after approval by continuing `main` on the next line instead
   of re-entering through `onApprove`.

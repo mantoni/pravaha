@@ -2,6 +2,7 @@ export { dispatch, worker } from './lib/runtime/dispatch/session.js';
 export { approve as approveRun } from './lib/approve.js';
 export {
   approve,
+  queueHandoff,
   run,
   runCodex,
   worktreeHandoff,

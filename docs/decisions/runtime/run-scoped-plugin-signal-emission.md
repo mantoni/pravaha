@@ -17,8 +17,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 ## Rationale
 
-- The state-machine runtime already evaluates `next` from job result values and
-  prior job outputs.
+- The checked-in flow runtime already exposes one durable result surface to flow
+  code and does not need a second emitted-signal model.
 - Removing plugin signal emission avoids two competing output models for one job
   visit.
 - Approval remains explicit without retaining a second signal-oriented runtime

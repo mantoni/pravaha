@@ -2,16 +2,17 @@
 import {
   createFixtureDocument,
   createFixtureRepoFromFiles,
+  linkPravahaPackage,
 } from './runtime-fixture.js';
 
 const APPROVAL_CONTRACT_PATH = 'docs/contracts/runtime/approval-contract.md';
-const APPROVAL_FLOW_PATH = 'docs/flows/runtime/approval-flow.yaml';
+const APPROVAL_FLOW_PATH = 'docs/flows/runtime/approval-flow.js';
 const CONFLICTING_CONTRACT_PATH =
   'docs/contracts/runtime/conflicting-contract.md';
-const CONFLICTING_FLOW_PATH = 'docs/flows/runtime/conflicting-flow.yaml';
+const CONFLICTING_FLOW_PATH = 'docs/flows/runtime/conflicting-flow.js';
 const INDEPENDENT_CONTRACT_PATH =
   'docs/contracts/runtime/independent-contract.md';
-const INDEPENDENT_FLOW_PATH = 'docs/flows/runtime/independent-flow.yaml';
+const INDEPENDENT_FLOW_PATH = 'docs/flows/runtime/independent-flow.js';
 
 export {
   APPROVAL_CONTRACT_PATH,
@@ -27,7 +28,7 @@ export {
  * @returns {Promise<string>}
  */
 async function createReusableWorktreeFixtureRepo() {
-  return createFixtureRepoFromFiles(
+  const repo_directory = await createFixtureRepoFromFiles(
     'pravaha-pooled-worktree-',
     {
       'docs/contracts/runtime/approval-contract.md':
@@ -40,15 +41,15 @@ async function createReusableWorktreeFixtureRepo() {
       ),
       'docs/decisions/runtime/trigger-driven-codex-runtime.md':
         createDecisionFixtureDocument('trigger-driven-codex-runtime'),
-      [APPROVAL_FLOW_PATH]: createPooledDispatchFlowDocumentText(
+      [APPROVAL_FLOW_PATH]: createPooledDispatchFlowModuleSource(
         'approval-flow',
         'app',
       ),
-      [CONFLICTING_FLOW_PATH]: createPooledDispatchFlowDocumentText(
+      [CONFLICTING_FLOW_PATH]: createPooledDispatchFlowModuleSource(
         'conflicting-flow',
         'app',
       ),
-      [INDEPENDENT_FLOW_PATH]: createPooledDispatchFlowDocumentText(
+      [INDEPENDENT_FLOW_PATH]: createPooledDispatchFlowModuleSource(
         'independent-flow',
         'review',
       ),
@@ -103,6 +104,10 @@ async function createReusableWorktreeFixtureRepo() {
       },
     },
   );
+
+  await linkPravahaPackage(repo_directory);
+
+  return repo_directory;
 }
 
 /**
@@ -159,22 +164,21 @@ function createTaskFixtureDocument(task_id, contract_path) {
  * @param {string} workspace_id
  * @returns {string}
  */
-function createPooledDispatchFlowDocumentText(flow_id, workspace_id) {
+function createPooledDispatchFlowModuleSource(flow_id, workspace_id) {
   return [
-    'workspace:',
-    `  id: ${workspace_id}`,
+    "import { defineFlow, run } from 'pravaha';",
     '',
-    'on:',
-    `  patram: $class == task and tracked_in == contract:${flow_id.replace(/-flow$/u, '-contract')} and status == ready`,
-    '',
-    'jobs:',
-    '  implement:',
-    '    uses: core/run',
-    '    with:',
-    '      command: "true"',
-    '    next: done',
-    '  done:',
-    '    end: success',
+    'export default defineFlow({',
+    '  on: {',
+    `    patram: '$class == task and tracked_in == contract:${flow_id.replace(/-flow$/u, '-contract')} and status == ready',`,
+    '  },',
+    '  workspace: {',
+    `    id: '${workspace_id}',`,
+    '  },',
+    '  async main(ctx) {',
+    "    await run(ctx, { command: 'true' });",
+    '  },',
+    '});',
     '',
   ].join('\n');
 }
