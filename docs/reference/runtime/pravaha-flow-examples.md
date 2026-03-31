@@ -32,12 +32,7 @@ checked-in runtime surface.
       }
     }
   },
-  "plugins": {
-    "dir": "plugins"
-  },
-  "flows": {
-    "default_matches": ["docs/flows/runtime/*.js"]
-  }
+  "flows": ["docs/flows/runtime/*.js"]
 }
 ```
 

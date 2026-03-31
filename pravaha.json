@@ -1,7 +1,4 @@
 {
-  "plugins": {
-    "dir": "plugins"
-  },
   "workspaces": {
     "app": {
       "mode": "pooled",
@@ -12,7 +9,5 @@
       }
     }
   },
-  "flows": {
-    "default_matches": ["flows/implement-task.js"]
-  }
+  "flows": ["flows/implement-task.js"]
 }

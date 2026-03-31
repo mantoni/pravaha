@@ -4,6 +4,7 @@ Id: default-flow-matching-and-configurable-flow-label
 Status: active
 Decided by:
   - docs/decisions/runtime/default-flow-matching-and-configurable-contract-flow-label.md
+  - docs/decisions/runtime/config-schema-hard-cut.md
 Depends on:
   - docs/contracts/runtime/local-dispatch-runtime.md
   - docs/contracts/runtime/pravaha-flow-foundation.md
@@ -19,8 +20,6 @@ Root flow: docs/flows/implement-task.js
 - Add a fallback dispatch path that resolves one governing flow for a task from
   configured flow glob candidates when the tracked contract omits an explicit
   flow binding.
-- Allow repositories to rename the user-facing contract flow label while
-  preserving the stable internal `root_flow` relation.
 
 ## Inputs
 
@@ -32,9 +31,7 @@ Root flow: docs/flows/implement-task.js
 
 ## Outputs
 
-- Pravaha config support for `flows.default_matches` as an array of glob
-  expressions and `flows.root_flow_label` as the contract front matter alias for
-  `root_flow`.
+- Pravaha config support for `flows` as an array of glob expressions.
 - Dispatcher fallback resolution that expands candidate flow files with `globby`
   only when the tracked contract has no explicit flow reference.
 - Dispatch-time evaluation that keeps `document` bound to the tracked contract
@@ -49,15 +46,12 @@ Root flow: docs/flows/implement-task.js
 - Explicit contract flow references remain authoritative.
 - Fallback matching does not add task-level explicit flow overrides.
 - Config order does not imply precedence across fallback candidates.
-- The internal Patram relation stays `root_flow`.
 - Zero fallback matches leave the task unscheduled.
 
 ## Failure Modes
 
 - Fallback flow discovery depends on config order instead of exact match
   cardinality.
-- The configured user-facing label changes the internal relation name and breaks
-  graph queries or existing contracts.
 - Dispatch silently chooses one fallback flow when more than one candidate
   matches a task.
 - Fallback matching introduces a second applicability language outside
@@ -71,6 +65,4 @@ Root flow: docs/flows/implement-task.js
   exactly one fallback candidate matches a ready task.
 - Ambiguous fallback matches fail clearly during dispatch and leave the task
   unscheduled.
-- The configured `flows.root_flow_label` changes contract metadata parsing
-  without changing the internal `root_flow` relation.
 - `npm run all` passes.

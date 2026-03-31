@@ -94,13 +94,11 @@ async function createReusableWorktreeFixtureRepo() {
             },
           },
         },
-        flows: {
-          default_matches: [
-            APPROVAL_FLOW_PATH,
-            CONFLICTING_FLOW_PATH,
-            INDEPENDENT_FLOW_PATH,
-          ],
-        },
+        flows: [
+          APPROVAL_FLOW_PATH,
+          CONFLICTING_FLOW_PATH,
+          INDEPENDENT_FLOW_PATH,
+        ],
       },
     },
   );

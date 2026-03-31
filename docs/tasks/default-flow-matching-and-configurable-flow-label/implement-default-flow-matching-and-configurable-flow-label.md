@@ -14,20 +14,14 @@ Decided by:
 
 ```json
 {
-  "flows": {
-    "default_matches": ["docs/flows/**/*.js"],
-    "root_flow_label": "Root flow"
-  }
+  "flows": ["docs/flows/**/*.js"]
 }
 ```
 
-- Keep `flows.default_matches` optional and interpret it as an unordered list of
-  glob expressions expanded with `globby`.
-- Keep `flows.root_flow_label` optional and default it to `Root flow`.
-- Preserve the internal Patram relation name `root_flow` while making contract
-  metadata parsing accept the configured `flows.root_flow_label`.
+- Keep `flows` optional and interpret it as an unordered list of glob
+  expressions expanded with `globby`.
 - Update the dispatcher so contracts without an explicit flow reference resolve
-  fallback flow candidates from `flows.default_matches`.
+  fallback flow candidates from `flows`.
 - Evaluate each fallback candidate through its existing `on.<binding>.where`
   query in contract scope with `document` bound to the tracked contract.
 - When more than one fallback candidate matches the same task at dispatch time,

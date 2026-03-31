@@ -30,9 +30,7 @@ it('writes pravaha config overrides into fixture repositories', async () => {
     {},
     {
       pravaha_config_override: {
-        flows: {
-          default_matches: ['docs/flows/**/*.js'],
-        },
+        flows: ['docs/flows/**/*.js'],
       },
     },
   );
@@ -40,7 +38,7 @@ it('writes pravaha config overrides into fixture repositories', async () => {
   try {
     await expect(
       readFile(join(temp_directory, 'pravaha.json'), 'utf8'),
-    ).resolves.toContain('"default_matches"');
+    ).resolves.toContain('"flows": [');
   } finally {
     await rm(temp_directory, { force: true, recursive: true });
   }

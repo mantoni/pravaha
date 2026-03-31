@@ -36,9 +36,7 @@ async function createReconcilerFixtureRepo(options = {}) {
     fixture_files,
     {
       pravaha_config_override: {
-        flows: {
-          default_matches: [FLOW_PATH],
-        },
+        flows: [FLOW_PATH],
         workspaces: {
           app: {
             base_path: '.pravaha/worktrees/app',
