@@ -24,13 +24,17 @@ export default defineFlow({
    */
   async main(ctx) {
     await run(ctx, {
-      command: 'git reset --hard main && git clean -fd',
-    });
-    await run(ctx, {
-      command: 'npm ci --prefer-offline --no-audit --fund=false',
+      command: `
+        git reset --hard main
+        git clean -fd
+        npm ci --prefer-offline --no-audit --fund=false
+      `,
     });
     await runCodex(ctx, {
-      prompt: `Implement the task described in ${ctx.task.path}.\nSet Status to \`done\` on completion.`,
+      prompt: `
+        Implement the task described in ${ctx.task.path}.
+        Set Status to \`done\` on completion.
+      `,
       reasoning: 'high',
     });
     await approve(ctx, {
