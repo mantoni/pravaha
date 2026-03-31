@@ -23,8 +23,9 @@ Depends on:
 - Remove legacy `plugins` support from Pravaha config and normalized config.
 - Replace `flows.default_matches` with `flows: string[]`.
 - Replace `pravaha.json` with `pravaha.config.js`.
-- Export `defineConfig(config)` from `pravaha` and require checked-in config to
-  default-export `defineConfig({ ... })`.
+- Export `defineConfig(config)` from `pravaha/config` and require checked-in
+  config to import from that subpath before default-exporting
+  `defineConfig({ ... })`.
 - Keep the dispatcher and repo validation wired to the normalized flow match
   array.
 - Update checked-in config, fixtures, tests, and operator-facing examples to the
@@ -39,6 +40,7 @@ Depends on:
   paths/globs.
 - Pravaha reads config only from `pravaha.config.js`.
 - The public config module contract requires
+  `import { defineConfig } from 'pravaha/config'` followed by
   `export default defineConfig({ ... })`.
 - Default flow matching still resolves fallback candidates from the configured
   `flows` array.

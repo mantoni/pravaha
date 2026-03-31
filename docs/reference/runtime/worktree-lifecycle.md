@@ -68,7 +68,7 @@ export default defineFlow({
 ## Global Workspace Policy
 
 ```js
-import { defineConfig } from 'pravaha';
+import { defineConfig } from 'pravaha/config';
 
 export default defineConfig({
   workspaces: {

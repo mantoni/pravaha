@@ -26,6 +26,10 @@ const EXPECTED_PACKAGE_METADATA = {
       default: './lib/pravaha.js',
       types: './lib/pravaha.d.ts',
     },
+    './config': {
+      default: './lib/config.js',
+      types: './lib/config.d.ts',
+    },
     './flow': {
       default: './lib/flow.js',
       types: './lib/flow.d.ts',

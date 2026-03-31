@@ -1,6 +1,6 @@
 import { expectTypeOf, it } from 'vitest';
 
-import { defineConfig } from 'pravaha';
+import { defineConfig } from 'pravaha/config';
 
 it('infers the public Pravaha config shape from defineConfig', () => {
   const config = defineConfig({

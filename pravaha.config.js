@@ -1,4 +1,4 @@
-import { defineConfig } from './lib/pravaha.js';
+import { defineConfig } from './lib/config.js';
 
 export default defineConfig({
   workspaces: {

@@ -27,6 +27,7 @@ it('installs and imports the packed npm package in a consumer project', async ()
     await installTarball(consumer_directory, tarball_path);
     await assertTarballIncludesDeclarations(tarball_path);
     await importPackedLibrary(consumer_directory);
+    await importPackedConfigLibrary(consumer_directory);
     await importPackedFlowLibrary(consumer_directory);
     await importPackedCli(consumer_directory);
     await typecheckPackedLibrary(consumer_directory);
@@ -128,8 +129,8 @@ async function importPackedLibrary(consumer_directory) {
       '--eval',
       [
         "const package_module = await import('pravaha');",
-        "if (typeof package_module.defineConfig !== 'function') {",
-        "  throw new Error('Expected defineConfig export.');",
+        "if ('defineConfig' in package_module) {",
+        "  throw new Error('Did not expect defineConfig export.');",
         '}',
         "if (typeof package_module.defineFlow !== 'function') {",
         "  throw new Error('Expected defineFlow export.');",
@@ -139,6 +140,27 @@ async function importPackedLibrary(consumer_directory) {
         '}',
         "if (typeof package_module.validateRepo !== 'function') {",
         "  throw new Error('Expected validateRepo export.');",
+        '}',
+      ].join('\n'),
+    ],
+    consumer_directory,
+  );
+}
+
+/**
+ * @param {string} consumer_directory
+ * @returns {Promise<void>}
+ */
+async function importPackedConfigLibrary(consumer_directory) {
+  await runCommand(
+    'node',
+    [
+      '--input-type=module',
+      '--eval',
+      [
+        "const config_module = await import('pravaha/config');",
+        "if (typeof config_module.defineConfig !== 'function') {",
+        "  throw new Error('Expected defineConfig export.');",
         '}',
       ].join('\n'),
     ],
@@ -182,6 +204,7 @@ async function assertTarballIncludesDeclarations(tarball_path) {
   );
 
   expect(stdout).toContain('package/lib/pravaha.d.ts');
+  expect(stdout).toContain('package/lib/config.d.ts');
   expect(stdout).toContain('package/lib/flow.d.ts');
   expect(stdout).toContain('package/lib/flow/flow-contract.d.ts');
   expect(stdout).toContain('package/lib/plugins/plugin-contract.d.ts');
@@ -207,6 +230,9 @@ async function typecheckPackedLibrary(consumer_directory) {
 async function assertGeneratedDeclarationsAreCleared() {
   await expect(
     access(join(repo_directory, 'lib/pravaha.d.ts')),
+  ).rejects.toThrow();
+  await expect(
+    access(join(repo_directory, 'lib/config.d.ts')),
   ).rejects.toThrow();
   await expect(access(join(repo_directory, 'lib/flow.d.ts'))).rejects.toThrow();
   await expect(
@@ -293,6 +319,8 @@ function createConsumerIndexText() {
   return [
     createConsumerPravahaImportText(),
     '',
+    createConsumerConfigImportText(),
+    '',
     createConsumerFlowImportText(),
     '',
     createConsumerBindingText(),
@@ -316,7 +344,6 @@ function createConsumerIndexText() {
 function createConsumerPravahaImportText() {
   return [
     'import {',
-    '  defineConfig,',
     '  defineFlow,',
     '  definePlugin,',
     '  type DispatchFlowOptions,',
@@ -326,6 +353,13 @@ function createConsumerPravahaImportText() {
     '  type TaskFlowContext,',
     "} from 'pravaha';",
   ].join('\n');
+}
+
+/**
+ * @returns {string}
+ */
+function createConsumerConfigImportText() {
+  return "import { defineConfig } from 'pravaha/config';";
 }
 
 /**

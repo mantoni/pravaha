@@ -32,8 +32,8 @@ Root flow: docs/flows/implement-task.js
   JavaScript flow modules.
 - Pravaha loads checked-in repo config from `pravaha.config.js`.
 - `pravaha.config.js` default-exports `defineConfig({ ... })`.
-- The public `defineConfig(config)` API enforces strict config typing for
-  checked-in config authoring.
+- The public `pravaha/config` module exports `defineConfig(config)` as the
+  strict config authoring API for checked-in config modules.
 - The normalized config surface no longer exposes plugin config.
 - Dispatcher and repo validation continue to expand fallback candidates from the
   normalized `flows` array.
@@ -43,7 +43,8 @@ Root flow: docs/flows/implement-task.js
 ## Invariants
 
 - Checked-in repo config lives only at `pravaha.config.js`.
-- Config modules default-export `defineConfig(...)`.
+- Config modules import `defineConfig` from `pravaha/config` and default-export
+  `defineConfig(...)`.
 - Explicit contract flow references remain authoritative.
 - Config order does not imply precedence across fallback candidates.
 - Bundled and imported callable plugin usage does not depend on repo-local
@@ -54,6 +55,8 @@ Root flow: docs/flows/implement-task.js
 - Pravaha continues to read `pravaha.json` or any other legacy config filename.
 - Pravaha accepts arbitrary default-exported objects and skips the
   `defineConfig(...)` contract.
+- Pravaha still exports `defineConfig` from the main `pravaha` entry point and
+  leaves the breaking change ambiguous for consumers.
 - Pravaha silently accepts removed `plugins` config and hides stale checked-in
   settings.
 - Pravaha keeps accepting `flows.default_matches` and widens the breaking change
@@ -63,6 +66,7 @@ Root flow: docs/flows/implement-task.js
 ## Review Gate
 
 - Checked-in `pravaha.config.js` default-exports `defineConfig({ ... })`.
+- Checked-in config modules import `defineConfig` from `pravaha/config`.
 - Config loading rejects missing config modules, invalid JavaScript modules, and
   default exports that do not come from `defineConfig(...)`.
 - Config validation rejects `plugins` and non-array `flows`.

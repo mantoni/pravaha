@@ -18,8 +18,10 @@ export {
 const REPO_DIRECTORY = dirname(
   fileURLToPath(new URL('../../package.json', import.meta.url)),
 );
-const PRAVAHA_MODULE_URL = new URL('../../lib/pravaha.js', import.meta.url)
-  .href;
+const PRAVAHA_CONFIG_MODULE_URL = new URL(
+  '../../lib/config.js',
+  import.meta.url,
+).href;
 
 /**
  * @returns {Promise<string>}
@@ -87,7 +89,7 @@ async function linkPravahaPackage(temp_directory) {
  */
 function createPravahaConfigSource(config) {
   return [
-    `import { defineConfig } from ${JSON.stringify(PRAVAHA_MODULE_URL)};`,
+    `import { defineConfig } from ${JSON.stringify(PRAVAHA_CONFIG_MODULE_URL)};`,
     '',
     `export default defineConfig(${JSON.stringify(config, null, 2)});`,
     '',
