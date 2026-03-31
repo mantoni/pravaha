@@ -35,7 +35,7 @@ graph LR
 ## Example Flow
 
 ```js
-import { approve, defineFlow, run, runCodex } from 'pravaha';
+import { approve, defineFlow, run, runCodex } from 'pravaha/flow';
 
 export default defineFlow({
   on: {

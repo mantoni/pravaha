@@ -15,43 +15,49 @@ const execFileAsync = promisify(execFile);
 const repo_directory = dirname(
   fileURLToPath(new URL('../package.json', import.meta.url)),
 );
+const EXPECTED_PACKAGE_METADATA = {
+  description:
+    'Pravaha turns human workflow into explicit contracts that agents can execute.',
+  engines: {
+    node: '>=22',
+  },
+  exports: {
+    '.': {
+      default: './lib/pravaha.js',
+      types: './pravaha.d.ts',
+    },
+    './flow': {
+      default: './lib/flow.js',
+      types: './flow.d.ts',
+    },
+    './bin/pravaha.js': './bin/pravaha.js',
+  },
+  files: [
+    'bin/pravaha.js',
+    'lib/**/*.js',
+    'lib/**/*.ts',
+    'flow.d.ts',
+    'pravaha.d.ts',
+    '!test/**',
+    '!bin/**/*.test.js',
+    '!bin/**/*.test-helpers.js',
+    '!lib/**/*.test.js',
+    '!lib/**/*.test-helpers.js',
+  ],
+  homepage: 'https://github.com/mantoni/pravaha',
+  license: 'MIT',
+  main: './lib/pravaha.js',
+  dependencies: {
+    patram: '^0.11.0',
+  },
+  repository: {
+    type: 'git',
+    url: 'git+https://github.com/mantoni/pravaha.git',
+  },
+};
 
 it('defines publish metadata for the npm package', async () => {
-  expect(package_json).toMatchObject({
-    description:
-      'Pravaha turns human workflow into explicit contracts that agents can execute.',
-    engines: {
-      node: '>=22',
-    },
-    exports: {
-      '.': {
-        default: './lib/pravaha.js',
-        types: './pravaha.d.ts',
-      },
-      './bin/pravaha.js': './bin/pravaha.js',
-    },
-    files: [
-      'bin/pravaha.js',
-      'lib/**/*.js',
-      'lib/**/*.ts',
-      'pravaha.d.ts',
-      '!test/**',
-      '!bin/**/*.test.js',
-      '!bin/**/*.test-helpers.js',
-      '!lib/**/*.test.js',
-      '!lib/**/*.test-helpers.js',
-    ],
-    homepage: 'https://github.com/mantoni/pravaha',
-    license: 'MIT',
-    main: './lib/pravaha.js',
-    dependencies: {
-      patram: '^0.11.0',
-    },
-    repository: {
-      type: 'git',
-      url: 'git+https://github.com/mantoni/pravaha.git',
-    },
-  });
+  expect(package_json).toMatchObject(EXPECTED_PACKAGE_METADATA);
 
   const license_text = await readTextFile(
     new URL('../LICENSE', import.meta.url),

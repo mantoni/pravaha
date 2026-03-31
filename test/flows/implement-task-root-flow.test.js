@@ -1,42 +1,45 @@
 import { expect, it, vi } from 'vitest';
 
 import implement_task_flow from '../../docs/flows/implement-task.js';
-import { attachFlowRuntime } from '../../lib/flow/built-ins.js';
+import { approve, run, runCodex, worktreeHandoff } from '../../lib/flow.js';
+import { attachFlowRuntime } from '../../lib/flow/runtime.js';
 
 const validated_flow = /** @type {{
  *   main: (ctx: unknown) => Promise<void>,
  *   onApprove: (ctx: unknown) => Promise<void>,
  * }} */ (/** @type {unknown} */ (implement_task_flow));
 
-it('implements the checked-in root flow through imported built-ins', async () => {
+it('implements the checked-in root flow through imported callable plugins', async () => {
   const ctx = createFlowContext();
 
   await expect(validated_flow.main(ctx)).rejects.toThrow('waiting');
-  const run_calls = /** @type {Array<[{ command: string }] | undefined>} */ (
-    ctx.run.mock.calls
-  );
-  const run_codex_calls = /** @type {Array<
-   *   [{ prompt: string, reasoning: string }] | undefined
-   * >} */ (ctx.run_codex.mock.calls);
-  const [run_call] = run_calls[0] ?? [];
-  const [run_codex_call] = run_codex_calls[0] ?? [];
-  if (run_call === undefined || run_codex_call === undefined) {
-    throw new Error('Expected flow built-ins to be called.');
+  expect(ctx.invokePlugin).toHaveBeenCalledTimes(3);
+  const invoke_plugin_calls = /** @type {Array<
+   *   [Function, { command?: string, prompt?: string, reasoning?: string, message?: string, title?: string }]
+   * >} */ (ctx.invokePlugin.mock.calls);
+  const [run_call, run_codex_call, approve_call] = invoke_plugin_calls;
+  if (
+    run_call === undefined ||
+    run_codex_call === undefined ||
+    approve_call === undefined
+  ) {
+    throw new Error('Expected flow plugins to be called.');
   }
 
-  expect(ctx.run).toHaveBeenCalledTimes(1);
-  expect(readNormalizedLines(run_call.command)).toEqual([
+  expect(run_call[0]).toBe(run);
+  expect(readNormalizedLines(run_call[1].command)).toEqual([
     'git reset --hard main',
     'git clean -fd',
     'npm ci --prefer-offline --no-audit --fund=false',
   ]);
-  expect(ctx.run_codex).toHaveBeenCalledTimes(1);
-  expect(readNormalizedLines(run_codex_call.prompt)).toEqual([
+  expect(run_codex_call[0]).toBe(runCodex);
+  expect(readNormalizedLines(run_codex_call[1].prompt)).toEqual([
     'Implement the task described in docs/tasks/runtime/demo.md.',
     'Set Status to `done` on completion.',
   ]);
-  expect(run_codex_call.reasoning).toBe('high');
-  expect(ctx.approve).toHaveBeenCalledWith({
+  expect(run_codex_call[1].reasoning).toBe('high');
+  expect(approve_call[0]).toBe(approve);
+  expect(approve_call[1]).toEqual({
     message: 'Approve the completed Codex work for this task.',
     title: 'Approve task implementation for docs/tasks/runtime/demo.md',
   });
@@ -46,31 +49,32 @@ it('hands approved work off to the review branch', async () => {
   const ctx = createFlowContext();
 
   await expect(validated_flow.onApprove(ctx)).resolves.toBeUndefined();
-  expect(ctx.worktree_handoff).toHaveBeenCalledWith({
+  expect(ctx.invokePlugin).toHaveBeenCalledWith(worktreeHandoff, {
     branch: 'review/ready/task-demo',
   });
 });
 
 /**
  * @returns {Record<string, unknown> & {
- *   approve: ReturnType<typeof vi.fn>,
- *   run: ReturnType<typeof vi.fn>,
- *   run_codex: ReturnType<typeof vi.fn>,
- *   worktree_handoff: ReturnType<typeof vi.fn>,
+ *   invokePlugin: ReturnType<typeof vi.fn>,
  * }}
  */
 function createFlowContext() {
-  const flow_runtime = {
-    approve: vi.fn(() => Promise.reject(new Error('waiting'))),
-    queue_handoff: vi.fn(() =>
-      Promise.resolve({ ready_ref: 'refs/queue/ready/0001-task-demo' }),
-    ),
-    run: vi.fn(() => Promise.resolve({ exit_code: 0 })),
-    run_codex: vi.fn(() => Promise.resolve({ outcome: 'success' })),
-    worktree_handoff: vi.fn(() =>
-      Promise.resolve({ branch: 'review/ready/task-demo' }),
-    ),
-  };
+  const invokePlugin = vi.fn((plugin_definition) => {
+    if (plugin_definition === approve) {
+      return Promise.reject(new Error('waiting'));
+    }
+
+    if (plugin_definition === worktreeHandoff) {
+      return Promise.resolve({ branch: 'review/ready/task-demo' });
+    }
+
+    if (plugin_definition === runCodex) {
+      return Promise.resolve({ outcome: 'success' });
+    }
+
+    return Promise.resolve({ exit_code: 0 });
+  });
   const ctx = attachFlowRuntime(
     {
       doc: {
@@ -78,10 +82,12 @@ function createFlowContext() {
         path: 'docs/tasks/runtime/demo.md',
       },
     },
-    flow_runtime,
+    {
+      invoke_plugin: invokePlugin,
+    },
   );
 
-  return Object.assign(ctx, flow_runtime);
+  return Object.assign(ctx, { invokePlugin });
 }
 
 /**

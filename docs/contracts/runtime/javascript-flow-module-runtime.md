@@ -4,6 +4,7 @@ Id: javascript-flow-module-runtime
 Status: active
 Decided by:
   - docs/decisions/runtime/javascript-flow-modules-as-runtime-truth.md
+  - docs/decisions/runtime/callable-plugins-as-flow-api.md
   - docs/decisions/runtime/current-truth-run-snapshot-persistence.md
   - docs/decisions/runtime/bundled-core-plugins-own-implementations.md
 Depends on:
@@ -19,15 +20,19 @@ Depends on:
 
 - Support only JavaScript flow modules whose exported handlers are the runtime
   truth for checked-in Pravaha flows.
+- Make imported callable plugins the official execution API inside those flow
+  modules.
 
 ## Inputs
 
 - The accepted JavaScript flow module decision that makes `defineFlow({...})`
   the checked-in flow asset shape.
+- The accepted callable-plugin decision that makes imported plugins the public
+  flow API.
 - The canonical current-truth run snapshot and wait persistence model.
 - The local dispatch runtime that still owns trigger matching, instance
   scheduling, and workspace assignment.
-- Bundled core plugin implementations that can back imported flow functions.
+- Bundled core plugin implementations exported from `pravaha/flow`.
 - Root flows checked in as ECMAScript modules that export
   `default defineFlow({...})`.
 
@@ -45,9 +50,12 @@ Depends on:
   `await ctx.setState(...)`, and the existing runtime-native fields needed by
   migrated flows such as run id, repo paths, bound documents when present, and
   operator-facing console output.
-- Imported built-in flow functions such as `run(ctx, with)`,
-  `runCodex(ctx, with)`, and `approve(ctx, with)` backed by bundled core plugin
-  implementations.
+- Runtime support that executes imported callable plugins through the same
+  plugin lifecycle used elsewhere in Pravaha.
+- Imported bundled core plugins from `pravaha/flow` such as `run(ctx, with)`,
+  `runCodex(ctx, with)`, and `approve(ctx, with)`.
+- Imported repo-local and third-party plugins through ordinary ECMAScript module
+  specifiers instead of Pravaha-owned plugin namespace strings.
 - Runtime support that routes uncaught handler failures to `onError(ctx, error)`
   when exported and otherwise treats them as terminal failure.
 - Runtime support that persists approval wait state and later re-enters through
@@ -75,6 +83,10 @@ Depends on:
 - Pravaha loads the flow module directly to discover metadata and handlers. It
   does not require purely static metadata extraction for migrated flows.
 - `main(ctx)` is the required initial handler for a new flow instance.
+- Imported plugins are called directly as `await plugin(ctx, with)`.
+- Direct plugin calls use the same plugin execution contract as runtime-loaded
+  bundled and external plugins, including Zod `with` parsing and plugin-owned
+  suspension behavior.
 - Re-entry after a persistent wait always enters a named handler such as
   `onApprove(ctx, data)` and never resumes on the next JavaScript line after the
   wait call.
@@ -84,35 +96,34 @@ Depends on:
 - `ctx.setState(...)` is the explicit persistence boundary for durable flow
   state. In-memory mutations that are not persisted through `ctx.setState(...)`
   are not durable.
-- Pravaha does not memoize prior built-in function results across replay.
-- Imported built-in flow functions and plugin-backed functions receive `ctx` as
-  their first argument.
-- Built-in functions throw on failure. Recovery inside the flow happens only
+- Pravaha does not memoize prior plugin call results across replay.
+- Imported callable plugins receive `ctx` as their first argument.
+- Callable plugins throw on failure. Recovery inside the flow happens only
   through user-land `try` / `catch` or the exported `onError` handler.
 - A flow instance may have at most one outstanding persistent wait at a time in
   `v0.1`.
-- Approval wait payload data is stored in the run snapshot and passed into
-  `onApprove`.
+- Approval wait payload data comes from the invoked plugin `with.data` field,
+  when present, and is stored in the run snapshot before `onApprove`.
 - Re-entry after approval uses the latest checked-in flow module and not a
   revision-pinned copy.
 
 ## Public Surface
 
-- `defineFlow({...})` accepts declarative flow metadata plus executable
-  handlers.
+- `defineFlow({...})` from `pravaha/flow` accepts declarative flow metadata plus
+  executable handlers.
 - `defineFlow({...}).main` is required.
-- `defineFlow({...}).onApprove` is optional and required only when the flow uses
-  `approve(ctx, ...)`.
+- `defineFlow({...}).onApprove` is optional and required only when the flow
+  invokes a plugin that suspends for approval.
 - `defineFlow({...}).onError` is optional.
 - `ctx.state` exposes the latest durable flow state snapshot.
 - `await ctx.setState(next_state)` durably replaces or updates flow state before
   later replay or re-entry.
-- `run(ctx, with)` delegates to the bundled subprocess-backed core execution
-  path and throws on failure.
-- `runCodex(ctx, with)` delegates to the bundled Codex execution path and throws
-  on failure.
-- `approve(ctx, with)` records one pending approval wait and returns only
-  through later `onApprove(ctx, data)` re-entry.
+- Bundled core plugins are imported from `pravaha/flow` and called directly as
+  `await plugin(ctx, with)`.
+- External plugins are imported through ordinary ECMAScript module specifiers
+  and called directly as `await plugin(ctx, with)`.
+- Plugins that suspend for approval record one pending approval wait and return
+  only through later `onApprove(ctx, data)` re-entry.
 
 ## Failure Modes
 
@@ -120,15 +131,17 @@ Depends on:
   JavaScript modules.
 - Pravaha resumes after approval by continuing `main` on the next line instead
   of re-entering through `onApprove`.
-- Replay skips earlier built-in calls or memoizes old results even though the
+- Replay skips earlier plugin calls or memoizes old results even though the
   durable model is replay-from-top with repeated side effects.
 - Flow state survives replay without an explicit `ctx.setState(...)` call and
   authors cannot reason about durability boundaries.
-- Built-in flow functions hide runtime services in ambient globals instead of
-  taking `ctx` explicitly.
+- Imported plugins hide runtime services in ambient globals instead of taking
+  `ctx` explicitly.
 - Multiple waits can be left pending for one flow instance and later ingress
   becomes ambiguous.
 - Uncaught errors bypass `onError` when the flow exports it.
+- Flow code still depends on Pravaha-owned `core/*`, `local/*`, or `npm/*`
+  namespace resolution rather than ordinary imports.
 - Waiting instances are pinned to an older module revision and diverge from the
   chosen latest-code resume model.
 
@@ -142,11 +155,13 @@ Depends on:
   `await ctx.setState(...)`.
 - After interruption, Pravaha restarts the current handler from the top using
   the latest durable state snapshot.
-- Replayed handlers re-run prior built-in calls unless the flow has guarded them
+- Replayed handlers re-run prior plugin calls unless the flow has guarded them
   with durable state.
-- `approve(ctx, ...)` stores one pending wait and later re-enters through
-  `onApprove(ctx, data)` under the latest checked-in code.
+- Imported callable plugins execute through the same plugin lifecycle as other
+  Pravaha plugins.
+- Approval-suspending plugin calls store one pending wait and later re-enter
+  through `onApprove(ctx, data)` under the latest checked-in code.
 - Flow instances cannot hold more than one outstanding persistent wait.
-- Imported built-in flow functions receive `ctx` as their first argument.
+- Imported callable plugins receive `ctx` as their first argument.
 - Uncaught handler failures route to `onError(ctx, error)` when exported.
 - `npm run all` passes.

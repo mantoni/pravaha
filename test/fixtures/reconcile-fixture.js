@@ -212,7 +212,7 @@ function createTaskDocument(task_document) {
  */
 function createFlowModuleSource() {
   return [
-    "import { defineFlow, runCodex } from 'pravaha';",
+    "import { defineFlow, runCodex } from 'pravaha/flow';",
     '',
     'export default defineFlow({',
     '  on: {',

@@ -1,14 +1,6 @@
 export { dispatch, worker } from './lib/runtime/dispatch/session.js';
 export { approve as approveRun } from './lib/approve.js';
 export {
-  approve,
-  queueHandoff,
-  run,
-  runCodex,
-  worktreeHandoff,
-} from './lib/flow/built-ins.js';
-export { definePlugin } from './lib/plugins/plugin-contract.js';
-export {
   initQueue,
   pullQueue,
   publishQueue,
@@ -92,3 +84,52 @@ export declare function defineFlow<
     onError?: (...args: never[]) => FlowHandlerResult;
   } & object,
 >(flow_definition: TFlow): TFlow;
+
+export interface DispatchFlowOptions {
+  flow: string;
+  inputs?: Record<string, unknown>;
+  wait?: boolean;
+}
+
+export interface QueueWaitState {
+  branch_head: string;
+  branch_ref: string;
+  outcome: 'failure' | 'success' | null;
+  ready_ref: string;
+  state: 'failed' | 'succeeded' | 'waiting';
+}
+
+export interface PluginContext<
+  TWith = unknown,
+  TBindings extends object = { doc: FlowBindingTarget },
+> extends TBindings {
+  console: FlowConsole;
+  dispatchFlow: (
+    options: DispatchFlowOptions,
+  ) => Promise<Record<string, unknown>>;
+  failRun: (error_message: string) => Promise<never>;
+  queueWait?: QueueWaitState;
+  repo_directory: string;
+  requestApproval: () => Promise<void>;
+  requestQueueWait: (queue_wait: QueueWaitState) => Promise<void>;
+  run_id: string;
+  with: TWith;
+  worktree_path: string;
+}
+
+export type CallablePlugin<TWith = unknown, TResult = unknown> = {
+  (ctx: TaskFlowContext, with_value: TWith): Promise<TResult>;
+  run: (context: PluginContext<TWith>) => Promise<TResult> | TResult;
+  with?: unknown;
+};
+
+export declare function definePlugin<
+  TContext extends object,
+  TWith = unknown,
+  TResult = unknown,
+>(plugin_definition: {
+  run: (context: TContext) => Promise<TResult> | TResult;
+  with?: unknown;
+}): CallablePlugin<TWith, TResult> & {
+  run: (context: TContext) => Promise<TResult> | TResult;
+};

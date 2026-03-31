@@ -66,7 +66,8 @@ Depends on:
 - `local/<name>` and `npm/<name>` are resolved directly from the checked-in
   `uses` value without a second registry mapping layer.
 - Engine-owned lease acquisition is not represented as a `uses` plugin.
-- Plugins must export `default definePlugin({...})`.
+- Plugins must export exactly one `definePlugin({...})` value. Default exports
+  are optional.
 - `with` is optional in the plugin contract and forbidden in the flow when the
   referenced plugin omits it.
 - Plugins do not declare `emits` signal schemas.
@@ -75,8 +76,8 @@ Depends on:
 
 ## Failure Modes
 
-- Flow validation accepts plugin modules that do not export the required
-  `definePlugin(...)` default contract.
+- Flow validation accepts plugin modules that do not export exactly one
+  `definePlugin(...)` value.
 - Plugin-backed `uses` steps rely on a separate registry file or other
   indirection instead of the checked-in `uses` string.
 - Engine-owned task leasing or worktree assignment still appears as a fake

@@ -178,7 +178,7 @@ function createPlanFixtures() {
  */
 function createRuntimeFlowSource() {
   return [
-    "import { defineFlow, run, runCodex } from 'pravaha';",
+    "import { defineFlow, run, runCodex } from 'pravaha/flow';",
     '',
     'export default defineFlow({',
     '  on: {',

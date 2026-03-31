@@ -166,7 +166,7 @@ function createTaskFixtureDocument(task_id, contract_path) {
  */
 function createPooledDispatchFlowModuleSource(flow_id, workspace_id) {
   return [
-    "import { defineFlow, run } from 'pravaha';",
+    "import { defineFlow, run } from 'pravaha/flow';",
     '',
     'export default defineFlow({',
     '  on: {',

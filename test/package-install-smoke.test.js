@@ -26,6 +26,7 @@ it('installs and imports the packed npm package in a consumer project', async ()
     await createConsumerProject(consumer_directory);
     await installTarball(consumer_directory, tarball_path);
     await importPackedLibrary(consumer_directory);
+    await importPackedFlowLibrary(consumer_directory);
     await importPackedCli(consumer_directory);
   } finally {
     await rm(temp_directory, { force: true, recursive: true });
@@ -125,6 +126,22 @@ async function importPackedLibrary(consumer_directory) {
   await runCommand(
     'node',
     ['--input-type=module', '--eval', ["await import('pravaha');"].join('\n')],
+    consumer_directory,
+  );
+}
+
+/**
+ * @param {string} consumer_directory
+ * @returns {Promise<void>}
+ */
+async function importPackedFlowLibrary(consumer_directory) {
+  await runCommand(
+    'node',
+    [
+      '--input-type=module',
+      '--eval',
+      ["await import('pravaha/flow');"].join('\n'),
+    ],
     consumer_directory,
   );
 }

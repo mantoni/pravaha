@@ -8,8 +8,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 # Bundled Core Plugins Own Implementations
 
 - Keep `core/<name>` as the checked-in public plugin namespace in `v0.1`.
-- Resolve `core/<name>` to bundled plugin modules that export the same
-  `default definePlugin({...})` contract as any other step plugin.
+- Resolve `core/<name>` to bundled plugin modules that export the same named
+  `definePlugin({...})` values as any other step plugin.
 - Remove placeholder core plugin definitions whose runtime behavior lives in
   separate engine-owned switch statements.
 - Remove `core/agent` and `core/codex-sdk`.

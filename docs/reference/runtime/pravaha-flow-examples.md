@@ -44,7 +44,7 @@ checked-in runtime surface.
 ## Implement Then Review
 
 ```js
-import { approve, defineFlow, runCodex } from 'pravaha';
+import { approve, defineFlow, runCodex } from 'pravaha/flow';
 
 export default defineFlow({
   on: {
@@ -82,7 +82,7 @@ export default defineFlow({
 ## Implement Then Handoff
 
 ```js
-import { defineFlow, run, runCodex, worktreeHandoff } from 'pravaha';
+import { defineFlow, run, runCodex, worktreeHandoff } from 'pravaha/flow';
 
 export default defineFlow({
   on: {
@@ -113,7 +113,7 @@ export default defineFlow({
 ## Land A Reviewed Branch
 
 ```js
-import { defineFlow, run } from 'pravaha';
+import { defineFlow, run } from 'pravaha/flow';
 
 export default defineFlow({
   on: {
@@ -136,7 +136,7 @@ export default defineFlow({
 ## Publish Worktree Output
 
 ```js
-import { defineFlow, worktreeHandoff } from 'pravaha';
+import { defineFlow, worktreeHandoff } from 'pravaha/flow';
 
 export default defineFlow({
   on: {

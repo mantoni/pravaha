@@ -42,8 +42,9 @@ export interface CorePluginContext<TWith> {
 }
 
 export interface ApprovalWith {
-  message: string;
-  options: string[];
+  data?: unknown;
+  message?: string;
+  options?: string[];
   title: string;
 }
 

@@ -57,7 +57,7 @@ function createPluginModuleSource(options) {
     "import { z } from 'zod';",
     "import { definePlugin } from 'pravaha';",
     '',
-    'export default definePlugin({',
+    'export const plugin = definePlugin({',
     ...with_lines,
     `  async run(context) {`,
     options.run_source ?? '    void context;',

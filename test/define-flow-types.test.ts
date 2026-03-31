@@ -1,6 +1,6 @@
 import { expectTypeOf, it } from 'vitest';
 
-import { defineFlow, run, type TaskFlowContext } from 'pravaha';
+import { defineFlow, run, type TaskFlowContext } from 'pravaha/flow';
 
 it('infers common flow entry point types from the public defineFlow api', () => {
   const flow_definition = defineFlow({

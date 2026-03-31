@@ -7,8 +7,8 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 
 # JavaScript Flow Modules As Runtime Truth
 
-- JavaScript modules that export `default defineFlow({...})` from the `pravaha`
-  package are the only supported checked-in flow surface.
+- JavaScript modules that export `default defineFlow({...})` from `pravaha/flow`
+  are the only supported checked-in flow surface.
 - Keep trigger bindings and workspace declarations in the `defineFlow(...)`
   config as declarative metadata fields such as `on` and `workspace`.
 - Require each flow module to declare one `main` entrypoint. Allow optional
@@ -20,15 +20,15 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
   compiling flow modules into an engine-owned job graph.
 - Allow unrestricted Node and library usage inside flow handlers. Do not
   constrain handler code to a statically analyzable subset.
-- Keep Pravaha-owned durable operations as imported core functions such as
-  `run(ctx, ...)`, `runCodex(ctx, ...)`, and `approve(ctx, ...)` instead of
+- Keep Pravaha-owned durable operations as imported callable core plugins such
+  as `run(ctx, ...)`, `runCodex(ctx, ...)`, and `approve(ctx, ...)` instead of
   `uses: core/...` plugin references inside checked-in flow data.
 - Keep bundled core plugins as the implementation seam behind those imported
-  functions instead of removing them from the architecture.
+  callable plugins instead of removing them from the architecture.
 - Require plugins, including bundled core plugins, to receive `ctx` as their
   first argument.
-- Make core functions throw on failure. Let flow authors catch and handle
-  exceptions in user code when they want recovery behavior.
+- Make imported callable plugins throw on failure. Let flow authors catch and
+  handle exceptions in user code when they want recovery behavior.
 - Route uncaught handler failures to `onError` when the flow exports that
   handler. Treat flows without `onError` as terminal failure on uncaught
   exceptions.
@@ -55,7 +55,7 @@ Tracked in: docs/plans/repo/v0.1/pravaha-flow-runtime.md
 ## Example Shape
 
 ```js
-import { approve, defineFlow, run, runCodex } from 'pravaha';
+import { approve, defineFlow, run, runCodex } from 'pravaha/flow';
 
 export default defineFlow({
   on: {

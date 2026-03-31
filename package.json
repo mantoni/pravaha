@@ -10,12 +10,17 @@
       "types": "./pravaha.d.ts",
       "default": "./lib/pravaha.js"
     },
+    "./flow": {
+      "types": "./flow.d.ts",
+      "default": "./lib/flow.js"
+    },
     "./bin/pravaha.js": "./bin/pravaha.js"
   },
   "files": [
     "bin/pravaha.js",
     "lib/**/*.js",
     "lib/**/*.ts",
+    "flow.d.ts",
     "pravaha.d.ts",
     "!test/**",
     "!bin/**/*.test.js",

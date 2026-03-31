@@ -30,7 +30,7 @@ Depends on:
 ## Outputs
 
 - Runtime plugin loading that resolves `core/<name>` to bundled plugin modules
-  exporting `default definePlugin({...})`.
+  exporting named `definePlugin({...})` values directly.
 - Removal of placeholder core plugin definitions whose behavior lives in
   separate runtime switch statements.
 - Removal of `core/agent` and `core/codex-sdk` from the checked-in flow surface.
