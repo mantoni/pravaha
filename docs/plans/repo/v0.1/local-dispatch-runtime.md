@@ -26,6 +26,8 @@ Depends on:
 - Replace job-level durable fan-out with one bound flow instance per matched
   trigger document.
 - Add `pravaha worker` and `pravaha dispatch` CLI commands.
+- Add ad hoc `pravaha dispatch --file` and `pravaha dispatch --prompt`
+  entrypoints with checked-in flow trigger declarations.
 - Add a portable local IPC endpoint abstraction and a minimal internal protocol
   for worker registration, notify, assignment, completion, and failure.
 - Add dispatcher leadership acquisition, follower registration, takeover, and
@@ -43,6 +45,8 @@ Depends on:
 - `pravaha worker` can start multiple local workers with one elected dispatcher.
 - `pravaha dispatch` can wake the active dispatcher and return success even when
   no dispatcher is alive.
+- `pravaha dispatch --file <repo-path>` and `pravaha dispatch --prompt <text>`
+  create one-off durable runs only when exactly one eligible flow matches.
 - The dispatcher rescans authoritative state on startup and takeover and
   rediscovers unfinished flow instances safely.
 - Connected followers remain in the worker pool across dispatcher loss and one
@@ -58,8 +62,10 @@ Depends on:
 - Phase 1: Flow surface
   - Add the root-level `on` schema and validation rules.
   - Bind the trigger document into the interpreted flow instance.
+  - Add `on.file` and `on.prompt` for explicit ad hoc dispatch eligibility.
 - Phase 2: Runtime entrypoints
   - Add `pravaha worker` and `pravaha dispatch`.
+  - Add explicit ad hoc dispatch resolution for file and prompt input.
   - Add the endpoint abstraction and the newline-delimited internal protocol.
   - Add leadership acquisition, follower registration, and notify handling.
 - Phase 3: Dispatcher scheduling

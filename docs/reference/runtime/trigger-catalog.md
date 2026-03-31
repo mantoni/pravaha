@@ -35,7 +35,7 @@ This document captures the trigger surface for the trigger-driven runtime.
 | Trigger        | Purpose                                | Typical use                                                      |
 | -------------- | -------------------------------------- | ---------------------------------------------------------------- |
 | CLI worker     | Long-running local worker-pool runtime | Startup or takeover rescan, live assignment supervision          |
-| CLI dispatch   | Best-effort dispatcher wake-up         | Nudge the active dispatcher after durable state changes          |
+| CLI dispatch   | Wake or inject one-off work            | Nudge the active dispatcher or start one ad hoc file/prompt flow |
 | Git hooks      | React to local repository actions      | Reconcile after commit, branch movement, or review prep          |
 | File watchers  | React to local file changes            | Notice document or config changes that affect readiness          |
 | Webhooks       | React to external systems              | Review completion, merge queue state, remote integration signals |

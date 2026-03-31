@@ -3,6 +3,7 @@ Kind: contract
 Id: local-dispatch-runtime
 Status: proposed
 Decided by:
+  - docs/decisions/runtime/ad-hoc-dispatch-input-triggers.md
   - docs/decisions/runtime/flow-trigger-entrypoints-and-instance-binding.md
   - docs/decisions/runtime/dispatcher-owned-local-worker-pool.md
   - docs/decisions/runtime/flattened-dispatcher-socket-path.md
@@ -43,10 +44,16 @@ Depends on:
 - One `pravaha dispatch` command that sends a best-effort wake-up notification.
 - One `pravaha dispatch --flow <flow_instance_id>` override that reruns exactly
   one flow instance when the operator asks explicitly.
+- One `pravaha dispatch --file <repo-path>` entrypoint that creates exactly one
+  ad hoc durable run when one eligible flow matches.
+- One `pravaha dispatch --prompt <text>` entrypoint that creates exactly one ad
+  hoc durable run when one eligible prompt flow matches.
 - Removal of the legacy single-run `pravaha reconcile` and `pravaha resume`
   command surfaces.
 - Flow validation and interpretation for one root-level durable trigger binding
   per dispatchable flow.
+- Flow validation and interpretation for manual `on.file` and `on.prompt`
+  trigger declarations on ad hoc-dispatchable flows.
 - Dispatcher scheduling that discovers pending flow instances from authoritative
   state and assigns them to available workers.
 - Runtime persistence that keeps one current-truth run snapshot per live task so
@@ -79,6 +86,8 @@ Depends on:
   until the run reaches a terminal outcome or performs an explicit handoff.
 - Default dispatcher rescans do not rerun a still-matching flow instance that
   already has a terminal runtime record.
+- Ad hoc dispatch creates a fresh flow-instance id and never aliases an existing
+  durable Patram match.
 - A worker may supervise at most one active assignment at a time in the first
   slice.
 - Dispatcher loss does not require operators to restart surviving followers
@@ -97,6 +106,10 @@ Depends on:
   unresolved approval or queue wait and destroys resumable state.
 - A lost notification leaves work stranded until a later manual dispatch or
   worker restart.
+- Ad hoc file dispatch silently chooses one flow when more than one `on.file`
+  candidate matches the supplied input path.
+- Prompt dispatch reaches a flow that also declares `on.patram` and creates a
+  run with no durable document match.
 - Migrated flows still allow hidden fan-out inside jobs and become ambiguous to
   schedule centrally.
 - Worker terminal output no longer identifies which assignment the operator is
@@ -111,6 +124,11 @@ Depends on:
   which worker is leader.
 - `pravaha dispatch --flow <flow_instance_id>` reruns only the named flow
   instance and bypasses the completed-instance suppression guard intentionally.
+- `pravaha dispatch --file <repo-path>` dispatches exactly one ad hoc run when
+  one eligible flow matches and fails clearly when zero or multiple flows are
+  eligible.
+- `pravaha dispatch --prompt <text>` dispatches exactly one ad hoc run when one
+  eligible prompt flow matches and rejects flows that also declare `on.patram`.
 - Pravaha help and public docs expose `worker`, `dispatch`, and `approve`
   without the removed `reconcile` or `resume` commands.
 - Dispatcher takeover rescans and preserves durable pending work after a crash.
