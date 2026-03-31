@@ -4,6 +4,14 @@ import { defineFlow, run, type TaskFlowContext } from 'pravaha/flow';
 
 it('infers common flow entry point types from the public defineFlow api', () => {
   const flow_definition = defineFlow({
+    on: {
+      patram: '$class == task and status == ready',
+    },
+
+    workspace: {
+      id: 'app',
+    },
+
     main(ctx) {
       expectTypeOf(ctx).toMatchTypeOf<TaskFlowContext>();
       expectTypeOf(ctx.doc).toEqualTypeOf<TaskFlowContext['doc']>();
@@ -27,7 +35,76 @@ it('infers common flow entry point types from the public defineFlow api', () => 
       return undefined;
     },
   });
-  expectTypeOf(flow_definition).toMatchTypeOf<{
-    main: (ctx: TaskFlowContext) => Promise<unknown>;
+  expectTypeOf(flow_definition.on).toEqualTypeOf<{
+    patram: string;
   }>();
+  expectTypeOf(flow_definition.workspace).toEqualTypeOf<{
+    id: string;
+  }>();
+});
+
+it('rejects unsupported defineFlow properties in the public api', () => {
+  defineFlow({
+    on: {
+      patram: '$class == task and status == ready',
+    },
+
+    workspace: {
+      id: 'app',
+    },
+
+    main() {
+      return undefined;
+    },
+
+    // @ts-expect-error defineFlow should reject unknown top-level properties.
+    arbitrary: true,
+  });
+
+  defineFlow({
+    on: {
+      patram: '$class == task and status == ready',
+      // @ts-expect-error flow.on should reject unknown properties.
+      extra: true,
+    },
+
+    workspace: {
+      id: 'app',
+    },
+
+    main() {
+      return undefined;
+    },
+  });
+
+  defineFlow({
+    on: {
+      // @ts-expect-error flow.on.patram must be a string.
+      patram: 123,
+    },
+
+    workspace: {
+      id: 'app',
+    },
+
+    main() {
+      return undefined;
+    },
+  });
+
+  defineFlow({
+    on: {
+      patram: '$class == task and status == ready',
+    },
+
+    workspace: {
+      id: 'app',
+      // @ts-expect-error workspace should reject unknown properties.
+      root: '.',
+    },
+
+    main() {
+      return undefined;
+    },
+  });
 });
