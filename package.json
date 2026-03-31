@@ -4,14 +4,19 @@
   "version": "0.0.1",
   "type": "module",
   "main": "./lib/pravaha.js",
+  "types": "./pravaha.d.ts",
   "exports": {
-    ".": "./lib/pravaha.js",
+    ".": {
+      "types": "./pravaha.d.ts",
+      "default": "./lib/pravaha.js"
+    },
     "./bin/pravaha.js": "./bin/pravaha.js"
   },
   "files": [
     "bin/pravaha.js",
     "lib/**/*.js",
     "lib/**/*.ts",
+    "pravaha.d.ts",
     "!test/**",
     "!bin/**/*.test.js",
     "!bin/**/*.test-helpers.js",

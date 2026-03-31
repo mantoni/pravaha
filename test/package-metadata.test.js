@@ -24,13 +24,17 @@ it('defines publish metadata for the npm package', async () => {
       node: '>=22',
     },
     exports: {
-      '.': './lib/pravaha.js',
+      '.': {
+        default: './lib/pravaha.js',
+        types: './pravaha.d.ts',
+      },
       './bin/pravaha.js': './bin/pravaha.js',
     },
     files: [
       'bin/pravaha.js',
       'lib/**/*.js',
       'lib/**/*.ts',
+      'pravaha.d.ts',
       '!test/**',
       '!bin/**/*.test.js',
       '!bin/**/*.test-helpers.js',

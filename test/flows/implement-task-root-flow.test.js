@@ -4,9 +4,9 @@ import implement_task_flow from '../../docs/flows/implement-task.js';
 import { attachFlowRuntime } from '../../lib/flow/built-ins.js';
 
 const validated_flow = /** @type {{
- *   main: (ctx: Record<string, unknown>) => Promise<void>,
- *   onApprove: (ctx: Record<string, unknown>) => Promise<void>,
- * }} */ (implement_task_flow);
+ *   main: (ctx: unknown) => Promise<void>,
+ *   onApprove: (ctx: unknown) => Promise<void>,
+ * }} */ (/** @type {unknown} */ (implement_task_flow));
 
 it('implements the checked-in root flow through imported built-ins', async () => {
   const ctx = createFlowContext();
