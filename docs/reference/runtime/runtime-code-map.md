@@ -51,7 +51,7 @@ Depends on:
   },
   "flow_policy": {
     "modules": [
-      "lib/flow/reconcile-flow.js",
+      "lib/flow/load-executable-dispatch-flow.js",
       "lib/flow/load-flow-definition.js",
       "lib/flow/query.js",
       "lib/flow/validate-flow-document.js"
@@ -111,7 +111,7 @@ graph TD
   A --> C["lib/runtime/dispatch/protocol.js"]
   D["docs/contracts/runtime/javascript-flow-module-runtime.md"] --> E["lib/runtime/attempts/javascript-flow.js"]
   D --> F["lib/runtime/attempts/runtime-attempt-records.js"]
-  G["docs/reference/runtime/pravaha-runtime-architecture.md"] --> H["lib/flow/reconcile-flow.js"]
+  G["docs/reference/runtime/pravaha-runtime-architecture.md"] --> H["lib/flow/load-executable-dispatch-flow.js"]
   G --> I["lib/repo/validate-repo.js"]
   J["shared helpers"] --> K["lib/shared/git/exec-git-file.js"]
   J --> L["lib/shared/diagnostics/validation-helpers.js"]

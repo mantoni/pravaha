@@ -104,7 +104,7 @@ graph TD
   code map document and following one subsystem path.
 - The current high-churn orchestration files move behind subsystem directories
   and become thin entrypoints rather than multi-purpose implementation buckets.
-- `local-dispatch-runtime`, `runtime-attempt`, `reconcile-flow`,
+- `local-dispatch-runtime`, `runtime-attempt`, `load-executable-dispatch-flow`,
   `validate-flow-document`, and `pravaha-cli` no longer carry the full
   implementation for their subsystems in one file.
 - New internal imports follow subsystem direction instead of cross-cutting the
