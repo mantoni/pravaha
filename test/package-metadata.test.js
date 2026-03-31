@@ -97,9 +97,6 @@ it(
         'test/fixtures/runtime-fixture.js',
       );
       expect(packed_file_paths).not.toContain(
-        'test/fixtures/plugin-fixture.js',
-      );
-      expect(packed_file_paths).not.toContain(
         'scripts/update-changelog.test.js',
       );
     } finally {

@@ -64,12 +64,7 @@ Depends on:
     ]
   },
   "plugin_runtime": {
-    "modules": [
-      "lib/plugins/plugin-contract.js",
-      "lib/plugins/plugin-loader.js",
-      "lib/plugins/core-step-plugins.js",
-      "lib/plugins/core/"
-    ]
+    "modules": ["lib/plugins/plugin-contract.js", "lib/plugins/core/"]
   },
   "shared_low_level": {
     "modules": [
@@ -123,6 +118,9 @@ graph TD
 
 - `lib/pravaha.js` remains the package facade while internal modules move behind
   subsystem directories.
+- Callable plugins now execute through direct module imports. The older
+  namespace-based step-plugin loader path is no longer part of current runtime
+  ownership.
 - The migration removed the temporary root compatibility shims. New internal
   imports should resolve directly to subsystem modules.
 - The active runtime contracts define the primary seams for future moves. Avoid
